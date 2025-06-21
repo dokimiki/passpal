@@ -6,6 +6,9 @@ enum Portal {
   /// ALBO portal (assignment and grade management)
   albo,
 
+  /// Cubics portal (academic information system)
+  cubics,
+
   /// SSO portal (single sign-on)
   sso,
 }
@@ -19,6 +22,8 @@ extension PortalExtension on Portal {
         return 'MaNaBo';
       case Portal.albo:
         return 'ALBO';
+      case Portal.cubics:
+        return 'Cubics';
       case Portal.sso:
         return 'SSO';
     }
@@ -31,6 +36,8 @@ extension PortalExtension on Portal {
         return 'manabo';
       case Portal.albo:
         return 'albo';
+      case Portal.cubics:
+        return 'cubics';
       case Portal.sso:
         return 'sso';
     }

@@ -25,6 +25,7 @@ class Environment {
     final baseUrl = switch (portal) {
       Portal.manabo => EnvConfig.manaboBaseUrl,
       Portal.albo => EnvConfig.alboBaseUrl,
+      Portal.cubics => EnvConfig.cubicsBaseUrl,
       Portal.sso => EnvConfig.ssoBaseUrl,
     };
 
