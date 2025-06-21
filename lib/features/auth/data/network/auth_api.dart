@@ -10,7 +10,7 @@ import 'package:passpal/core/network/portal.dart';
 import 'auth_failure.dart';
 
 /// API client for authentication services
-/// 
+///
 /// Handles authentication flows for ALBO, MaNaBo, and Cubics portals
 /// using SAML-based SSO via Shibboleth IdP.
 class AuthApi {
@@ -20,9 +20,9 @@ class AuthApi {
   final Dio _dio;
 
   /// Performs login for the specified portal
-  /// 
+  ///
   /// Returns a list of authentication cookies on success, or throws an AuthFailure on error.
-  /// 
+  ///
   /// [portal] - The portal to authenticate against (albo, manabo, cubics)
   /// [id] - University student ID
   /// [pw] - University password
@@ -33,20 +33,20 @@ class AuthApi {
   }) async {
     try {
       debugPrint('Starting login for ${portal.displayName}');
-      
+
       // Get portal-specific URLs
       final urls = _getPortalUrls(portal);
-      
+
       // Clear existing cookies
       await _clearCookies(urls.baseUrl);
-      
+
       // Perform SAML login flow
       final cookies = await _performSamlLogin(
         urls: urls,
         username: id,
         password: pw,
       );
-      
+
       debugPrint('Login successful for ${portal.displayName}');
       return cookies;
     } on AuthFailure {
@@ -62,16 +62,16 @@ class AuthApi {
   }
 
   /// Refreshes the current session
-  /// 
+  ///
   /// Throws an AuthFailure if refresh fails.
   Future<void> refresh() async {
     try {
       debugPrint('Starting session refresh');
-      
+
       // For now, we implement a simple refresh by making a test request
       // In a full implementation, this would use specific refresh endpoints
       await _dio.get('/');
-      
+
       debugPrint('Session refresh successful');
     } on DioException catch (e) {
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
@@ -97,19 +97,18 @@ class AuthApi {
     try {
       // Step 1: Get SAML AuthnRequest
       final authnRequestUrl = await _getSamlAuthnRequest(urls);
-      
+
       // Step 2: Get AuthState
       final authState = await _getAuthState(authnRequestUrl);
-      
+
       // Step 3: Perform login
       final samlData = await _performLogin(authState, username, password);
-      
+
       // Step 4: Post SAML Response
       await _postSamlResponse(urls.postSamlEntry, samlData);
-      
+
       // Step 5: Extract cookies
       return await _extractCookies(urls);
-      
     } catch (e) {
       if (e is AuthFailure) rethrow;
       throw UnexpectedError(
@@ -123,14 +122,14 @@ class AuthApi {
   Future<String> _getSamlAuthnRequest(_PortalUrls urls) async {
     try {
       final response = await _dio.get(urls.shibEntry);
-      
+
       if (response.statusCode == 503) {
         throw ServiceUnavailable(
           serviceName: urls.serviceName,
           message: '${urls.serviceName}がメンテナンス中です。しばらくしてから再度お試しください。',
         );
       }
-      
+
       final locationHeader = response.headers.value('location');
       if (locationHeader == null) {
         throw const SamlRequestFailed(
@@ -138,7 +137,7 @@ class AuthApi {
           message: 'SAMLRequestの取得に失敗しました。',
         );
       }
-      
+
       debugPrint('AuthnRequest URL取得完了');
       return locationHeader;
     } on DioException catch (e) {
@@ -150,7 +149,7 @@ class AuthApi {
   Future<String> _getAuthState(String authnRequestUrl) async {
     try {
       final response = await _dio.get(authnRequestUrl);
-      
+
       final loginFormUrl = response.headers.value('location');
       if (loginFormUrl == null) {
         throw const SamlRequestFailed(
@@ -158,7 +157,7 @@ class AuthApi {
           message: 'ログインフォームURLの取得に失敗しました。',
         );
       }
-      
+
       final loginFormUri = Uri.parse(loginFormUrl);
       final authState = loginFormUri.queryParameters['AuthState'];
       if (authState == null) {
@@ -167,7 +166,7 @@ class AuthApi {
           message: 'AuthStateの取得に失敗しました。',
         );
       }
-      
+
       debugPrint('AuthState取得完了');
       return authState;
     } on DioException catch (e) {
@@ -182,36 +181,35 @@ class AuthApi {
     String password,
   ) async {
     try {
-      final loginUrl = '${EnvConfig.ssoBaseUrl}/cloudlink/module.php/core/loginuserpass.php?';
-      
+      final loginUrl =
+          '${EnvConfig.ssoBaseUrl}/cloudlink/module.php/core/loginuserpass.php?';
+
       final loginFormData = FormData.fromMap({
         'username': username,
         'password': password,
         'login': 'Processing...', // Required constant
         'AuthState': authState,
       });
-      
+
       final response = await _dio.post(loginUrl, data: loginFormData);
       final responseHtml = response.data.toString();
-      
+
       // Extract SAML response and relay state
       final samlResponseMatch = RegExp(
         r'<input[^<>]+name="SAMLResponse" value="([^<>]+)" />',
       ).firstMatch(responseHtml);
-      
+
       final relayStateMatch = RegExp(
         r'<input[^<>]+name="RelayState" value="([^<>]+)\n?" />',
       ).firstMatch(responseHtml);
-      
+
       final samlResponse = samlResponseMatch?.group(1);
       final relayState = relayStateMatch?.group(1);
-      
+
       if (samlResponse == null || relayState == null) {
-        throw const InvalidCredentials(
-          message: 'ユーザIDまたはパスワードが間違っています。',
-        );
+        throw const InvalidCredentials(message: 'ユーザIDまたはパスワードが間違っています。');
       }
-      
+
       debugPrint('ログイン完了、SAMLResponse取得');
       return _SamlResponseData(
         samlResponse: samlResponse,
@@ -232,13 +230,13 @@ class AuthApi {
         'SAMLResponse': samlData.samlResponse,
         'RelayState': samlData.relayState,
       };
-      
+
       await _dio.post(
         postSamlEntry,
         data: postData,
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
-      
+
       debugPrint('SAMLResponse送信完了');
     } on DioException catch (e) {
       throw _handleDioException(e);
@@ -250,26 +248,29 @@ class AuthApi {
     try {
       // Make a request to refresh cookies
       await _dio.get(urls.shibEntry);
-      
+
       // Extract cookies using the CookieManager
       final cookieManager = _dio.interceptors
           .whereType<CookieManager>()
           .firstOrNull;
-      
+
       if (cookieManager == null) {
         throw const CookieExtractionFailed(
           cookieName: 'CookieManager',
           message: 'CookieManagerが見つかりません。',
         );
       }
-      
-      final allCookies = await cookieManager.cookieJar
-          .loadForRequest(Uri.parse(urls.baseUrl));
-      
+
+      final allCookies = await cookieManager.cookieJar.loadForRequest(
+        Uri.parse(urls.baseUrl),
+      );
+
       // Get portal-specific cookies
       final requiredCookies = _getRequiredCookies(urls.portal, allCookies);
-      
-      debugPrint('Cookie取得完了: ${requiredCookies.map((c) => c.name).join(', ')}');
+
+      debugPrint(
+        'Cookie取得完了: ${requiredCookies.map((c) => c.name).join(', ')}',
+      );
       return requiredCookies;
     } catch (e) {
       if (e is AuthFailure) rethrow;
@@ -300,7 +301,7 @@ class AuthApi {
           ),
         );
         return [jSessionId, shibSession];
-        
+
       case Portal.manabo:
         final glexaSessionId = allCookies.firstWhere(
           (cookie) => cookie.name == 'GlexaSESSID',
@@ -317,7 +318,7 @@ class AuthApi {
           ),
         );
         return [glexaSessionId, shibSession];
-        
+
       case Portal.sso:
         // For SSO, return all cookies
         return allCookies;
@@ -330,7 +331,7 @@ class AuthApi {
       final cookieManager = _dio.interceptors
           .whereType<CookieManager>()
           .firstOrNull;
-      
+
       if (cookieManager != null) {
         await cookieManager.cookieJar.delete(Uri.parse(baseUrl));
       }
@@ -351,7 +352,7 @@ class AuthApi {
           shibEntry: '${EnvConfig.alboBaseUrl}/uniprove_pt/UnLoginControl',
           postSamlEntry: '${EnvConfig.alboBaseUrl}/Shibboleth.sso/SAML2/POST',
         );
-        
+
       case Portal.manabo:
         return _PortalUrls(
           portal: Portal.manabo,
@@ -360,7 +361,7 @@ class AuthApi {
           shibEntry: '${EnvConfig.manaboBaseUrl}/auth/shibboleth/',
           postSamlEntry: '${EnvConfig.manaboBaseUrl}/Shibboleth.sso/SAML2/POST',
         );
-        
+
       case Portal.cubics:
         return _PortalUrls(
           portal: Portal.cubics,
@@ -369,7 +370,7 @@ class AuthApi {
           shibEntry: '${EnvConfig.cubicsBaseUrl}/uniprove_pt/UnLoginControl',
           postSamlEntry: '${EnvConfig.cubicsBaseUrl}/Shibboleth.sso/SAML2/POST',
         );
-        
+
       case Portal.sso:
         return _PortalUrls(
           portal: Portal.sso,
@@ -389,20 +390,18 @@ class AuthApi {
         originalException: e.error as Exception,
       );
     }
-    
+
     if (e.response?.statusCode == 503) {
       return const ServiceUnavailable(
         serviceName: 'サーバー',
         message: 'サービスが一時的に利用できません。',
       );
     }
-    
+
     if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
-      return const InvalidCredentials(
-        message: '認証に失敗しました。',
-      );
+      return const InvalidCredentials(message: '認証に失敗しました。');
     }
-    
+
     return NetworkError(
       message: 'ネットワークエラーが発生しました: ${e.message}',
       originalException: e,

@@ -27,28 +27,33 @@ void main() {
     });
 
     group('login', () {
-      test('should throw ServiceUnavailable when service returns 503', () async {
-        // Arrange
-        const portal = Portal.manabo;
-        const id = 'test123';
-        const pw = 'password';
+      test(
+        'should throw ServiceUnavailable when service returns 503',
+        () async {
+          // Arrange
+          const portal = Portal.manabo;
+          const id = 'test123';
+          const pw = 'password';
 
-        final interceptors = Interceptors();
-        interceptors.add(CookieManager(mockCookieJar));
-        when(mockDio.interceptors).thenReturn(interceptors);
+          final interceptors = Interceptors();
+          interceptors.add(CookieManager(mockCookieJar));
+          when(mockDio.interceptors).thenReturn(interceptors);
 
-        // Mock 503 response for entry point
-        when(mockDio.get(any)).thenAnswer((_) async => Response(
+          // Mock 503 response for entry point
+          when(mockDio.get(any)).thenAnswer(
+            (_) async => Response(
               statusCode: 503,
               requestOptions: RequestOptions(path: ''),
-            ));
+            ),
+          );
 
-        // Act & Assert
-        expect(
-          () => authApi.login(portal: portal, id: id, pw: pw),
-          throwsA(isA<ServiceUnavailable>()),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => authApi.login(portal: portal, id: id, pw: pw),
+            throwsA(isA<ServiceUnavailable>()),
+          );
+        },
+      );
 
       test('should throw NetworkError for connection issues', () async {
         // Arrange
@@ -79,10 +84,12 @@ void main() {
     group('refresh', () {
       test('should complete successfully on valid session', () async {
         // Arrange
-        when(mockDio.get('/')).thenAnswer((_) async => Response(
-              statusCode: 200,
-              requestOptions: RequestOptions(path: '/'),
-            ));
+        when(mockDio.get('/')).thenAnswer(
+          (_) async => Response(
+            statusCode: 200,
+            requestOptions: RequestOptions(path: '/'),
+          ),
+        );
 
         // Act & Assert
         expect(() => authApi.refresh(), returnsNormally);
@@ -101,10 +108,7 @@ void main() {
         );
 
         // Act & Assert
-        expect(
-          () => authApi.refresh(),
-          throwsA(isA<SessionRefreshFailed>()),
-        );
+        expect(() => authApi.refresh(), throwsA(isA<SessionRefreshFailed>()));
       });
     });
   });
