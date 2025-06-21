@@ -68,16 +68,14 @@ lib/
 
     - `CookieManager(PersistCookieJar())` for session cookies.
     - `RetryInterceptor` – exponential back‑off on **503**.
-
-2. **TLS pinning**: Wrap Dio with `HttpCertificatePinning.intercept(url, sha256Pins)` before any request.
-3. **Secure storage**: Persist ID/PW with `flutter_secure_storage` (AES+RSA) and optional extra AES via `encrypt` pkg if needed.
-4. **Auth HTML form**: Submit credentials to IdP, follow redirects, extract `Set‑Cookie` headers into cookie jar.
-5. **Interceptor for 401/403**:
+2. **Secure storage**: Persist ID/PW with `flutter_secure_storage` (AES+RSA) and optional extra AES via `encrypt` pkg if needed.
+3. **Auth HTML form**: Submit credentials to IdP, follow redirects, extract `Set‑Cookie` headers into cookie jar.
+4. **Interceptor for 401/403**:
 
     - On first 401/403, call `signInUc.autoRefresh()` once.
     - If refresh fails, throw `AuthenticationException()`.
 
-6. **FirebaseAuth**: Use `signInWithGoogle()`; verify email domain ends with `m.chukyo-u.ac.jp`.
+5. **FirebaseAuth**: Use `signInWithGoogle()`; verify email domain ends with `m.chukyo-u.ac.jp`.
 
 ---
 
@@ -138,7 +136,6 @@ lib/
 
 ## 7. Security Checklist
 
--   [x] **TLS pinning** mandatory
 -   [x] Wipe credentials on sign‑out or re‑auth failure.
 -   [x] Encrypt cookies/HTML cache using `flutter_secure_storage` (+ AES).
 -   [x] Mismatch of Google account & campus ID triggers forced logout.
@@ -176,15 +173,13 @@ Copilot will expand the TODO into workable code chunks.
 ## 10. References (inline citation IDs)
 
 1. Secure storage AES sample
-2. http_certificate_pinning plugin
-3. Dio 401 retry pattern
-4. Riverpod auth state advice
-5. Google Sign‑In tutorial
-6. Shibboleth IdP plugin docs
-7. Clean architecture auth repo discussion
-8. Testing interceptors guide
-9. flutter_secure_storage API
-10. SSL pinning conceptual guide
-11. Dio 401 refresh token article .
-12. Riverpod auth YouTube tutorial .
-13. Firebase Auth masterclass .
+2. Dio 401 retry pattern
+3. Riverpod auth state advice
+4. Google Sign‑In tutorial
+5. Shibboleth IdP plugin docs
+6. Clean architecture auth repo discussion
+7. Testing interceptors guide
+8. flutter_secure_storage API
+9. Dio 401 refresh token article .
+10. Riverpod auth YouTube tutorial .
+11. Firebase Auth masterclass .

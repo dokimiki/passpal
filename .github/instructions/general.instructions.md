@@ -9,7 +9,7 @@ If you only read one section: generate Flutter code following Clean Architecture
 ## 1. Project Context
 
 -   This repository implements "ぱすぱる", a Flutter app that wraps university portals (MaNaBo, ALBO, Cubics) and adds notifications, timetable widgets, etc.
--   Frameworks & libs: Flutter >=3.32, Riverpod v3, Dio, Isar, firebase\_\*, workmanager, flutter_secure_storage, http_certificate_pinning.
+-   Frameworks & libs: Flutter >=3.32, Riverpod v3, Dio, Isar, firebase\_\*, workmanager, flutter_secure_storage.
 
 ## 2. High‑Level Architecture
 
@@ -71,7 +71,6 @@ lib/
 
 ## 8. Security Checklist
 
--   TLS certificate pinning via `http_certificate_pinning`.
 -   Store credentials in `flutter_secure_storage` (encrypted).
 -   Purge cookies on logout.
 

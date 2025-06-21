@@ -48,7 +48,7 @@ lib/
 
 -   **Remote**
 
-    -   `AttendanceApi` wraps Dio + `RetryInterceptor` (exponential back‑off, max 3) and uses **TLS certificate pinning** via `http_certificate_pinning`.
+    -   `AttendanceApi` wraps Dio + `RetryInterceptor` (exponential back‑off, max 3)
     -   Expose:
 
         ```dart
@@ -141,7 +141,6 @@ _Example for the API class_
 
 ```dart
 // Copilot: Generate AttendanceApi with Dio, RetryInterceptor (max3, exponential),
-// TLS pinning helper `PinnedDio`, methods fetchAttendanceHtml & postAttendance.
 ```
 
 ---

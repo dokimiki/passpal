@@ -25,7 +25,7 @@ applyTo: "test/**"
 ```text
 ➜ test/
     ├─ fixtures/
-    │   └─ html/   ← MaNaBo & ALBO sample pages (versioned)
+    │   └─ html/   ← MaNaBo & ALBO & Cubics sample pages (versioned)
     ├─ core/
     │   ├─ network_retry_interceptor_test.dart
     │   └─ isar_db_test.dart
@@ -130,7 +130,6 @@ applyTo: "test/**"
 ## 9. Security & Privacy in Tests
 
 -   Never log real credentials. Use `user@example.com / p@ssw0rd`.
--   Mock TLS pinning by disabling certificate checks in test scope only.
 
 ---
 

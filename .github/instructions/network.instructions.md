@@ -12,11 +12,10 @@ applyTo: "lib/core/network/**"
 ## 1 High‑level Responsibilities
 
 1. **HTTP client configuration** – Build `Dio` instances with: base URL, timeouts, proxy / debug logging flags.
-2. **Security** – TLS certificate pinning, HTTPS‑only, cookie encryption.
-3. **Session management** – Attach Shibboleth SSO cookies to every request. Auto‑refresh when expired.
-4. **Reliability** – Retry 503 & network errors with jittered exponential back‑off; short‑circuit on 4xx (except 429).
-5. **Error translation** – Map `DioError` → `NetworkFailure` sealed class for domain layer.
-6. **Offline & maintenance** – Detect lack of connectivity or scheduled portal downtime and surface `MaintenanceException`.
+2. **Session management** – Attach Shibboleth SSO cookies to every request. Auto‑refresh when expired.
+3. **Reliability** – Retry 503 & network errors with jittered exponential back‑off; short‑circuit on 4xx (except 429).
+4. **Error translation** – Map `DioError` → `NetworkFailure` sealed class for domain layer.
+5. **Offline & maintenance** – Detect lack of connectivity or scheduled portal downtime and surface `MaintenanceException`.
 
 ## 2 Packages to Use
 
@@ -26,7 +25,6 @@ dependencies:
     dio: ^5.4.0
     dio_cookie_manager: ^3.0.0
     cookie_jar: ^4.0.0
-    http_certificate_pinning: ^2.1.0
     flutter_secure_storage: ^9.0.0
     connectivity_plus: ^5.0.2
     riverpod: ^3.0.0
@@ -56,10 +54,9 @@ lib/core/network/
 
 ### 4.1 DioFactory
 
--   Expose `Dio create({required Portal portal})` where `Portal` is an enum (`albo`, `manabo`, `sso`).
+-   Expose `Dio create({required Portal portal})` where `Portal` is an enum (`albo`, `manabo`, `cubics`, `sso`).
 -   Read **baseURL** & **timeout** from `RemoteConfig` with local fallback.
 -   Attach **CookieManager** using `PersistCookieJar`, directory at `path_provider.getApplicationDocumentsDirectory()/cookies/`.
--   **Pin TLS** via `HttpCertificatePinning.check()` in a custom `PinningInterceptor` executed before network handshake.
 -   Set `followRedirects: false` – we handle 302 manually for SSO.
 
 ### 4.2 AuthInterceptor
@@ -104,14 +101,13 @@ class NoConnectionFailure extends NetworkFailure {}
 
 ## 5 Security Rules
 
-1. **TLS pinning** uses _two_ fingerprints (active + backup). Update fingerprints via RemoteConfig; fallback to bundled copy.
-2. **Cookies** & other session data are **AES‑256 encrypted** inside `PersistCookieJar` using a key from `flutter_secure_storage`.
-3. **No HTTP** – fail fast if `scheme != https`.
-4. **Certificate rotation** – At app start, download new fingerprints; apply on next launch to avoid bricking.
+1. **Cookies** & other session data are **AES‑256 encrypted** inside `PersistCookieJar` using a key from `flutter_secure_storage`.
+2. **No HTTP** – fail fast if `scheme != https`.
+3. **Certificate rotation** – At app start, download new fingerprints; apply on next launch to avoid bricking.
 
 ## 6 Testing (+ CI)
 
--   **Unit tests** – Mock `DioAdapter` to verify retry/backoff, header injection, pin validation.
+-   **Unit tests** – Mock `DioAdapter` to verify retry/backoff, header injection.
 -   **Integration** – Use [`http_mock_adapter`](https://pub.dev/packages/http_mock_adapter) with fixture HTML/JSON.
 -   GitHub Actions runs `flutter test --coverage`. Reject PRs under 90 % line coverage for `core/network/`.
 

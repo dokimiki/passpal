@@ -64,7 +64,6 @@ abstract class ThemeRepository {
 ## 4. Persistence & Remote Config
 
 -   **Isar Collection** `theme_settings` → single row (id = 0).
--   Fetch order: Isar > Firebase Remote Config (with TLS pinning) > Defaults.
 -   Remote payload: `{ "seedColor": "#34a853", "campus": "toyota" }`.
 -   Update flow: background worker polls weekly; manual pull via Settings.
 

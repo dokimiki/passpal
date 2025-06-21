@@ -26,7 +26,6 @@ applyTo: "lib/features/notifications/**"
 -   **Background tasks**:
     • iOS: `BGAppRefreshTask` to sync missed pushes
     • Android: `WorkManager` one‑shot retry with exponential back‑off when FCM fails.
--   **Security**: TLS pinning is **already configured** in `core/network`; just reuse Dio singleton. Never store FCM token unencrypted.
 
 ## 2. Folder Layout
 

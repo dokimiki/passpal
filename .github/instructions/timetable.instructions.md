@@ -14,7 +14,7 @@ applyTo: "lib/features/timetable/**"
 features/
   timetable/
     data/
-      remote/          # Dio scrapers ↔ ALBO / MaNaBo portals
+      remote/          # Dio scrapers ↔ ALBO / MaNaBo / Cubics portals
       local/           # Isar collection & DAO
       dto/             # JSON/HTML‑parsed models
       repository_impl.dart
@@ -104,7 +104,6 @@ UseCases (command‑query split):
 
 ## 7. Security & Compliance
 
--   Fetch via `core/network/secure_dio.dart` with TLS pinning.
 -   Timetable data is **non‑PII**; however respect campus selection stored in secure storage.
 
 ---

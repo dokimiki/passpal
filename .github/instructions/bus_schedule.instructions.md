@@ -49,7 +49,6 @@ lib/
     -   If Remote Config announces a JSON API (`v2`), switch to `…/schedule.json`.
 
 -   Parser classes live in `parser/`, versioned (`v1_html_bus_parser.dart`). Add corresponding **fixtures HTML** under `test/fixtures/bus/`.
--   Enforce **TLS certificate pinning** with `http_certificate_pinning` and two backup fingerprints.
 
 ### 2‑2 Local Data Source
 

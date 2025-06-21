@@ -4,7 +4,7 @@ applyTo: "lib/features/assignments/**"
 
 ## 1. Scope & Responsibilities
 
--   **Primary goal** : list, cache, notify, and submit MaNaBo / ALBO assignments.
+-   **Primary goal** : list, cache, notify, and submit MaNaBo / ALBO / Cubics assignments.
 -   **Out of scope** : full content parsing (display assignments in a WebView), unrelated portal resources.
 
 ## 2. Folder Layout (feature‑first × 4‑layer)
