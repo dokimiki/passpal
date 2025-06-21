@@ -14,16 +14,16 @@ final class _EnvConfig {
 
   static const bool enableLogging = true;
 
-  static const String manaboBaseUrl = 'https://manabo.example.ac.jp';
+  static const String manaboBaseUrl = 'https://manabo.cnc.chukyo-u.ac.jp';
 
-  static const String alboBaseUrl = 'https://albo.example.ac.jp';
+  static const String alboBaseUrl = 'https://cubics-pt-out.mng.chukyo-u.ac.jp';
 
   static const String cubicsBaseUrl =
       'https://cubics-as-out.mng.chukyo-u.ac.jp';
 
-  static const String ssoBaseUrl = 'https://sso.example.ac.jp';
+  static const String ssoBaseUrl = 'https://shib.chukyo-u.ac.jp';
 
-  static const int apiTimeoutSeconds = 20;
+  static const int apiTimeoutSeconds = 30;
 
   static const int maxRetryAttempts = 3;
 }
