@@ -1,3 +1,6 @@
+# テストファイルに個人情報詰まりまくってるのでignore
+/test/fixtures/html/*.html
+
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,flutter,androidstudio,xcode,visualstudio,visualstudiocode,intellij,dart
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,flutter,androidstudio,xcode,visualstudio,visualstudiocode,intellij,dart
 
