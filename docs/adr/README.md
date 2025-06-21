@@ -5,13 +5,16 @@ This log lists the architectural decisions for this project.
 <!-- toc -->
 
 * [ADR-0000](0000-use-markdown-architectural-decision-records.md) - Use Markdown Architectural Decision Records - [accepted]
+* [ADR-0001](0001-base-dio-wrapper-http-client.md) - BaseDioWrapperを使用したHTTPクライアント実装 - [accepted, updated]
+* [ADR-0002](0002-environment-configuration-management.md) - 環境設定の型安全な管理とマルチポータル対応 - [accepted]
 
 <!-- tocstop -->
 
 ---
 
 For new ADRs, please use [template.md](template.md) as basis. You can easily create a new ADR with [adr-tool](https://www.npmjs.com/package/adr-tool) based on the template:
-```
+
+```bash
 npx adr-tool create <decision>
 ```
 
