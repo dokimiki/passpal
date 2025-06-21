@@ -165,28 +165,25 @@ class _OverlayErrorWidgetState extends State<OverlayErrorWidget>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextButton.icon(
-                            onPressed: _openFaq,
-                            icon: Icon(
+                            onPressed: _openFaq,                            icon: Icon(
                               Icons.help_outline,
                               size: 16,
                               color: theme.colorScheme.onErrorContainer
-                                  .withOpacity(0.7),
-                            ),
-                            label: Text(
+                                  .withValues(alpha: 0.7),
+                            ),                            label: Text(
                               'FAQ を見る',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onErrorContainer
-                                    .withOpacity(0.7),
+                                    .withValues(alpha: 0.7),
                               ),
                             ),
                           ),
                           TextButton(
-                            onPressed: _dismiss,
-                            child: Text(
+                            onPressed: _dismiss,                            child: Text(
                               '閉じる',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onErrorContainer
-                                    .withOpacity(0.7),
+                                    .withValues(alpha: 0.7),
                               ),
                             ),
                           ),
