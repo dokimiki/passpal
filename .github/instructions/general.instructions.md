@@ -89,6 +89,7 @@ lib/
 
 ## 11. ADRs
 
+-   ALWAYS write ADRs documents after create / edit code.
 -   Store decision records in `docs/adr` using MADR template (`make adr-new` helper).
 
 ## 12. Copilot Prompt Tips

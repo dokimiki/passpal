@@ -2,12 +2,6 @@
 applyTo: "lib/features/assignments/**"
 ---
 
-# GitHub Copilot Instructions — **Assignments Feature (ぱすぱる)**
-
-> 🛈 **Read me first**: These instructions refine the repo‑level `general.instructions.md` for the `features/assignments` module. Keep them concise, action‑oriented, and immediately consumable by an AI code generator.
-
----
-
 ## 1. Scope & Responsibilities
 
 -   **Primary goal** : list, cache, notify, and submit MaNaBo / ALBO assignments.
@@ -79,13 +73,9 @@ features/assignments/
 -   Encrypt cache with AES‑256 (Isar built‑in `encrypt=true`).
 -   Respect 503 maintenance windows; propagate `PortalMaintenanceFailure` to UI overlay.
 
-## 7. ADR Reference
-
--   `docs/adr/0002-assignment-notification-strategy.md` documents the deadline alert logic—update if behavior changes.
-
 ---
 
-## 8. Seed Code Snippet
+## 7. Seed Code Snippet
 
 ```dart
 @riverpod
