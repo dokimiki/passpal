@@ -164,16 +164,7 @@ Generate keys inside `intl/arb/`. Copilot: _When you add a new string, also appe
 
 ---
 
-## 9. Lint & formatting
-
--   Always run `dart format`.
--   Respect `analysis_options.yaml` (pedantic + riverpod_lints).
--   Disallow `print`; use `logger`.
--   Prefer pattern matching (`switch(value) { ... }`) introduced in Dart 3.
-
----
-
-## 10. How to write prompts to Copilot (meta)
+## 9. How to write prompts to Copilot (meta)
 
 > “Generate an immutable value object for AppSettings with copyWith and proper defaults following equatable.”
 > “Inside provider, debounce disk writes by 300 ms using Timer+cancel.”
@@ -183,7 +174,7 @@ Copy these _imperative_, _context‑rich_, _file‑path‑prefixed_ comments at 
 
 ---
 
-## 11. Future‑proof hooks
+## 10. Future‑proof hooks
 
 -   When **Remote Config** pushes new campus list, provider must refresh dropdown items.
 -   Add `betaFlags` map inside entity for feature toggles; keep but ignore for now.
