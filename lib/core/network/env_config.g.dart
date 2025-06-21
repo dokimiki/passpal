@@ -20,7 +20,8 @@ final class _EnvConfig {
 
   static const String alboBaseUrl = 'https://cubics-pt-out.mng.chukyo-u.ac.jp';
 
-  static const String cubicsBaseUrl = 'https://cubics-as-out.mng.chukyo-u.ac.jp';
+  static const String cubicsBaseUrl =
+      'https://cubics-as-out.mng.chukyo-u.ac.jp';
 
   static const String ssoBaseUrl = 'https://shib.chukyo-u.ac.jp';
 
