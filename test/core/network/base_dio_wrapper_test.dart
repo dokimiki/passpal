@@ -111,12 +111,10 @@ class ClientErrorAdapter implements HttpClientAdapter {
 void main() {
   group('BaseDioWrapper', () {
     late BaseDioWrapper wrapper;
-
     setUp(() {
       wrapper = BaseDioWrapper(
         baseUrl: 'https://test.example.com',
         maxRetry: 3,
-        enablePinning: false, // Disable for testing
       );
     });
 
@@ -218,40 +216,6 @@ void main() {
           final dioError = error as DioException;
           expect(dioError.response?.statusCode, equals(404));
         }
-      });
-    });
-
-    group('Certificate Pinning', () {
-      test('should be disabled when enablePinning is false', () {
-        final wrapper = BaseDioWrapper(
-          baseUrl: 'https://test.example.com',
-          enablePinning: false,
-        );
-
-        final interceptors = wrapper.dio.interceptors;
-        final hasPinningInterceptor = interceptors.any(
-          (i) => i.runtimeType.toString().contains(
-            'CertificatePinningInterceptor',
-          ),
-        );
-
-        expect(hasPinningInterceptor, isFalse);
-      });
-
-      test('should be enabled when enablePinning is true', () {
-        final wrapper = BaseDioWrapper(
-          baseUrl: 'https://test.example.com',
-          enablePinning: true,
-        );
-
-        final interceptors = wrapper.dio.interceptors;
-        final hasPinningInterceptor = interceptors.any(
-          (i) => i.runtimeType.toString().contains(
-            'CertificatePinningInterceptor',
-          ),
-        );
-
-        expect(hasPinningInterceptor, isTrue);
       });
     });
   });

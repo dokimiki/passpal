@@ -15,7 +15,6 @@ final dioWrapperProvider = Provider.family<BaseDioWrapper, Portal>((
     baseUrl: env.apiBase,
     timeout: env.timeout,
     maxRetry: env.maxRetryAttempts,
-    enablePinning: env.enablePinning,
   );
 });
 
@@ -27,7 +26,6 @@ final defaultDioWrapperProvider = Provider<BaseDioWrapper>((ref) {
     baseUrl: env.apiBase,
     timeout: env.timeout,
     maxRetry: env.maxRetryAttempts,
-    enablePinning: env.enablePinning,
   );
 });
 

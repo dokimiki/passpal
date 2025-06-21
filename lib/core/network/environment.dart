@@ -6,18 +6,14 @@ import 'portal.dart';
 class Environment {
   final String apiBase;
   final bool enableLogging;
-  final bool enablePinning;
   final int timeoutSeconds;
   final int maxRetryAttempts;
-  final List<String> certificatePins;
 
   const Environment({
     required this.apiBase,
     required this.enableLogging,
-    required this.enablePinning,
     required this.timeoutSeconds,
     required this.maxRetryAttempts,
-    required this.certificatePins,
   });
 
   /// Creates an environment configuration for a specific portal
@@ -29,21 +25,11 @@ class Environment {
       Portal.sso => EnvConfig.ssoBaseUrl,
     };
 
-    final pins = <String>[];
-    if (EnvConfig.certPinMain.isNotEmpty) {
-      pins.add(EnvConfig.certPinMain);
-    }
-    if (EnvConfig.certPinBackup.isNotEmpty) {
-      pins.add(EnvConfig.certPinBackup);
-    }
-
     return Environment(
       apiBase: baseUrl,
       enableLogging: EnvConfig.enableLogging,
-      enablePinning: EnvConfig.enablePinning,
       timeoutSeconds: EnvConfig.apiTimeoutSeconds,
       maxRetryAttempts: EnvConfig.maxRetryAttempts,
-      certificatePins: pins,
     );
   }
 
@@ -61,12 +47,7 @@ final defaultEnvProvider = Provider<Environment>((ref) {
   return Environment(
     apiBase: EnvConfig.apiBaseUrl,
     enableLogging: EnvConfig.enableLogging,
-    enablePinning: EnvConfig.enablePinning,
     timeoutSeconds: EnvConfig.apiTimeoutSeconds,
     maxRetryAttempts: EnvConfig.maxRetryAttempts,
-    certificatePins: [
-      if (EnvConfig.certPinMain.isNotEmpty) EnvConfig.certPinMain,
-      if (EnvConfig.certPinBackup.isNotEmpty) EnvConfig.certPinBackup,
-    ],
   );
 });

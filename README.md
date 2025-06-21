@@ -140,7 +140,6 @@ flutter test
 
 ## 🔒 セキュリティ
 
-* **TLS 証明書ピンニング** (`http_certificate_pinning`) – leaf + backup pin。
 * Cookie & HTML キャッシュは `flutter_secure_storage` + AES‑256 暗号化。
 * 端末ログアウト時にセキュア情報を完全削除。
 

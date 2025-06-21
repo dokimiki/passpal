@@ -3,7 +3,10 @@
 * Status: accepted
 * Deciders: Development Team
 * Date: 2025-06-22
+* Updated: 2025-06-22 (TLS証明書ピニング関連設定の削除)
 * Template used: [MADR 3.0.0](https://adr.github.io/madr/)
+
+> **Note**: TLS証明書ピニング関連の環境変数（`ENABLE_PINNING`, `CERT_PIN_MAIN`, `CERT_PIN_BACKUP`）は [ADR-0004](./0004-remove-tls-certificate-pinning.md) により削除されました。
 
 Technical Story: コンパイル時環境変数管理とポータル別設定の型安全な実装
 
