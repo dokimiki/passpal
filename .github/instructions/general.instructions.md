@@ -106,3 +106,8 @@ lib/
 
 -   **Do**: null‑safety, sealed classes, async/await, log errors.
 -   **Don't**: write business logic in UI layer, hard‑code API URLs, ignore test coverage.
+
+## 15. Adding New Packages
+
+-   Use `flutter pub add <package_name>` to add new dependencies.
+-   DON'T rewrite `pubspec.yaml` manually; use the command to ensure proper formatting and versioning.
