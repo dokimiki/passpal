@@ -19,31 +19,7 @@ applyTo: "lib/core/background/**"
 
 ---
 
-## 2. Folder & File Anatomy
-
-```
-features/background/
- ├─ data/
- │   ├─ datasources/
- │   │   ├─ workmanager_adapter.dart   // Android
- │   │   └─ bg_task_adapter.dart       // iOS
- │   └─ models/background_task_dto.dart
- ├─ domain/
- │   ├─ entities/background_task.dart
- │   └─ repositories/background_repo.dart
- ├─ application/
- │   └─ provider/background_scheduler.dart   // @riverpod
- ├─ presentation/      // none (headless)
- └─ test/
-     ├─ background_scheduler_test.dart
-     └─ fake_workmanager.dart
-```
-
-_Place this tree at the top of every Copilot prompt so it knows where to write files._
-
----
-
-## 3. Scheduler API Contract
+## 2. Scheduler API Contract
 
 ```dart
 /// Schedules a periodic sync. Returns true if OS accepted the request.
@@ -58,7 +34,7 @@ Future<bool> schedulePeriodic(
 
 ---
 
-## 4. Android – WorkManager Guidelines
+## 3. Android – WorkManager Guidelines
 
 1. Use `workmanager`≥0.5.1 with `ExistingWorkPolicy.replace`.
 2. Pass input data _only_ via JSON map to avoid type issues on background isolates .
@@ -68,7 +44,7 @@ Future<bool> schedulePeriodic(
 
 ---
 
-## 5. iOS – BGTaskScheduler Guidelines
+## 4. iOS – BGTaskScheduler Guidelines
 
 1. Register identifiers in `Info.plist` and `application(_:didFinishLaunchingWithOptions:)` .
 2. Prefer `BGAppRefreshTask` (15 min–6 h) for lightweight sync; fall back to `BGProcessingTask` for heavy I/O .
@@ -77,14 +53,14 @@ Future<bool> schedulePeriodic(
 
 ---
 
-## 6. Riverpod Integration
+## 5. Riverpod Integration
 
 -   Wrap the scheduler in a `Provider<BackgroundScheduler>` so tests can inject fakes .
 -   Expose a `Stream<void>` notifier that UI widgets can listen to for immediate refresh.
 
 ---
 
-## 7. Stale‑While‑Revalidate Workflow
+## 6. Stale‑While‑Revalidate Workflow
 
 1. Show cached data instantly from Isar.
 2. Kick `BackgroundScheduler.syncNow()` if cache _older_ than TTL.
@@ -94,7 +70,7 @@ This mirrors HTTP’s `stale‑while‑revalidate` semantics
 
 ---
 
-## 8. Testing & CI
+## 7. Testing & CI
 
 -   Unit‑test adapters with fake channels; simulate success/failure & verify exponential back‑off.
 -   Use `adb shell cmd jobscheduler run` + Xcode BGTask debug menu in integration tests.
@@ -102,7 +78,7 @@ This mirrors HTTP’s `stale‑while‑revalidate` semantics
 
 ---
 
-## 9. Copilot Prompt Examples
+## 8. Copilot Prompt Examples
 
 > **🎯 Goal:** Generate WorkManager adapter implementing `BackgroundTaskDataSource` above.
 >
@@ -120,7 +96,7 @@ Repeat similar prompts for `bg_task_adapter.dart`, fake adapters and provider.
 
 ---
 
-### 10. Style Rules Recap
+### 9. Style Rules Recap
 
 -   **Null‑safety** (`late` only where absolutely required).
 -   **Avoid platform channel boilerplate** – rely on plugins.

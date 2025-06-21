@@ -110,28 +110,7 @@ final themeRepoProvider = Provider<ThemeRepository>((ref) {
 
 ---
 
-## 9. Sample File Tree
-
-```
-features/
- └─ theme/
-     ├─ data/
-     │   ├─ local/theme_local_ds.dart
-     │   ├─ remote/theme_remote_ds.dart
-     │   └─ repo/theme_repo_impl.dart
-     ├─ domain/
-     │   ├─ entities/theme_settings.dart
-     │   └─ repo/theme_repository.dart
-     ├─ application/
-     │   └─ controller/theme_controller.dart
-     └─ presentation/
-         ├─ widgets/theme_switch.dart
-         └─ pages/theme_debug_page.dart
-```
-
----
-
-## 10. Reference Snippets
+## 9. Reference Snippets
 
 ```dart
 // Example ThemeExtension

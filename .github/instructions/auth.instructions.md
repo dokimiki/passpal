@@ -8,7 +8,7 @@ applyTo: "lib/features/auth/**"
 
 ---
 
-## 0. Scope & Goals
+## 1. Scope & Goals
 
 -   Implement secure, test‑driven **SSO + Firebase auth** for the _ぱすぱる_ app.
 -   Handle two parallel identity domains:
@@ -19,46 +19,6 @@ applyTo: "lib/features/auth/**"
 -   Ensure the _same_ username is used in both domains; surface mismatch to the user.
 -   Store campus ID / password only in encrypted secure storage.
 -   Auto‑refresh sessions; gracefully recover on 401/403/503.
-
----
-
-## 1. Folder & File Naming
-
-```
-lib/
- └─ features/
-     └─ auth/
-         ├─ data/
-         │   ├─ datasources/
-         │   │   ├─ auth_remote_ds.dart       // Dio + cookie_jar + HTML form
-         │   │   └─ google_remote_ds.dart     // FirebaseAuth + GoogleSignIn
-         │   ├─ dto/
-         │   │   └─ login_response_dto.dart
-         │   ├─ models/
-         │   │   └─ session_model.dart        // tokens, cookies, expiry
-         │   └─ repository_impl/
-         │       └─ auth_repository_impl.dart
-         ├─ domain/
-         │   ├─ entities/
-         │   │   └─ session.dart
-         │   ├─ repositories/
-         │   │   └─ auth_repository.dart
-         │   └─ usecases/
-         │       ├─ sign_in_uc.dart
-         │       ├─ auto_refresh_uc.dart
-         │       └─ sign_out_uc.dart
-         ├─ application/
-         │   └─ providers/
-         │       ├─ auth_notifier.dart        // StateNotifier<AsyncValue<Session?>>
-         │       └─ auth_provider.dart        // Riverpod facade
-         └─ presentation/
-             ├─ pages/login_page.dart
-             ├─ pages/account_mismatch_dialog.dart
-             └─ widgets/login_button.dart
-```
-
--   **Pattern**: `<layer>/<role>/<feature>_<suffix>.dart`.
--   One public class per file. Prefer immutable DTOs with `freezed` + `json_serializable`.
 
 ---
 

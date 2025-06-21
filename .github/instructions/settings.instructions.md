@@ -38,34 +38,9 @@ _Out of scope_ here: login credentials screen (auth feature), debug flags (dev
 
 ---
 
-## 2. Folder layout (feature‑first)
+## 2. Key API contracts
 
-```
-lib/
- └─ features/
-     └─ settings/
-         ├─ data/
-         │   ├─ dto/
-         │   ├─ local/
-         │   └─ repository_impl/
-         ├─ domain/
-         │   ├─ entity/
-         │   ├─ repository/
-         │   └─ usecase/
-         ├─ application/
-         │   └─ provider/
-         └─ presentation/
-             ├─ pages/
-             └─ widgets/
-```
-
-Copilot **must** nest all new files beneath this path. Never mingle with other features.
-
----
-
-## 3. Key API contracts
-
-### 3.1 `AppSettings` entity (domain)
+### 2.1 `AppSettings` entity (domain)
 
 ```dart
 @immutable
@@ -80,7 +55,7 @@ class AppSettings extends Equatable {
 }
 ```
 
-### 3.2 Repository interface
+### 2.2 Repository interface
 
 ```dart
 abstract interface class AppSettingsRepository {
@@ -90,7 +65,7 @@ abstract interface class AppSettingsRepository {
 }
 ```
 
-### 3.3 Application provider
+### 2.3 Application provider
 
 Use **Riverpod 3** `AsyncNotifier` (or `Notifier` when sync) pattern:
 
@@ -102,7 +77,7 @@ final appSettingsProvider = AsyncNotifierProvider<AppSettingsNotifier, AppSettin
 
 The notifier loads via repository on `build`, exposes `updateXxx()` methods that merge copyWith & persist.
 
-### 3.4 Presentation widgets
+### 2.4 Presentation widgets
 
 -   `SettingTile` generalises Label + Subtitle + trailing Switch/Navigation arrow.
 -   Use **adaptive_platform_widgets** or a simple `PlatformListTile` util to match iOS style.
@@ -110,7 +85,7 @@ The notifier loads via repository on `build`, exposes `updateXxx()` methods that
 
 ---
 
-## 4. Persistence rules
+## 3. Persistence rules
 
 | Field                                            | Storage                      | Notes            |
 | ------------------------------------------------ | ---------------------------- | ---------------- |
@@ -125,7 +100,7 @@ Load order during splash:
 
 ---
 
-## 5. UX guidelines for Copilot
+## 45. UX guidelines for Copilot
 
 1. **Material 3 List semantics**: one preference per tile; group with Section header; use `SwitchListTile.adaptive` for toggles.
 2. Place destructive actions at bottom; color them `Colors.red`.
@@ -136,7 +111,7 @@ Load order during splash:
 
 ---
 
-## 6. Testing notes
+## 5. Testing notes
 
 1. **Unit tests (domain)** – Validate `copyWith`, default values.
 2. **Repository tests (data)** – use _in‑memory_ Isar + `MockSecureStorage`.
@@ -147,14 +122,14 @@ Copilot should auto‑scaffold a test when a new class is created (`_test.dart` 
 
 ---
 
-## 7. Security levers exposed to user
+## 6. Security levers exposed to user
 
 -   **Reset credentials** tile executes `authRepository.logout(…)`; after success navigate to login screen.
 -   **Export diagnostic log** (future). For now stub action with TODO.
 
 ---
 
-## 8. Internationalization stub
+## 7. Internationalization stub
 
 ```dart
 AppLocalizations.of(context)!.settingsTheme
@@ -164,7 +139,7 @@ Generate keys inside `intl/arb/`. Copilot: _When you add a new string, also appe
 
 ---
 
-## 9. How to write prompts to Copilot (meta)
+## 8. How to write prompts to Copilot (meta)
 
 > “Generate an immutable value object for AppSettings with copyWith and proper defaults following equatable.”
 > “Inside provider, debounce disk writes by 300 ms using Timer+cancel.”
@@ -174,7 +149,7 @@ Copy these _imperative_, _context‑rich_, _file‑path‑prefixed_ comments at 
 
 ---
 
-## 10. Future‑proof hooks
+## 9. Future‑proof hooks
 
 -   When **Remote Config** pushes new campus list, provider must refresh dropdown items.
 -   Add `betaFlags` map inside entity for feature toggles; keep but ignore for now.

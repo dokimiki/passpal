@@ -10,41 +10,9 @@ applyTo: "lib/features/attendance/**"
 
 ---
 
-## 1. Directory & Naming Conventions
+## 1. Layer‑Specific Guidelines
 
-```
-lib/
- └─ features/
-     └─ attendance/
-         ├─ data/
-         │   ├─ remote/attendance_api.dart
-         │   ├─ local/attendance_cache.dart
-         │   ├─ dto/attendance_dto.dart
-         │   └─ parsers/html_v1_attendance_parser.dart
-         ├─ domain/
-         │   ├─ entity/attendance_record.dart
-         │   ├─ repository/attendance_repository.dart   // interface
-         │   └─ usecase/
-         │       ├─ fetch_attendance_status.dart
-         │       ├─ submit_attendance.dart
-         │       └─ monitor_attendance.dart
-         ├─ application/
-         │   └─ provider/attendance_notifier.dart  // Riverpod StateNotifier
-         └─ presentation/
-             ├─ pages/attendance_page.dart
-             └─ widgets/
-                 ├─ attendance_modal.dart
-                 └─ attendance_status_badge.dart
-```
-
--   **File names** → snake_case. *Class names* → PascalCase.
--   **Parser versions**: `html_v{n}_attendance_parser.dart` to allow hot‑swap via DI when HTML structure changes.
-
----
-
-## 2. Layer‑Specific Guidelines
-
-### 2.1 Data Layer
+### 1.1 Data Layer
 
 -   **Remote**
 
@@ -67,7 +35,7 @@ lib/
 
 -   **DTO ↔ Entity mappers** live in the same file as DTO for cohesion.
 
-### 2.2 Domain Layer
+### 1.2 Domain Layer
 
 -   **Entity**
 
@@ -83,7 +51,7 @@ lib/
 -   **Repository interface** should remain _pure_ and platform‑agnostic.
 -   **Use‑cases** return `Either<Failure, …>` (dartz) and stream when appropriate.
 
-### 2.3 Application Layer
+### 1.3 Application Layer
 
 -   `AttendanceNotifier` extends **StateNotifier\<AsyncValue\<AttendanceRecord?>>**.
 
@@ -96,7 +64,7 @@ lib/
 
 -   Handle 401 / 403 by invoking `AuthService.refreshSession()` once; surface `AuthenticationException` to UI only after failure.
 
-### 2.4 Presentation Layer
+### 1.4 Presentation Layer
 
 -   **Widgets** must be _stateless_ where possible and read providers via `Consumer`. Use shadcn/ui components.
 -   **AttendanceModal** shows ⏰ countdown (auto‑close in 2 min) & _Submit_ button. Uses `AnimatedOpacity` + Framer‑Motion style transitions.
@@ -104,7 +72,7 @@ lib/
 
 ---
 
-## 3. Business Rules & Edge Cases
+## 2. Business Rules & Edge Cases
 
 1. Polling **only while AttendancePage is in the widget tree** (use `RouteAware` or `FocusDetector`).
 2. Remote portal returns **503 during nightly maintenance**: surface `MaintenanceOverlay` and pause polling until HTTP 200.
@@ -114,7 +82,7 @@ lib/
 
 ---
 
-## 4. Testing Strategy
+## 3. Testing Strategy
 
 | Layer      | Tool / Pattern  | Key Points                                                                                    |
 | ---------- | --------------- | --------------------------------------------------------------------------------------------- |
@@ -125,7 +93,7 @@ lib/
 
 ---
 
-## 5. Copilot Prompt Snippets
+## 4. Copilot Prompt Snippets
 
 Paste the following comment at top of new files to steer Copilot:
 
@@ -145,7 +113,7 @@ _Example for the API class_
 
 ---
 
-## 6. Common Pitfalls – Guardrails
+## 5. Common Pitfalls – Guardrails
 
 | ❌ Anti‑pattern                     | ✅ Correct Approach                |
 | ----------------------------------- | ---------------------------------- |
@@ -157,7 +125,7 @@ _Example for the API class_
 
 ---
 
-## 7. Definition of Done (DoD)
+## 6. Definition of Done (DoD)
 
 1. All tests green (`flutter test`).
 2. No TODOs or ignored lints.

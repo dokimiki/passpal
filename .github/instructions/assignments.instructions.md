@@ -7,38 +7,7 @@ applyTo: "lib/features/assignments/**"
 -   **Primary goal** : list, cache, notify, and submit MaNaBo / ALBO / Cubics assignments.
 -   **Out of scope** : full content parsing (display assignments in a WebView), unrelated portal resources.
 
-## 2. Folder Layout (feature‑first × 4‑layer)
-
-```
-features/assignments/
- ├─ data/
- │   ├─ remote/
- │   │   └─ assignment_api.dart      // Dio wrapper + 503 retry
- │   ├─ local/
- │   │   ├─ assignment_cache.dart    // Isar DAO
- │   │   └─ assignment_log_dao.dart  // For deadline notifications
- │   ├─ dto/
- │   │   └─ assignment_dto.dart
- │   └─ repository_impl.dart         // Implements Domain interface
- ├─ domain/
- │   ├─ entity/
- │   │   └─ assignment.dart
- │   ├─ repository/
- │   │   └─ assignment_repository.dart
- │   └─ usecase/
- │       ├─ fetch_assignments.dart
- │       ├─ refresh_assignments.dart // stale‑while‑revalidate
- │       └─ schedule_deadline_alerts.dart
- ├─ application/
- │   └─ provider/
- │       ├─ assignment_notifier.dart // StateNotifier<List<Assignment>>
- │       └─ overdue_notifier.dart    // Emits List<Assignment> about to expire
- └─ presentation/
-     ├─ pages/assignment_list_page.dart
-     └─ widgets/assignment_card.dart
-```
-
-## 3. Coding Conventions
+## 2. Coding Conventions
 
 1. **Null safety & exhaustive `when`** on sealed classes.
 2. **Dio** : add `RetryInterceptor` (503 ⇒ exp. back‑off ≤ 3). Inject via Riverpod.
@@ -47,7 +16,7 @@ features/assignments/
 5. **WebView submission** : open URL + auth cookies, never parse answer UI.
 6. **Notification rule** : schedule `deadline − 24h` local alert once. Cancel/replace when assignment is removed.
 
-## 4. Typical Copilot Prompt Patterns
+## 3. Typical Copilot Prompt Patterns
 
 | Scenario            | Minimal Prompt                                                             | Expected Output                                                                |
 | ------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
@@ -58,7 +27,7 @@ features/assignments/
 
 **Tip for Copilot**: Start prompts with _“Write a null‑safe …”_ and specify _inputs, outputs, side‑effects_. End with _“add unit tests”_ for best results.
 
-## 5. Testing Matrix
+## 4. Testing Matrix
 
 | Layer          | What to test                                       | File                 | Tool                 |
 | -------------- | -------------------------------------------------- | -------------------- | -------------------- |
@@ -67,7 +36,7 @@ features/assignments/
 | Application    | `overdue_notifier` emits at correct times          | `notifier_test.dart` | FakeAsync            |
 | Presentation   | `AssignmentListPage` renders loading/error         | `widget_test.dart`   | Golden toolkit       |
 
-## 6. Security & Error Handling Checklist
+## 5. Security & Error Handling Checklist
 
 -   Catch `HtmlParseException` → fallback regex, log to Crashlytics.
 -   Encrypt cache with AES‑256 (Isar built‑in `encrypt=true`).
@@ -75,7 +44,7 @@ features/assignments/
 
 ---
 
-## 7. Seed Code Snippet
+## 6. Seed Code Snippet
 
 ```dart
 @riverpod

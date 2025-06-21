@@ -27,35 +27,7 @@ applyTo: "lib/features/notifications/**"
     • iOS: `BGAppRefreshTask` to sync missed pushes
     • Android: `WorkManager` one‑shot retry with exponential back‑off when FCM fails.
 
-## 2. Folder Layout
-
-```
-features/notifications/
- ├─ data/
- │   ├─ datasource/
- │   │   ├─ fcm_remote_datasource.dart
- │   │   └─ local_notification_datasource.dart
- │   ├─ dto/
- │   │   └─ fcm_payload_dto.dart
- │   ├─ repository/
- │   │   └─ notification_repository_impl.dart
- │   └─ mappers/
- ├─ domain/
- │   ├─ entity/notification_event.dart
- │   ├─ repository/notification_repository.dart
- │   └─ usecase/
- │       ├─ register_fcm_token.dart
- │       ├─ schedule_deadline_reminder.dart
- │       └─ fetch_missed_notifications.dart
- ├─ application/
- │   ├─ provider/notification_settings_provider.dart
- │   └─ notifier/notification_notifier.dart
- └─ presentation/
-     ├─ widgets/notification_banner.dart
-     └─ pages/notification_settings_page.dart
-```
-
-## 3. Coding Directives
+## 2. Coding Directives
 
 1. **Null‑safe Dart** (`sdk: ">=3.0.0 <4.0.0"`).
 2. Use **Riverpod Generator** (`@riverpod`) for providers where possible.
@@ -74,7 +46,7 @@ features/notifications/
 8. Respect **quiet hours**: if a push arrives during quiet hours, enqueue as a local notification for 07:00.
 9. **Logging**: use `logger` package; log level ≥WARNING only in production builds.
 
-## 4. Testing Guidelines
+## 3. Testing Guidelines
 
 -   **Unit tests** (100 % UseCase coverage):
     → Mock `NotificationRepository`, verify `scheduleDeadlineReminder` schedules _exactly one_ notification when `dueDate.difference(now) ≤ 24h`.
@@ -84,7 +56,7 @@ features/notifications/
     • Simulate doze mode and confirm WorkManager retry.
 -   Provide **fixtures** (`test/fixtures/fcm_assignment_added.json`) for every FCM payload variant.
 
-## 5. Sample Prompts for Copilot
+## 4. Sample Prompts for Copilot
 
 -   "Generate a Riverpod notifier that wraps `FlutterLocalNotificationsPlugin` and exposes a `Future<void> schedule(DateTime when, NotificationDetails details)` API."
 -   "Write a unit test for `registerFcmToken` that mocks Dio and asserts HTTP 200 + token saved to Isar."
@@ -92,7 +64,7 @@ features/notifications/
     _(Include iOS 13+ availability check!)_
 -   "Implement presentation banner that slides down with Framer Motion when notification permission == denied."
 
-## 6. Edge Cases & Error Handling
+## 5. Edge Cases & Error Handling
 
 | Case                                       | Expected behaviour                                                                         |
 | ------------------------------------------ | ------------------------------------------------------------------------------------------ |
@@ -101,7 +73,7 @@ features/notifications/
 | Device offline                             | Schedule retry WorkManager (Android) / BGProcessingTask (iOS) with exponential back‑off    |
 | Server sends duplicate `assignment_added`  | Deduplicate by `assignmentId` in Isar _before_ raising banner or local notification        |
 
-## 7. Performance Targets
+## 6. Performance Targets
 
 -   End‑to‑end push latency **< 2 s** (FCM arrival → banner rendered) in foreground.
 -   Battery impact ≤ **4 %/day** for background tasks (measured via Android Vitals).

@@ -24,33 +24,7 @@ applyTo: "lib/core/storage/**"
 
 ---
 
-## 2. Directory Layout
-
-```
-lib/
- └─ core/
-     └─ storage/
-         ├─ data/
-         │   ├─ local_db/
-         │   │   ├─ isar_database.dart
-         │   │   ├─ drift_database.dart     // fallback when relations required
-         │   ├─ secure/
-         │   │   ├─ secure_store.dart       // wraps flutter_secure_storage
-         │   │   └─ encryption.dart         // AES‑256‑GCM helpers
-         │   ├─ cleanup/cache_cleaner.dart  // TTL sweeper
-         │   └─ models/ …                  // DTOs
-         ├─ domain/
-         │   ├─ entities/ …
-         │   ├─ repositories/storage_repository.dart
-         │   └─ value_objects/encrypted.dart
-         └─ application/
-             ├─ providers/storage_providers.dart
-             └─ services/background_cache_refresh_service.dart
-```
-
----
-
-## 3. Package Choices & Configuration
+## 2. Package Choices & Configuration
 
 | Concern            | Package                                              | Notes                                                            |
 | ------------------ | ---------------------------------------------------- | ---------------------------------------------------------------- |
@@ -73,7 +47,7 @@ dependencies:
 
 ---
 
-## 4. Database Schema Guidelines (Isar)
+## 3. Database Schema Guidelines (Isar)
 
 1. **Entities reside in `core/storage/data/local_db/schemas/*.dart`.**
 2. Use `@collection` + generated `*.isar.dart`.
@@ -89,7 +63,7 @@ dependencies:
 
 ---
 
-## 5. Caching Strategy – **Stale‑While‑Revalidate**
+## 4. Caching Strategy – **Stale‑While‑Revalidate**
 
 -   **Read flow:** Return cached object _immediately_ → If `expiresAt < now`, trigger background re‑fetch via `BackgroundCacheRefreshService`.
 -   **Write flow:** Update cache & set `expiresAt = DateTime.now().add(ttl)`.
@@ -97,7 +71,7 @@ dependencies:
 
 ---
 
-## 6. TTL & Cleanup
+## 5. TTL & Cleanup
 
 -   For entities with TTL (e.g., timetable 24 h, periodTimes 7 d):
 
@@ -115,7 +89,7 @@ dependencies:
 
 ---
 
-## 7. Secure Credential Storage
+## 6. Secure Credential Storage
 
 -   Use `SecureStore.writeEncrypted(key, value)` – wraps `flutter_secure_storage` + AES‑256.
 -   Never store plaintext IDs/Passwords in DB.
@@ -137,7 +111,7 @@ dependencies:
 
 ---
 
-## 8. Firestore Cost Control Helpers
+## 7. Firestore Cost Control Helpers
 
 -   Batch updates (`WriteBatch`) when pushing logs.
 -   Expose `FirestoreBillingGuard` util with:
@@ -149,7 +123,7 @@ dependencies:
 
 ---
 
-## 9. Testing Checklist
+## 8. Testing Checklist
 
 -   **Unit** – Encryption round‑trip, TTL expiration, Isar adapters.
 -   **Widget** – None (storage is non‑UI).
@@ -159,7 +133,7 @@ dependencies:
 
 ---
 
-## 10. Copilot Prompting Tips
+## 9. Copilot Prompting Tips
 
 -   Comment every public method with summary, params, and returns – Copilot amplifies JSDoc‑style comments.
 -   Begin new files with a small banner like:
@@ -174,7 +148,7 @@ dependencies:
 
 ---
 
-## 11. Sample Starter Snippet
+## 10. Sample Starter Snippet
 
 ```dart
 // lib/core/storage/data/secure/secure_store.dart

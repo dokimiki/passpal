@@ -34,32 +34,16 @@ dependencies:
 
 > **Copilot rule:** never import `dart:io` in platform code; use plugins above.
 
-## 3 Folder & File Naming
+## 3 Implementation Guidelines
 
-```
-lib/core/network/
- ├─ dio_factory.dart          # builds configured Dio
- ├─ interceptors/
- │    ├─ auth_interceptor.dart
- │    ├─ retry_interceptor.dart
- │    ├─ logging_interceptor.dart (debug only)
- │    └─ connectivity_interceptor.dart
- ├─ certs/
- │    └─ known_fingerprints.json  # updated through RemoteConfig
- ├─ models/network_failure.dart   # sealed result types
- └─ provider/network_provider.dart # Riverpod global
-```
-
-## 4 Implementation Guidelines
-
-### 4.1 DioFactory
+### 3.1 DioFactory
 
 -   Expose `Dio create({required Portal portal})` where `Portal` is an enum (`albo`, `manabo`, `cubics`, `sso`).
 -   Read **baseURL** & **timeout** from `RemoteConfig` with local fallback.
 -   Attach **CookieManager** using `PersistCookieJar`, directory at `path_provider.getApplicationDocumentsDirectory()/cookies/`.
 -   Set `followRedirects: false` – we handle 302 manually for SSO.
 
-### 4.2 AuthInterceptor
+### 3.2 AuthInterceptor
 
 -   On every request, inject `Cookie` header with `ShibbolethSession` tokens from `PersistCookieJar`.
 -   On **401|403**:
@@ -68,23 +52,23 @@ lib/core/network/
     2. If refresh succeeds → replay original request.
     3. On second failure → throw `AuthExpiredException`, bubble to UI for forced re‑login.
 
-### 4.3 RetryInterceptor
+### 3.3 RetryInterceptor
 
 -   Trigger only on `DioExceptionType.connectionTimeout` or HTTP **503|429**.
 -   Use [`retry`](https://pub.dev/packages/retry) package with: `maxAttempts = 5`, `delayFactor = 1s`, `maxDelay = 32s`, **jitter = 50%**.
 -   Abort retries when battery saver is active (`PowerMode.broadcastStream`).
 
-### 4.4 ConnectivityInterceptor
+### 3.4 ConnectivityInterceptor
 
 -   Before each request: `await Connectivity().checkConnectivity()`.
 -   If `none` → throw `NoConnectionException` immediately.
 
-### 4.5 Logging
+### 3.5 Logging
 
 -   Only enabled in **‒‒dart‑define=flavor=dev** builds.
 -   Use `PrettyDioLogger` with masked headers for `Cookie`, `Set‑Cookie`, `Authorization`.
 
-### 4.6 Error Mapping
+### 3.6 Error Mapping
 
 ```dart
 sealed class NetworkFailure {
@@ -99,19 +83,19 @@ class NoConnectionFailure extends NetworkFailure {}
 -   Extend if feature teams need specific cases.
 -   Convert inside `FailureMapper.onError(DioError e)`.
 
-## 5 Security Rules
+## 4 Security Rules
 
 1. **Cookies** & other session data are **AES‑256 encrypted** inside `PersistCookieJar` using a key from `flutter_secure_storage`.
 2. **No HTTP** – fail fast if `scheme != https`.
 3. **Certificate rotation** – At app start, download new fingerprints; apply on next launch to avoid bricking.
 
-## 6 Testing (+ CI)
+## 5 Testing (+ CI)
 
 -   **Unit tests** – Mock `DioAdapter` to verify retry/backoff, header injection.
 -   **Integration** – Use [`http_mock_adapter`](https://pub.dev/packages/http_mock_adapter) with fixture HTML/JSON.
 -   GitHub Actions runs `flutter test --coverage`. Reject PRs under 90 % line coverage for `core/network/`.
 
-## 7 Copilot Prompt Patterns
+## 6 Copilot Prompt Patterns
 
 | Goal                      | Prefix Copilot with…                                    |
 | ------------------------- | ------------------------------------------------------- |

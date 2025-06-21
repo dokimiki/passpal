@@ -8,33 +8,7 @@ applyTo: "lib/features/timetable/**"
 
 ---
 
-## 1. Directory & Layer Layout
-
-```
-features/
-  timetable/
-    data/
-      remote/          # Dio scrapers ↔ ALBO / MaNaBo / Cubics portals
-      local/           # Isar collection & DAO
-      dto/             # JSON/HTML‑parsed models
-      repository_impl.dart
-    domain/
-      entity/          # TimetableDay, Period, Class
-      repository.dart  # abstract TimetableRepository
-      usecase/         # FetchTimetable, GetClassesForDate, ...
-    application/
-      provider/        # Riverpod Notifiers & Schedulers
-      background/      # WorkManager & BGAppRefresh bridges
-    presentation/
-      pages/           # TimetablePage, ClassDetailBottomSheet
-      widgets/         # TimetableGrid, TodayClassesWidget
-```
-
-_Never import across features except via `domain` contracts._
-
----
-
-## 2. Data Layer Rules
+## 1. Data Layer Rules
 
 -   **Remote fetch**
 
@@ -49,7 +23,7 @@ _Never import across features except via `domain` contracts._
 
 ---
 
-## 3. Domain Layer Contracts
+## 2. Domain Layer Contracts
 
 ```dart
 abstract class TimetableRepository {
@@ -70,7 +44,7 @@ UseCases (command‑query split):
 
 ---
 
-## 4. Application Layer
+## 3. Application Layer
 
 -   **Providers**
 
@@ -85,7 +59,7 @@ UseCases (command‑query split):
 
 ---
 
-## 5. Presentation Layer
+## 4. Presentation Layer
 
 -   `TimetablePage` shows week grid; reuse open‑source **JonasWanke/timetable** widget for layout (MIT) but wrap in our ViewModel.
 -   Today widget and home‑screen widget show next class countdown and list.
@@ -94,7 +68,7 @@ UseCases (command‑query split):
 
 ---
 
-## 6. Testing Strategy
+## 5. Testing Strategy
 
 -   **Unit**: Use Fake Dio + fixture HTML; assert parser → DTO → Entity.
 -   **Widget**: Wrap `TimetablePage` in `ProviderScope` with mock repo; pump and expect class tiles.
@@ -102,13 +76,13 @@ UseCases (command‑query split):
 
 ---
 
-## 7. Security & Compliance
+## 6. Security & Compliance
 
 -   Timetable data is **non‑PII**; however respect campus selection stored in secure storage.
 
 ---
 
-## 8. Copilot Prompting Hints
+## 7. Copilot Prompting Hints
 
 -   **Always start by generating failing tests** (`*_test.dart`).
 -   Prefer functional returns; avoid exposing Isar objects outside data layer.
@@ -119,7 +93,7 @@ UseCases (command‑query split):
 
 ---
 
-## 9. Example Skeleton (abbrev.)
+## 8. Example Skeleton (abbrev.)
 
 ```dart
 final timetableControllerProvider = StateNotifierProvider.autoDispose<
@@ -135,7 +109,7 @@ Use this as template for Copilot completions.
 
 ---
 
-## 10. Done Criteria
+## 9. Done Criteria
 
 Copilot‑generated PRs for this feature must:
 
