@@ -59,6 +59,7 @@
 
 * **Feature‑first x Layer マトリクス構成**。UI と “それ以外” を最上位で分割し、各機能ごとに data / domain / presentation ディレクトリを配置。
 * **依存性逆転**: Domain → Data の依存を禁止し、Provider で DI。
+* **Error Handling**: ネットワークエラー時は非ブロッキング Overlay バナーで即座に再試行・FAQ アクセス提供。
 * スクレイピングパーサは **バージョン付き**(`v1_courseListParser` 等) でテスト駆動開発 (TDD)。
 
 ### データ取得フロー
@@ -72,9 +73,10 @@
 
 ## 📁 ディレクトリ構成 (抜粋)
 
-```
+```text
 lib/
  ├── core/                # 共通ユーティリティ・DI ルート
+ │    └── error/          # エラーハンドラー・Overlay UI コンポーネント
  ├── features/
  │    ├── assignments/
  │    │     ├── data/          # DataFetch / DataParse / DTO
