@@ -2,29 +2,46 @@
 applyTo: "lib/core/storage/**"
 ---
 
-# Storage Architecture — Passpal
+# Storage Layer Instructions
 
-Follow these rules for all storage code.
+## Summary
 
----
+* Enforce **Single Source of Truth** with SWR (stale-while-revalidate) + TTL for fast and fresh UI.
+* Split into three clear layers:
 
-## 1. Goals & Principles
-
--   Use **flutter_secure_storage** (AES-256) for campus credentials (ID/PW, SSO cookie).
--   All higher layers access storage only via APIs—never raw DB.
--   Send all storage exceptions to Crashlytics as non-fatal; support kill-switch via RemoteConfig.
--   All storage must be testable (CI: isar_test + isar_flutter_libs).
+  * **Credential**: Secure, encrypted storage
+  * **Cache**: Key-Value store for data JSON
+  * **Pref**: Lightweight settings (also key-value)
 
 ---
 
-## 2. Layer Responsibilities
+## 0. Overview
 
-| Layer            | Responsibilities                  | Not responsible for |
-| ---------------- | --------------------------------- | ------------------- |
-| Credential Store | Store, expire, wipe ID/PW/cookies | FirebaseAuth ops    |
-| Database Gateway | Isar schema, instance, streams    | HTML/JSON parsing   |
-| Cache Policy     | TTL, SWR flag, staleness          | Network fetch       |
-| Preferences      | Theme, notification, campus info  | UI rendering        |
+* Store campus ID/PW and SSO cookies via **flutter\_secure\_storage** (AES-256).
+* Use **SharedPreferences** for all cache (JSON-serialized) and user prefs, separated by namespace.
+* Data is streamed/reactive via Riverpod `StreamProvider`.
+* TTL expiry or deserialization errors are mapped to *core/error*.
+* *core/background* handles automatic re-sync with backoff.
+
+---
+
+## 1. Principles
+
+1. **Security:** Credentials encrypted in Keychain/Keystore (AES-256).
+2. **Consistency:** No direct SharedPreferences usage in features; use Storage Facade.
+3. **Observability:** All exceptions sent to Crashlytics and respect RemoteConfig kill-switches.
+4. **Testability:** Use `shared_preferences_mocks` and fake impls for pure CI runs.
+
+---
+
+## 2. Scope & Responsibility
+
+| Layer            | Handles                               | Does NOT handle          |
+| ---------------- | ------------------------------------- | ------------------------ |
+| Credential Store | ID/PW/Cookie save, expire, wipe       | FirebaseAuth (core/auth) |
+| Key-Value Cache  | JSON encode/decode, namespace, stream | HTML/JSON parsing        |
+| Cache Policy     | TTL, SWR flag                         | Network fetch            |
+| Preferences      | Theme, notification, campus           | UI rendering logic       |
 
 ---
 
@@ -34,147 +51,141 @@ Follow these rules for all storage code.
 
 ```dart
 abstract interface class CredentialStorage {
-  Future<void> save(Credentials data);
+  Future<void> save(Credentials value);
   Future<Credentials?> read();
   Future<void> purge();
 }
 ```
 
--   Implementation: `FlutterSecureStorageCredentialStorage`
--   Android: Keystore; iOS: Keychain.
+Impl: `FlutterSecureStorageCredentialStorage`
 
 ---
 
-### 3.2 AppDatabase (**PasspalIsar**)
-
-| Item         | Details                                                                              |
-| ------------ | ------------------------------------------------------------------------------------ |
-| Driver       | Isar (Native)                                                                        |
-| Dependencies | isar, isar_flutter_libs, build_runner, isar_generator                                |
-| Entity       | @collection + @Index(); use Freezed for copyWith/json                                |
-| Migration    | Auto-detect schema; open with migration callback; breaking changes: clear + resync   |
-| Reactive     | `collection.watchLazy(fireImmediately: true)` → Riverpod                             |
-| Encryption   | 32-byte key from SecureStorage                                                       |
-| Corruption   | Open fail → `StorageException.corrupted()` → Crashlytics → delete dir and regenerate |
-
-#### Example Entity
+### 3.2 KeyValueCache
 
 ```dart
-@collection
-class AssignmentEntity {
-  Id id = Isar.autoIncrement;
-  @Index(unique: true) late String manaboId;
-  late String title;
-  DateTime? openAt;
-  DateTime? dueAt;
-  @Enumerated(EnumType.name)
-  late AssignmentStatus status;
-  DateTime lastFetchedAt = DateTime.now();
+abstract interface class KeyValueCache {
+  Future<void> putJson(String key, Map<String, dynamic> value);
+  Stream<Map<String, dynamic>?> watchJson(String key);
+  Future<void> remove(String key);
 }
 ```
+
+Impl: `SharedPrefsKeyValueCache`
+
+* Namespace: `cache.<entity>`
+* Always include `lastFetchedAt` for TTL.
+
+**Stream Tips:**
+
+* SharedPreferences is not reactive; wrap updates via `StreamController` or `ValueNotifier` + `Stream`.
+* Bind UI using Riverpod `StreamProvider`.
 
 ---
 
 ### 3.3 CachePolicy (TTL + SWR)
 
--   Every entity has `lastFetchedAt`.
--   Repo evaluates `isStale(now)`.
--   If stale: fetch remote, upsert, notify UI.
--   If fresh: serve from cache, trigger background revalidate (SWR).
+* Use `lastFetchedAt` in cache for staleness check.
+* SWR logic as before.
 
 ---
 
 ### 3.4 UserPrefs
 
--   Use `SharedPreferencesPrefs`.
--   Expose via Riverpod Notifier (e.g., ThemeMode).
+```dart
+abstract interface class UserPrefs {
+  ThemeMode get theme;
+  Future<void> setTheme(ThemeMode mode);
+  String? get campus;
+  Future<void> setCampus(String value);
+  // ...other settings
+}
+```
+
+Impl: `SharedPrefsUserPrefs` (namespace: `pref.*`)
 
 ---
 
-## 4. Data Lifecycle
+## 4. Data Lifecycle (SWR Example)
 
 ```mermaid
 sequenceDiagram
   participant UI
   participant Repo
-  participant Isar
-  participant CacheP
-  participant Net
+  participant Cache as KVCache
+  participant Policy as CachePolicy
+  participant Net as NetworkClient
   UI->>Repo: watchAssignments()
-  Repo->>Isar: query()
-  Isar-->>Repo: data + isStale?
+  Repo->>KVCache: watchJson("cache.assignments")
+  KVCache-->>Repo: data + isStale?
   alt fresh
     Repo-->>UI: Stream(data)
   else stale
     Repo->>Net: GET /assignments
     Net-->>Repo: JSON
-    Repo->>Isar: upsert()
-    Isar-->>UI: updated Stream
+    Repo->>KVCache: putJson()
+    KVCache-->>UI: updated Stream
   end
 ```
 
 ---
 
-## 5. Error Handling & _core/error_
+## 5. Error Handling
 
-| Case            | Exception                      | _core/error_ Mapping                 |
-| --------------- | ------------------------------ | ------------------------------------ |
-| DB Corruption   | `StorageException.corrupted()` | `UnknownException` (fatal=false)     |
-| Schema Mismatch | `IsarError`                    | `MigrationException` → /force-update |
-| SecureStore I/O | `StorageException.secureIo()`  | `NetworkFailure.offline()`           |
+| Event            | Exception                        | core/error Mapping             |
+| ---------------- | -------------------------------- | ------------------------------ |
+| JSON decode fail | `StorageException.deserialize()` | `UnknownException` (non-fatal) |
+| SecureStore I/O  | `StorageException.secureIo()`    | `NetworkFailure.offline()`     |
+| SharedPrefs I/O  | `StorageException.kvIo()`        | Retry as per NetworkFailure    |
 
-All errors: record to Crashlytics as non-fatal.
+* Always report to `FirebaseCrashlytics.instance.recordError()`.
 
 ---
 
-## 6. Testing Strategy
+## 6. Testing
 
-| Layer       | Tool                   | What to Test          |
-| ----------- | ---------------------- | --------------------- |
-| Credential  | Fake impl              | Purge correctness     |
-| DAO         | isar_test (in-memory)  | Query, watch          |
-| CachePolicy | Fake clock             | TTL/isStale logic     |
-| Integration | BGTaskScheduler Driver | BGTask, upsert on TTL |
+| Layer       | Tool                       | Main Check                |
+| ----------- | -------------------------- | ------------------------- |
+| Credential  | Fake in-memory impl        | `purge()` reliability     |
+| KV Cache    | shared\_preferences\_mocks | putJson/watchJson correct |
+| CachePolicy | Fake clock                 | TTL → isStale logic       |
+| Integration | BGTaskScheduler test       | BG sync/stream update     |
 
 ---
 
 ## 7. DI & Providers
 
 ```dart
-final isarProvider = Provider<Isar>((ref) {
-  final dir = ref.watch(appDocDirProvider);
-  final key = ref.watch(dbKeyProvider); // 32 bytes
-  return Isar.open(
-    [AssignmentEntitySchema, ...],
-    directory: dir.path,
-    encryptionKey: key,
-    inspector: kDebugMode,
-    name: 'passpal',
-  );
+final sharedPrefsProvider = Provider<SharedPreferences>((_) => throw UnimplementedError());
+final keyValueCacheProvider = Provider<KeyValueCache>((ref) {
+  final prefs = ref.watch(sharedPrefsProvider);
+  return SharedPrefsKeyValueCache(prefs);
 });
-
-final assignmentDaoProvider = Provider<AssignmentDao>((ref) {
-  final isar = ref.watch(isarProvider);
-  return AssignmentDao(isar);
-});
+final credentialStorageProvider = Provider<CredentialStorage>((_) => FlutterSecureStorageCredentialStorage());
+final cachePolicyProvider = Provider<CachePolicy>((ref) => DefaultCachePolicy(ref.watch(clockProvider)));
 ```
 
--   For tests: override providers with in-memory instance.
+**Entrypoint:**
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+final container = ProviderContainer(overrides: [
+  sharedPrefsProvider.overrideWithValue(prefs),
+]);
+```
 
 ---
 
-## 8. TTL Settings
+## 8. TTL Reference
 
-| Entity        | TTL  | Refresh Trigger           |
-| ------------- | ---- | ------------------------- |
-| Timetable     | 24 h | BGTask 6h + widget open   |
-| Period Master | 3 d  | BGTask                    |
-| Bus Timetable | 3 d  | BGTask                    |
-| Assignments   | 1 h  | User open / Push / BGTask |
-| Absence Log   | 24 h | User open                 |
-| Announcements | 1 h  | User open                 |
-
--   TTL is managed via RemoteConfig; on change, invalidate current `lastFetchedAt`.
+| Entity          | TTL  | Trigger           |
+| --------------- | ---- | ----------------- |
+| Timetable       | 24 h | BGTask 6h, widget |
+| Period Master   | 3 d  | BGTask            |
+| Bus Timetable   | 3 d  | BGTask            |
+| Assignments/etc | 1 h  | User open/push/BG |
+| Absence Log     | 24 h | User open         |
+| Announcements   | 1 h  | User open         |
 
 ---
 
@@ -183,18 +194,9 @@ final assignmentDaoProvider = Provider<AssignmentDao>((ref) {
 ```
 lib/core/storage/
  ├─ secure/credential_storage.dart
- ├─ isar/
- │   ├─ schemas/
- │   ├─ daos/assignment_dao.dart
- │   └─ passpal_isar.dart
+ ├─ kv/key_value_cache.dart
  ├─ cache_policy/cache_policy.dart
  ├─ prefs/user_prefs.dart
- ├─ models/ (freezed)
+ ├─ models/ (freezed json models)
  └─ errors/storage_exception.dart
 ```
-
----
-
-**End of instruction.**
-Keep logic DRY, testable, and fully decoupled from UI.
-When in doubt, follow Clean Architecture and use Riverpod for all injection.
