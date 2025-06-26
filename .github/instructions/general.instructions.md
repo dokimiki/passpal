@@ -60,7 +60,7 @@ _Only_ downstream dependencies are allowed (data→domain→application→presen
 -   **Rules:**
     -   Wrap all HTTP with **dio Interceptors**; retry once on `401`, surface custom `NetworkException`.
     -   Handle portal 503 maintenance windows gracefully.
-    -   Store long-lived caches in **sqflite**; adopt “stale-while-revalidate”.
+    -   Store long-lived caches in **isar**; adopt “stale-while-revalidate”.
     -   Provide test fixtures under `test/fixtures/html/`.
 
 ### 3.2 Domain Layer
@@ -93,7 +93,7 @@ _Only_ downstream dependencies are allowed (data→domain→application→presen
 | **auth/**       | SSO login, token refresh, Google account linkage.                                         |
 | **background/** | Register periodic / one-shot tasks; respect Android **Doze** and cancel on app uninstall. |
 | **error/**      | Centralized `FlutterError.onError`, Crashlytics forwarding, Remote Config kill-switch.    |
-| **storage/**    | `sqflite` + `flutter_secure_storage` wrappers.                                            |
+| **storage/**    | `isar` + `flutter_secure_storage` wrappers.                                               |
 | **routing/**    | Declarative routes + deep links; guarded sub-trees for auth.                              |
 | **theme/**      | ColorScheme, radius, text scale.                                                          |
 
@@ -131,3 +131,7 @@ _Only_ downstream dependencies are allowed (data→domain→application→presen
 -   `dart format .` & `flutter analyze` must pass pre-commit.
 -   Each PR includes updated ADR when architecture changes.
 -   Keep instruction files lean; prefer linking to in-repo docs instead of inline duplication.
+
+---
+
+**End of file**.

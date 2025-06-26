@@ -2,35 +2,29 @@
 applyTo: "lib/core/storage/**"
 ---
 
-# Storage & Caching Strategy (Summary)
+# Storage Architecture — Passpal
 
-**Storage is the Single Source of Truth. Achieve both speed and freshness via SWR (stale-while-revalidate) + TTL. Separate three layers: Credential → Secure, Cache → SQLite, Pref → Key-Value.**
-
--   Use `flutter_secure_storage` (AES-256) for campus ID/PW & SSO Cookie.
--   Use Floor + sqflite for data cache (stream-based).
--   Use lightweight Key-Value for user prefs.
--   DB corruption or TTL expiry maps to _core/error_’s Failure class.
--   _core/background_ ensures re-sync with exponential backoff.
+Follow these rules for all storage code.
 
 ---
 
 ## 1. Goals & Principles
 
-1. **Security:** Credentials encrypted (AES-256) via Keychain/Keystore.
-2. **Consistency:** Upper layers access data only via storage API, never direct SQLite.
-3. **Observability:** Non-fatal exceptions sent to Crashlytics, linked to RemoteConfig Kill-Switch.
-4. **Testability:** Use `sqflite_common_ffi` for mockable, device-independent CI.
+-   Use **flutter_secure_storage** (AES-256) for campus credentials (ID/PW, SSO cookie).
+-   All higher layers access storage only via APIs—never raw DB.
+-   Send all storage exceptions to Crashlytics as non-fatal; support kill-switch via RemoteConfig.
+-   All storage must be testable (CI: isar_test + isar_flutter_libs).
 
 ---
 
-## 2. Scope & Responsibility
+## 2. Layer Responsibilities
 
-| Layer            | Includes                          | Excludes                     |
-| ---------------- | --------------------------------- | ---------------------------- |
-| Credential Store | ID/PW/Cookie save/expire/wipe     | FirebaseAuth ops (core/auth) |
-| Database Gateway | DAO, migrations, streams          | HTML/JSON parsing            |
-| Cache Policy     | TTL check, SWR flags              | Network fetch                |
-| Preferences      | Theme, notifications, campus info | UI rendering logic           |
+| Layer            | Responsibilities                  | Not responsible for |
+| ---------------- | --------------------------------- | ------------------- |
+| Credential Store | Store, expire, wipe ID/PW/cookies | FirebaseAuth ops    |
+| Database Gateway | Isar schema, instance, streams    | HTML/JSON parsing   |
+| Cache Policy     | TTL, SWR flag, staleness          | Network fetch       |
+| Preferences      | Theme, notification, campus info  | UI rendering        |
 
 ---
 
@@ -40,36 +34,60 @@ applyTo: "lib/core/storage/**"
 
 ```dart
 abstract interface class CredentialStorage {
-  Future<void> save(Credentials);
+  Future<void> save(Credentials data);
   Future<Credentials?> read();
   Future<void> purge();
 }
 ```
 
--   Implementation: `FlutterSecureStorageCredentialStorage`.
--   On Android, AES key is wrapped with RSA/Keystore. On iOS, use Keychain.
--   Always call `purge()` from _core/auth_’s `logout()`.
+-   Implementation: `FlutterSecureStorageCredentialStorage`
+-   Android: Keystore; iOS: Keychain.
 
-### 3.2 AppDatabase
+---
 
--   **Driver:** sqflite
--   **ORM:** Floor – DAOs expose `Stream<List<T>>`.
--   **Migrations:** `onUpgrade()` + versioned SQL; automatic by sqflite.
--   **Entities:** Use Freezed for `@JsonKey` & `copyWith`.
--   **Corruption:** On open-fail, trigger `StorageException.corrupted()`, log to Crashlytics, and auto-recreate DB.
+### 3.2 AppDatabase (**PasspalIsar**)
+
+| Item         | Details                                                                              |
+| ------------ | ------------------------------------------------------------------------------------ |
+| Driver       | Isar (Native)                                                                        |
+| Dependencies | isar, isar_flutter_libs, build_runner, isar_generator                                |
+| Entity       | @collection + @Index(); use Freezed for copyWith/json                                |
+| Migration    | Auto-detect schema; open with migration callback; breaking changes: clear + resync   |
+| Reactive     | `collection.watchLazy(fireImmediately: true)` → Riverpod                             |
+| Encryption   | 32-byte key from SecureStorage                                                       |
+| Corruption   | Open fail → `StorageException.corrupted()` → Crashlytics → delete dir and regenerate |
+
+#### Example Entity
+
+```dart
+@collection
+class AssignmentEntity {
+  Id id = Isar.autoIncrement;
+  @Index(unique: true) late String manaboId;
+  late String title;
+  DateTime? openAt;
+  DateTime? dueAt;
+  @Enumerated(EnumType.name)
+  late AssignmentStatus status;
+  DateTime lastFetchedAt = DateTime.now();
+}
+```
+
+---
 
 ### 3.3 CachePolicy (TTL + SWR)
 
--   DAO has `lastFetchedAt`.
--   On repo fetch, judge `isStale(now)`.
--   If stale: fetch remote, upsert, emit stream.
--   If fresh: return immediately, trigger background revalidation.
--   Follows Web `stale-while-revalidate` pattern.
+-   Every entity has `lastFetchedAt`.
+-   Repo evaluates `isStale(now)`.
+-   If stale: fetch remote, upsert, notify UI.
+-   If fresh: serve from cache, trigger background revalidate (SWR).
+
+---
 
 ### 3.4 UserPrefs
 
--   Implementation: `SharedPreferencesPrefs`.
--   Riverpod’s `userPrefsProvider` issues theme mode, etc.
+-   Use `SharedPreferencesPrefs`.
+-   Expose via Riverpod Notifier (e.g., ThemeMode).
 
 ---
 
@@ -79,86 +97,84 @@ abstract interface class CredentialStorage {
 sequenceDiagram
   participant UI
   participant Repo
-  participant DAO
-  participant CacheP as CachePolicy
-  participant Net as NetworkClient
+  participant Isar
+  participant CacheP
+  participant Net
   UI->>Repo: watchAssignments()
-  Repo->>DAO: query()
-  DAO-->>Repo: data + isStale?
+  Repo->>Isar: query()
+  Isar-->>Repo: data + isStale?
   alt fresh
     Repo-->>UI: Stream(data)
   else stale
     Repo->>Net: GET /assignments
     Net-->>Repo: JSON
-    Repo->>DAO: upsert()
-    DAO-->>UI: updated Stream
+    Repo->>Isar: upsert()
+    Isar-->>UI: updated Stream
   end
 ```
-
--   CachePolicy manages `isStale` judgment.
--   _core/background_ runs periodic updates (15min–6h as per OS limit).
 
 ---
 
 ## 5. Error Handling & _core/error_
 
-| Event           | Exception                      | _core/error_ Mapping                 |
+| Case            | Exception                      | _core/error_ Mapping                 |
 | --------------- | ------------------------------ | ------------------------------------ |
-| DB corruption   | `StorageException.corrupted()` | `UnknownException` (fatal=false)     |
-| Migration fail  | `MigrationException`           | `MigrationException` → /force-update |
-| SecureStore I/O | `StorageException.secureIo()`  | `NetworkFailure.offline()`-like      |
+| DB Corruption   | `StorageException.corrupted()` | `UnknownException` (fatal=false)     |
+| Schema Mismatch | `IsarError`                    | `MigrationException` → /force-update |
+| SecureStore I/O | `StorageException.secureIo()`  | `NetworkFailure.offline()`           |
 
-All are non-fatal and sent to `FirebaseCrashlytics.instance.recordError()`.
+All errors: record to Crashlytics as non-fatal.
 
 ---
 
-## 6. Test Strategy
+## 6. Testing Strategy
 
-| Layer       | Tool                  | Focus                                    |
-| ----------- | --------------------- | ---------------------------------------- |
-| Credential  | fake in-memory impl   | Verify purge() works                     |
-| DAO         | sqflite_common_ffi    | Unit tests run device-less               |
-| CachePolicy | fake clock            | TTL → isStale check                      |
-| Integration | WorkManager/BGTaskDrv | TTL expiry → BGTask → DB upsert → Stream |
+| Layer       | Tool                   | What to Test          |
+| ----------- | ---------------------- | --------------------- |
+| Credential  | Fake impl              | Purge correctness     |
+| DAO         | isar_test (in-memory)  | Query, watch          |
+| CachePolicy | Fake clock             | TTL/isStale logic     |
+| Integration | BGTaskScheduler Driver | BGTask, upsert on TTL |
 
 ---
 
 ## 7. DI & Providers
 
 ```dart
-final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  final path = ref.watch(databasePathProvider);
-  return $FloorAppDatabase
-      .databaseBuilder(path)
-      .addMigrations(allMigrations)
-      .build();
+final isarProvider = Provider<Isar>((ref) {
+  final dir = ref.watch(appDocDirProvider);
+  final key = ref.watch(dbKeyProvider); // 32 bytes
+  return Isar.open(
+    [AssignmentEntitySchema, ...],
+    directory: dir.path,
+    encryptionKey: key,
+    inspector: kDebugMode,
+    name: 'passpal',
+  );
 });
 
-final credentialStorageProvider =
-    Provider<CredentialStorage>((_) => FlutterSecureStorageCredentialStorage());
-
-final cachePolicyProvider =
-    Provider<CachePolicy>((ref) => DefaultCachePolicy(ref.watch(clockProvider)));
+final assignmentDaoProvider = Provider<AssignmentDao>((ref) {
+  final isar = ref.watch(isarProvider);
+  return AssignmentDao(isar);
+});
 ```
 
--   For tests, use `ProviderContainer(overrides:[appDatabaseProvider.overrideWithValue(fakeDb), ...])`
--   Use Riverpod v2.4+ `overrideWith`.
+-   For tests: override providers with in-memory instance.
 
 ---
 
-## 8. TTL Reference
+## 8. TTL Settings
 
-| Entity                | TTL  | Update Trigger          |
-| --------------------- | ---- | ----------------------- |
-| Timetable             | 24 h | BGTask 6h, widget open  |
-| Period Master         | 3 d  | BGTask                  |
-| Bus Timetable         | 3 d  | BGTask                  |
-| Assignments/Materials | 1 h  | User open, push, BGTask |
-| Absence Log           | 24 h | User open               |
-| Announcements         | 1 h  | User open               |
+| Entity        | TTL  | Refresh Trigger           |
+| ------------- | ---- | ------------------------- |
+| Timetable     | 24 h | BGTask 6h + widget open   |
+| Period Master | 3 d  | BGTask                    |
+| Bus Timetable | 3 d  | BGTask                    |
+| Assignments   | 1 h  | User open / Push / BGTask |
+| Absence Log   | 24 h | User open                 |
+| Announcements | 1 h  | User open                 |
 
--   TTLs are dynamic via RemoteConfig.
--   Change → invalidate existing records’ `lastFetchedAt`.
+-   TTL is managed via RemoteConfig; on change, invalidate current `lastFetchedAt`.
 
 ---
 
@@ -167,10 +183,18 @@ final cachePolicyProvider =
 ```
 lib/core/storage/
  ├─ secure/credential_storage.dart
- ├─ db/app_database.dart
- │   └─ migrations/
+ ├─ isar/
+ │   ├─ schemas/
+ │   ├─ daos/assignment_dao.dart
+ │   └─ passpal_isar.dart
  ├─ cache_policy/cache_policy.dart
  ├─ prefs/user_prefs.dart
  ├─ models/ (freezed)
  └─ errors/storage_exception.dart
 ```
+
+---
+
+**End of instruction.**
+Keep logic DRY, testable, and fully decoupled from UI.
+When in doubt, follow Clean Architecture and use Riverpod for all injection.
