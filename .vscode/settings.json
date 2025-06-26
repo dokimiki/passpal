@@ -2,5 +2,5 @@
     "cSpell.words": ["ALBO", "glexa", "Manabo", "passpal"],
     "IDX.aI.enableInlineCompletion": true,
     "IDX.aI.enableCodebaseIndexing": true,
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
