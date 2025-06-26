@@ -18,7 +18,8 @@ class BrandColors {
   const BrandColors();
 
   /// Primary brand color (Chukyo University brand color)
-  Color get primary => const Color(0xFF0057D9);
+  /// Updated to meet WCAG accessibility contrast requirements
+  Color get primary => const Color(0xFF0D47A1);
 }
 
 class SemanticColors {

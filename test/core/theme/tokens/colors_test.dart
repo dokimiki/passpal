@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 void main() {
   group('ColorTokens', () {
     test('should define brand primary color', () {
-      expect(ColorTokens.brand.primary, equals(const Color(0xFF0057D9)));
+      expect(ColorTokens.brand.primary, equals(const Color(0xFF0D47A1)));
     });
 
     test('should define semantic colors', () {
@@ -25,7 +25,7 @@ void main() {
     });
 
     test('brand primary should meet accessibility requirements', () {
-      const primaryColor = Color(0xFF0057D9);
+      const primaryColor = Color(0xFF0D47A1);
       const whiteColor = Color(0xFFFFFFFF);
 
       // Calculate contrast ratio (simplified)
@@ -52,9 +52,9 @@ double _calculateContrastRatio(Color color1, Color color2) {
 }
 
 double _calculateRelativeLuminance(Color color) {
-final r = _sRGBToLinear(color.r / 255.0);
-final g = _sRGBToLinear(color.g / 255.0);
-final b = _sRGBToLinear(color.b / 255.0);
+  final r = _sRGBToLinear(color.red / 255.0);
+  final g = _sRGBToLinear(color.green / 255.0);
+  final b = _sRGBToLinear(color.blue / 255.0);
 
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
