@@ -17,6 +17,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    
+    // Configure Java compilation options to suppress warnings
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.addAll(listOf(
+            "-Xlint:-options",          // Suppress obsolete options warnings
+            "-Xlint:-deprecation",      // Suppress deprecation warnings (optional)
+            "-Xlint:-unchecked"         // Suppress unchecked warnings (optional)
+        ))
+    }
 
     kotlinOptions {
         jvmTarget = "17"
