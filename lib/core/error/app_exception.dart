@@ -155,3 +155,79 @@ class ForceUpdateException extends AppException {
   final String currentVersion;
   final String minimumVersion;
 }
+
+/// Background task related exceptions
+sealed class BackgroundTaskException extends AppException {
+  const BackgroundTaskException({
+    required super.message,
+    super.stack,
+    super.isFatal = false,
+    required this.taskId,
+  });
+
+  final String taskId;
+
+  /// Task execution timeout
+  const factory BackgroundTaskException.timeout({
+    required String taskId,
+    required String message,
+    StackTrace? stack,
+  }) = _BackgroundTaskTimeoutException;
+
+  /// Task scheduling failure
+  const factory BackgroundTaskException.schedulingFailed({
+    required String taskId,
+    required String message,
+    StackTrace? stack,
+  }) = _BackgroundTaskSchedulingException;
+
+  /// Task handler not found
+  const factory BackgroundTaskException.handlerNotFound({
+    required String taskId,
+    required String message,
+    StackTrace? stack,
+  }) = _BackgroundTaskHandlerNotFoundException;
+
+  /// Task cancelled due to unrecoverable error
+  const factory BackgroundTaskException.cancelled({
+    required String taskId,
+    required String message,
+    StackTrace? stack,
+  }) = _BackgroundTaskCancelledException;
+}
+
+/// Background task timeout exception
+class _BackgroundTaskTimeoutException extends BackgroundTaskException {
+  const _BackgroundTaskTimeoutException({
+    required super.taskId,
+    required super.message,
+    super.stack,
+  });
+}
+
+/// Background task scheduling exception
+class _BackgroundTaskSchedulingException extends BackgroundTaskException {
+  const _BackgroundTaskSchedulingException({
+    required super.taskId,
+    required super.message,
+    super.stack,
+  });
+}
+
+/// Background task handler not found exception
+class _BackgroundTaskHandlerNotFoundException extends BackgroundTaskException {
+  const _BackgroundTaskHandlerNotFoundException({
+    required super.taskId,
+    required super.message,
+    super.stack,
+  });
+}
+
+/// Background task cancelled exception
+class _BackgroundTaskCancelledException extends BackgroundTaskException {
+  const _BackgroundTaskCancelledException({
+    required super.taskId,
+    required super.message,
+    super.stack,
+  });
+}
