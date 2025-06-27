@@ -16,7 +16,7 @@ class SharedPrefsKeyValueCache implements KeyValueCache {
     try {
       final jsonString = jsonEncode(value);
       await _prefs.setString(key, jsonString);
-      
+
       // ストリームに変更を通知
       final controller = _controllers[key];
       if (controller != null && !controller.isClosed) {
@@ -57,7 +57,7 @@ class SharedPrefsKeyValueCache implements KeyValueCache {
   }
 
   Future<void> _loadInitialValue(
-    String key, 
+    String key,
     StreamController<Map<String, dynamic>?> controller,
   ) async {
     try {
@@ -74,11 +74,13 @@ class SharedPrefsKeyValueCache implements KeyValueCache {
       }
     } catch (e) {
       if (!controller.isClosed) {
-        controller.addError(DeserializeException(
-          key: key,
-          message: 'Failed to deserialize JSON data',
-          cause: e,
-        ));
+        controller.addError(
+          DeserializeException(
+            key: key,
+            message: 'Failed to deserialize JSON data',
+            cause: e,
+          ),
+        );
       }
     }
   }
@@ -87,7 +89,7 @@ class SharedPrefsKeyValueCache implements KeyValueCache {
   Future<void> remove(String key) async {
     try {
       await _prefs.remove(key);
-      
+
       // ストリームに削除を通知
       final controller = _controllers[key];
       if (controller != null && !controller.isClosed) {
@@ -104,9 +106,11 @@ class SharedPrefsKeyValueCache implements KeyValueCache {
 
   /// 全てのStreamControllerを閉じる（テスト用）
   Future<void> dispose() async {
-    final controllers = List<StreamController<Map<String, dynamic>?>>.from(_controllers.values);
+    final controllers = List<StreamController<Map<String, dynamic>?>>.from(
+      _controllers.values,
+    );
     _controllers.clear();
-    
+
     for (final controller in controllers) {
       if (!controller.isClosed) {
         await controller.close();

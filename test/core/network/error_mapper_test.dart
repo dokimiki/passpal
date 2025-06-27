@@ -88,7 +88,9 @@ void main() {
 
     test('should return existing AppException if already mapped', () {
       // Arrange
-      const originalException = NetworkFailure.offline(message: 'Already mapped');
+      const originalException = NetworkFailure.offline(
+        message: 'Already mapped',
+      );
       final dioException = DioException(
         requestOptions: RequestOptions(path: '/test'),
         error: originalException,

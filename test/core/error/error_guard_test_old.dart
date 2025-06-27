@@ -34,10 +34,7 @@ void main() {
 
       // Act & Assert
       expect(
-        () => ErrorGuard.runGuarded(
-          container,
-          () => Future.error(exception),
-        ),
+        () => ErrorGuard.runGuarded(container, () => Future.error(exception)),
         throwsA(isA<NetworkFailure>()),
       );
     });
@@ -50,7 +47,10 @@ void main() {
       );
 
       // Act & Assert
-      expect(() => ErrorGuard.handleFlutterError(container, flutterError), returnsNormally);
+      expect(
+        () => ErrorGuard.handleFlutterError(container, flutterError),
+        returnsNormally,
+      );
     });
 
     test('should initialize correctly', () {

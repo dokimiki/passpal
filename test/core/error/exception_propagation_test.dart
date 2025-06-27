@@ -119,7 +119,7 @@ void main() {
 
           // Assert - Verify it was recorded to Crashlytics
           verify(mockReporter.recordError(exception)).called(1);
-          
+
           final state = container.read(errorNotifierProvider);
           expect(state, isA<AppErrorState$Showing>());
           expect((state as AppErrorState$Showing).exception, exception);
@@ -135,14 +135,14 @@ void main() {
           message: originalException.toString(),
           originalException: originalException,
         );
-        
+
         final errorNotifier = container.read(errorNotifierProvider.notifier);
         await errorNotifier.show(convertedException);
 
         // Assert - Verify it was converted to UnknownException and recorded
         expect(convertedException, isA<UnknownException>());
         verify(mockReporter.recordError(convertedException)).called(1);
-        
+
         final state = container.read(errorNotifierProvider);
         expect(state, isA<AppErrorState$Showing>());
       });

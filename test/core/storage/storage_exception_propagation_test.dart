@@ -33,45 +33,46 @@ void main() {
         key: 'cache.assignments',
         message: 'Invalid JSON format',
       );
-      
+
       const secureIoException = SecureIoException(
         operation: 'read',
         message: 'Failed to read from secure storage',
       );
-      
+
       const kvIoException = KvIoException(
         operation: 'putJson',
         message: 'Failed to save JSON data',
       );
 
-      expect(deserializeException.toString(), 
-        contains('DeserializeException(key: cache.assignments): Invalid JSON format'));
-      expect(secureIoException.toString(), 
-        contains('SecureIoException(operation: read): Failed to read from secure storage'));
-      expect(kvIoException.toString(), 
-        contains('KvIoException(operation: putJson): Failed to save JSON data'));
+      expect(
+        deserializeException.toString(),
+        contains(
+          'DeserializeException(key: cache.assignments): Invalid JSON format',
+        ),
+      );
+      expect(
+        secureIoException.toString(),
+        contains(
+          'SecureIoException(operation: read): Failed to read from secure storage',
+        ),
+      );
+      expect(
+        kvIoException.toString(),
+        contains('KvIoException(operation: putJson): Failed to save JSON data'),
+      );
     });
 
     test('StorageExceptions should be thrown and caught properly', () {
       expect(() {
-        throw const DeserializeException(
-          key: 'test',
-          message: 'test error',
-        );
+        throw const DeserializeException(key: 'test', message: 'test error');
       }, throwsA(isA<DeserializeException>()));
 
       expect(() {
-        throw const SecureIoException(
-          operation: 'test',
-          message: 'test error',
-        );
+        throw const SecureIoException(operation: 'test', message: 'test error');
       }, throwsA(isA<SecureIoException>()));
 
       expect(() {
-        throw const KvIoException(
-          operation: 'test',
-          message: 'test error',
-        );
+        throw const KvIoException(operation: 'test', message: 'test error');
       }, throwsA(isA<KvIoException>()));
     });
 

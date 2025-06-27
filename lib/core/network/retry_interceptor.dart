@@ -70,7 +70,9 @@ class RetryInterceptor extends Interceptor {
       DioExceptionType.sendTimeout => true,
       DioExceptionType.receiveTimeout => true,
       DioExceptionType.connectionError => true,
-      DioExceptionType.badResponse => _shouldRetryStatusCode(error.response?.statusCode),
+      DioExceptionType.badResponse => _shouldRetryStatusCode(
+        error.response?.statusCode,
+      ),
       _ => false,
     };
   }
@@ -82,23 +84,26 @@ class RetryInterceptor extends Interceptor {
 
   bool _shouldRetryStatusCode(int? statusCode) {
     if (statusCode == null) return false;
-    
+
     // Retry on 5xx server errors, but not on 4xx client errors
     return statusCode >= 500 && statusCode < 600;
   }
 
   Duration _calculateDelay(int retryCount) {
     // Exponential backoff: baseDelay * (backoffFactor ^ retryCount)
-    final exponentialDelay = baseDelay.inMilliseconds * 
-        pow(backoffFactor, retryCount);
-    
+    final exponentialDelay =
+        baseDelay.inMilliseconds * pow(backoffFactor, retryCount);
+
     // Add jitter: ±jitterPercent%
     final random = Random();
     final jitterRange = exponentialDelay * jitterPercent / 100;
     final jitter = (random.nextDouble() - 0.5) * 2 * jitterRange;
-    
-    final totalDelayMs = (exponentialDelay + jitter).round().clamp(0, 30000); // Max 30s
-    
+
+    final totalDelayMs = (exponentialDelay + jitter).round().clamp(
+      0,
+      30000,
+    ); // Max 30s
+
     return Duration(milliseconds: totalDelayMs);
   }
 }

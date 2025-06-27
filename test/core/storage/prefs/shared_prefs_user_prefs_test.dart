@@ -53,8 +53,9 @@ void main() {
 
     group('setTheme', () {
       test('should save light theme', () async {
-        when(mockPrefs.setString('pref.theme', 'light'))
-            .thenAnswer((_) async => true);
+        when(
+          mockPrefs.setString('pref.theme', 'light'),
+        ).thenAnswer((_) async => true);
 
         await userPrefs.setTheme(ThemeMode.light);
 
@@ -62,8 +63,9 @@ void main() {
       });
 
       test('should save dark theme', () async {
-        when(mockPrefs.setString('pref.theme', 'dark'))
-            .thenAnswer((_) async => true);
+        when(
+          mockPrefs.setString('pref.theme', 'dark'),
+        ).thenAnswer((_) async => true);
 
         await userPrefs.setTheme(ThemeMode.dark);
 
@@ -71,8 +73,9 @@ void main() {
       });
 
       test('should save system theme', () async {
-        when(mockPrefs.setString('pref.theme', 'system'))
-            .thenAnswer((_) async => true);
+        when(
+          mockPrefs.setString('pref.theme', 'system'),
+        ).thenAnswer((_) async => true);
 
         await userPrefs.setTheme(ThemeMode.system);
 
@@ -80,14 +83,21 @@ void main() {
       });
 
       test('should throw KvIoException when save fails', () async {
-        when(mockPrefs.setString('pref.theme', any))
-            .thenThrow(Exception('Prefs error'));
+        when(
+          mockPrefs.setString('pref.theme', any),
+        ).thenThrow(Exception('Prefs error'));
 
         await expectLater(
           () => userPrefs.setTheme(ThemeMode.light),
-          throwsA(isA<KvIoException>()
-              .having((e) => e.operation, 'operation', 'setTheme')
-              .having((e) => e.message, 'message', contains('Failed to save theme preference'))),
+          throwsA(
+            isA<KvIoException>()
+                .having((e) => e.operation, 'operation', 'setTheme')
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Failed to save theme preference'),
+                ),
+          ),
         );
       });
     });
@@ -114,8 +124,9 @@ void main() {
 
     group('setCampus', () {
       test('should save campus', () async {
-        when(mockPrefs.setString('pref.campus', 'nagoya'))
-            .thenAnswer((_) async => true);
+        when(
+          mockPrefs.setString('pref.campus', 'nagoya'),
+        ).thenAnswer((_) async => true);
 
         await userPrefs.setCampus('nagoya');
 
@@ -123,14 +134,21 @@ void main() {
       });
 
       test('should throw KvIoException when save fails', () async {
-        when(mockPrefs.setString('pref.campus', any))
-            .thenThrow(Exception('Prefs error'));
+        when(
+          mockPrefs.setString('pref.campus', any),
+        ).thenThrow(Exception('Prefs error'));
 
         await expectLater(
           () => userPrefs.setCampus('nagoya'),
-          throwsA(isA<KvIoException>()
-              .having((e) => e.operation, 'operation', 'setCampus')
-              .having((e) => e.message, 'message', contains('Failed to save campus preference'))),
+          throwsA(
+            isA<KvIoException>()
+                .having((e) => e.operation, 'operation', 'setCampus')
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Failed to save campus preference'),
+                ),
+          ),
         );
       });
     });
@@ -149,7 +167,9 @@ void main() {
       });
 
       test('should return true when exception occurs', () {
-        when(mockPrefs.getBool('pref.notifications_enabled')).thenThrow(Exception('Error'));
+        when(
+          mockPrefs.getBool('pref.notifications_enabled'),
+        ).thenThrow(Exception('Error'));
 
         expect(userPrefs.notificationsEnabled, isTrue);
       });
@@ -157,23 +177,37 @@ void main() {
 
     group('setNotificationsEnabled', () {
       test('should save notifications enabled state', () async {
-        when(mockPrefs.setBool('pref.notifications_enabled', false))
-            .thenAnswer((_) async => true);
+        when(
+          mockPrefs.setBool('pref.notifications_enabled', false),
+        ).thenAnswer((_) async => true);
 
         await userPrefs.setNotificationsEnabled(false);
 
-        verify(mockPrefs.setBool('pref.notifications_enabled', false)).called(1);
+        verify(
+          mockPrefs.setBool('pref.notifications_enabled', false),
+        ).called(1);
       });
 
       test('should throw KvIoException when save fails', () async {
-        when(mockPrefs.setBool('pref.notifications_enabled', any))
-            .thenThrow(Exception('Prefs error'));
+        when(
+          mockPrefs.setBool('pref.notifications_enabled', any),
+        ).thenThrow(Exception('Prefs error'));
 
         await expectLater(
           () => userPrefs.setNotificationsEnabled(true),
-          throwsA(isA<KvIoException>()
-              .having((e) => e.operation, 'operation', 'setNotificationsEnabled')
-              .having((e) => e.message, 'message', contains('Failed to save notifications preference'))),
+          throwsA(
+            isA<KvIoException>()
+                .having(
+                  (e) => e.operation,
+                  'operation',
+                  'setNotificationsEnabled',
+                )
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Failed to save notifications preference'),
+                ),
+          ),
         );
       });
     });

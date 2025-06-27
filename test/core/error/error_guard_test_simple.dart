@@ -10,9 +10,7 @@ import 'package:riverpod/riverpod.dart';
 
 import 'error_guard_test.mocks.dart';
 
-@GenerateNiceMocks([
-  MockSpec<CrashlyticsReporter>(),
-])
+@GenerateNiceMocks([MockSpec<CrashlyticsReporter>()])
 void main() {
   group('ErrorGuard', () {
     late MockCrashlyticsReporter mockReporter;
@@ -20,7 +18,7 @@ void main() {
 
     setUp(() {
       mockReporter = MockCrashlyticsReporter();
-      
+
       container = ProviderContainer(
         overrides: [
           crashlyticsReporterProvider.overrideWithValue(mockReporter),
@@ -35,45 +33,53 @@ void main() {
     test('should handle zone errors correctly', () async {
       // Arrange
       final exception = NetworkFailure.offline(message: 'Zone error');
-      
+
       // Act
       ErrorGuard.handleZoneError(container, exception, StackTrace.current);
-      
+
       // Allow async operations to complete
       await Future.delayed(Duration.zero);
 
       // Assert
       verify(mockReporter.recordError(exception)).called(1);
-      
+
       // Check that error was shown in UI
       final errorState = container.read(errorNotifierProvider);
       expect(errorState, isA<AppErrorState$Showing>());
-      
+
       final showingState = errorState as AppErrorState$Showing;
       expect(showingState.exception, equals(exception));
     });
 
-    test('should handle non-AppException by wrapping in UnknownException', () async {
-      // Arrange
-      final originalException = Exception('Regular exception');
+    test(
+      'should handle non-AppException by wrapping in UnknownException',
+      () async {
+        // Arrange
+        final originalException = Exception('Regular exception');
 
-      // Act
-      ErrorGuard.handleZoneError(container, originalException, StackTrace.current);
-      
-      // Allow async operations to complete
-      await Future.delayed(Duration.zero);
+        // Act
+        ErrorGuard.handleZoneError(
+          container,
+          originalException,
+          StackTrace.current,
+        );
 
-      // Assert
-      verify(mockReporter.recordError(argThat(isA<UnknownException>())))
-          .called(1);
-          
-      // Check that wrapped error was shown in UI
-      final errorState = container.read(errorNotifierProvider);
-      expect(errorState, isA<AppErrorState$Showing>());
-      
-      final showingState = errorState as AppErrorState$Showing;
-      expect(showingState.exception, isA<UnknownException>());
-    });
+        // Allow async operations to complete
+        await Future.delayed(Duration.zero);
+
+        // Assert
+        verify(
+          mockReporter.recordError(argThat(isA<UnknownException>())),
+        ).called(1);
+
+        // Check that wrapped error was shown in UI
+        final errorState = container.read(errorNotifierProvider);
+        expect(errorState, isA<AppErrorState$Showing>());
+
+        final showingState = errorState as AppErrorState$Showing;
+        expect(showingState.exception, isA<UnknownException>());
+      },
+    );
 
     test('should handle flutter framework errors', () async {
       // Arrange
@@ -84,13 +90,14 @@ void main() {
 
       // Act
       ErrorGuard.handleFlutterError(container, flutterError);
-      
+
       // Allow async operations to complete
       await Future.delayed(Duration.zero);
 
       // Assert
-      verify(mockReporter.recordError(argThat(isA<UnknownException>())))
-          .called(1);
+      verify(
+        mockReporter.recordError(argThat(isA<UnknownException>())),
+      ).called(1);
     });
 
     test('should not show UI error for background exceptions', () async {
@@ -102,18 +109,18 @@ void main() {
 
       // Act
       ErrorGuard.handleZoneError(
-        container, 
-        exception, 
+        container,
+        exception,
         StackTrace.current,
         isBackground: true,
       );
-      
+
       // Allow async operations to complete
       await Future.delayed(Duration.zero);
 
       // Assert
       verify(mockReporter.recordError(exception)).called(1);
-      
+
       // Verify that ErrorNotifier.show was not called by checking the state
       final errorState = container.read(errorNotifierProvider);
       expect(errorState, isA<AppErrorState$Idle>());
@@ -128,17 +135,17 @@ void main() {
 
       // Act
       ErrorGuard.handleZoneError(container, exception, StackTrace.current);
-      
+
       // Allow async operations to complete
       await Future.delayed(Duration.zero);
 
       // Assert
       verify(mockReporter.recordError(exception)).called(1);
-      
+
       // Check that fatal error was shown in UI
       final errorState = container.read(errorNotifierProvider);
       expect(errorState, isA<AppErrorState$Showing>());
-      
+
       final showingState = errorState as AppErrorState$Showing;
       expect(showingState.exception.isFatal, isTrue);
     });
@@ -159,36 +166,50 @@ void main() {
 
       // Act
       final result = ErrorGuard.handlePlatformError(container, error, stack);
-      
+
       // Allow async operations to complete
       await Future.delayed(Duration.zero);
 
       // Assert
       expect(result, isTrue);
-      verify(mockReporter.recordError(argThat(isA<UnknownException>())))
-          .called(1);
+      verify(
+        mockReporter.recordError(argThat(isA<UnknownException>())),
+      ).called(1);
     });
 
-    test('should convert various error types to appropriate AppExceptions', () async {
-      // Test String error
-      ErrorGuard.handleZoneError(container, 'String error', StackTrace.current);
-      await Future.delayed(Duration.zero);
-      verify(mockReporter.recordError(argThat(isA<UnknownException>())))
-          .called(1);
+    test(
+      'should convert various error types to appropriate AppExceptions',
+      () async {
+        // Test String error
+        ErrorGuard.handleZoneError(
+          container,
+          'String error',
+          StackTrace.current,
+        );
+        await Future.delayed(Duration.zero);
+        verify(
+          mockReporter.recordError(argThat(isA<UnknownException>())),
+        ).called(1);
 
-      // Test generic Exception
-      ErrorGuard.handleZoneError(container, Exception('Generic exception'), StackTrace.current);
-      await Future.delayed(Duration.zero);
-      verify(mockReporter.recordError(argThat(isA<UnknownException>())))
-          .called(2); // 2 calls total now
+        // Test generic Exception
+        ErrorGuard.handleZoneError(
+          container,
+          Exception('Generic exception'),
+          StackTrace.current,
+        );
+        await Future.delayed(Duration.zero);
+        verify(
+          mockReporter.recordError(argThat(isA<UnknownException>())),
+        ).called(2); // 2 calls total now
 
-      reset(mockReporter);
+        reset(mockReporter);
 
-      // Test AppException (should pass through)
-      final appException = AuthenticationException(message: 'Auth error');
-      ErrorGuard.handleZoneError(container, appException, StackTrace.current);
-      await Future.delayed(Duration.zero);
-      verify(mockReporter.recordError(appException)).called(1);
-    });
+        // Test AppException (should pass through)
+        final appException = AuthenticationException(message: 'Auth error');
+        ErrorGuard.handleZoneError(container, appException, StackTrace.current);
+        await Future.delayed(Duration.zero);
+        verify(mockReporter.recordError(appException)).called(1);
+      },
+    );
   });
 }

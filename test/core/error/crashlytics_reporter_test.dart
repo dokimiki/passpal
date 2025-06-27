@@ -123,7 +123,10 @@ void main() {
       ).thenThrow(Exception('Crashlytics error'));
 
       // Act & Assert - should not throw
-      expect(() async => await reporter.recordError(exception), returnsNormally);
+      expect(
+        () async => await reporter.recordError(exception),
+        returnsNormally,
+      );
     });
   });
 }

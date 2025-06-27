@@ -45,7 +45,9 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 10));
 
         // JSON文字列として保存されることを確認
-        verify(mockPrefs.setString(key, '{"name":"test","value":42}')).called(1);
+        verify(
+          mockPrefs.setString(key, '{"name":"test","value":42}'),
+        ).called(1);
 
         // ストリームに通知されることを確認（初期値null + 新しいデータ）
         expect(streamData.length, greaterThanOrEqualTo(2));
@@ -58,14 +60,19 @@ void main() {
         const key = 'test_key';
         final data = {'name': 'test'};
 
-        when(mockPrefs.setString(key, any))
-            .thenThrow(Exception('Prefs error'));
+        when(mockPrefs.setString(key, any)).thenThrow(Exception('Prefs error'));
 
         await expectLater(
           () => cache.putJson(key, data),
-          throwsA(isA<KvIoException>()
-              .having((e) => e.operation, 'operation', 'putJson')
-              .having((e) => e.message, 'message', contains('Failed to save JSON data'))),
+          throwsA(
+            isA<KvIoException>()
+                .having((e) => e.operation, 'operation', 'putJson')
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Failed to save JSON data'),
+                ),
+          ),
         );
       });
     });
@@ -77,7 +84,7 @@ void main() {
         when(mockPrefs.getString(key)).thenReturn(null);
 
         final stream = cache.watchJson(key);
-        
+
         await expectLater(stream.first, completion(isNull));
       });
 
@@ -89,7 +96,7 @@ void main() {
         when(mockPrefs.getString(key)).thenReturn(jsonString);
 
         final stream = cache.watchJson(key);
-        
+
         await expectLater(stream.first, completion(equals(expectedData)));
       });
 
@@ -103,9 +110,15 @@ void main() {
 
         await expectLater(
           stream.first,
-          throwsA(isA<DeserializeException>()
-              .having((e) => e.key, 'key', key)
-              .having((e) => e.message, 'message', contains('Failed to deserialize JSON data'))),
+          throwsA(
+            isA<DeserializeException>()
+                .having((e) => e.key, 'key', key)
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Failed to deserialize JSON data'),
+                ),
+          ),
         );
       });
 
@@ -159,9 +172,15 @@ void main() {
 
         await expectLater(
           () => cache.remove(key),
-          throwsA(isA<KvIoException>()
-              .having((e) => e.operation, 'operation', 'remove')
-              .having((e) => e.message, 'message', contains('Failed to remove data'))),
+          throwsA(
+            isA<KvIoException>()
+                .having((e) => e.operation, 'operation', 'remove')
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Failed to remove data'),
+                ),
+          ),
         );
       });
     });

@@ -18,28 +18,31 @@ void main() {
       mockHandler = MockErrorInterceptorHandler();
     });
 
-    test('should detect maintenance response with 503 and maintenance keyword', () {
-      // Arrange
-      final response = Response<String>(
-        data: '<html><body>System is under maintenance</body></html>',
-        statusCode: 503,
-        requestOptions: RequestOptions(path: '/test'),
-      );
-      final dioException = DioException(
-        requestOptions: RequestOptions(path: '/test'),
-        response: response,
-        type: DioExceptionType.badResponse,
-      );
+    test(
+      'should detect maintenance response with 503 and maintenance keyword',
+      () {
+        // Arrange
+        final response = Response<String>(
+          data: '<html><body>System is under maintenance</body></html>',
+          statusCode: 503,
+          requestOptions: RequestOptions(path: '/test'),
+        );
+        final dioException = DioException(
+          requestOptions: RequestOptions(path: '/test'),
+          response: response,
+          type: DioExceptionType.badResponse,
+        );
 
-      // Act
-      interceptor.onError(dioException, mockHandler);
+        // Act
+        interceptor.onError(dioException, mockHandler);
 
-      // Assert
-      final calls = verify(mockHandler.reject(captureAny)).captured;
-      expect(calls.length, 1);
-      final captured = calls.first as DioException;
-      expect(captured.error, isA<MaintenanceException>());
-    });
+        // Assert
+        final calls = verify(mockHandler.reject(captureAny)).captured;
+        expect(calls.length, 1);
+        final captured = calls.first as DioException;
+        expect(captured.error, isA<MaintenanceException>());
+      },
+    );
 
     test('should detect Japanese maintenance message', () {
       // Arrange
@@ -66,26 +69,29 @@ void main() {
       expect(maintenanceException.message, contains('メンテナンス'));
     });
 
-    test('should not detect maintenance for 503 without maintenance keywords', () {
-      // Arrange
-      final response = Response<String>(
-        data: '<html><body>Internal Server Error</body></html>',
-        statusCode: 503,
-        requestOptions: RequestOptions(path: '/test'),
-      );
-      final dioException = DioException(
-        requestOptions: RequestOptions(path: '/test'),
-        response: response,
-        type: DioExceptionType.badResponse,
-      );
+    test(
+      'should not detect maintenance for 503 without maintenance keywords',
+      () {
+        // Arrange
+        final response = Response<String>(
+          data: '<html><body>Internal Server Error</body></html>',
+          statusCode: 503,
+          requestOptions: RequestOptions(path: '/test'),
+        );
+        final dioException = DioException(
+          requestOptions: RequestOptions(path: '/test'),
+          response: response,
+          type: DioExceptionType.badResponse,
+        );
 
-      // Act
-      interceptor.onError(dioException, mockHandler);
+        // Act
+        interceptor.onError(dioException, mockHandler);
 
-      // Assert
-      verify(mockHandler.next(dioException)).called(1);
-      verifyNever(mockHandler.reject(any));
-    });
+        // Assert
+        verify(mockHandler.next(dioException)).called(1);
+        verifyNever(mockHandler.reject(any));
+      },
+    );
 
     test('should not detect maintenance for non-503 responses', () {
       // Arrange

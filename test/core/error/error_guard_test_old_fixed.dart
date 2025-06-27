@@ -20,8 +20,7 @@ void main() {
       mockReporter = MockCrashlyticsReporter();
 
       // Setup mock behavior
-      when(mockReporter.recordError(any))
-          .thenAnswer((_) async {});
+      when(mockReporter.recordError(any)).thenAnswer((_) async {});
 
       container = ProviderContainer(
         overrides: [
@@ -38,7 +37,7 @@ void main() {
     test('should handle AppException correctly', () async {
       // Arrange
       final exception = NetworkFailure.offline(message: 'Test error');
-      
+
       // Act - Test error handling directly through zone error handler
       ErrorGuard.handleZoneError(container, exception, StackTrace.current);
 
@@ -87,6 +86,9 @@ class _TestErrorNotifier extends ErrorNotifier {
     bool autoDismiss = false,
   }) async {
     // Test implementation - just update state without actual Crashlytics call
-    state = AppErrorState$Showing(exception: exception, showTime: DateTime.now());
+    state = AppErrorState$Showing(
+      exception: exception,
+      showTime: DateTime.now(),
+    );
   }
 }

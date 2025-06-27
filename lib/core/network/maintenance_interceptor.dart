@@ -10,7 +10,7 @@ class MaintenanceInterceptor extends Interceptor {
         message: _extractMaintenanceMessage(err),
         estimatedEndTime: _extractEstimatedEndTime(err),
       );
-      
+
       handler.reject(
         DioException(
           requestOptions: err.requestOptions,
@@ -21,7 +21,7 @@ class MaintenanceInterceptor extends Interceptor {
       );
       return;
     }
-    
+
     handler.next(err);
   }
 
@@ -32,7 +32,7 @@ class MaintenanceInterceptor extends Interceptor {
     }
 
     final responseData = response.data?.toString().toLowerCase() ?? '';
-    
+
     // Check for maintenance indicators in the response
     const maintenanceKeywords = [
       'maintenance',
@@ -43,8 +43,9 @@ class MaintenanceInterceptor extends Interceptor {
       'temporarily unavailable',
     ];
 
-    return maintenanceKeywords.any((keyword) => 
-        responseData.contains(keyword.toLowerCase()));
+    return maintenanceKeywords.any(
+      (keyword) => responseData.contains(keyword.toLowerCase()),
+    );
   }
 
   String _extractMaintenanceMessage(DioException error) {
@@ -54,7 +55,7 @@ class MaintenanceInterceptor extends Interceptor {
     }
 
     final responseData = response.data?.toString() ?? '';
-    
+
     // Try to extract a more specific message from the response
     // This is a simple implementation - could be enhanced with HTML parsing
     if (responseData.contains('メンテナンス')) {
@@ -62,7 +63,7 @@ class MaintenanceInterceptor extends Interceptor {
     } else if (responseData.contains('maintenance')) {
       return 'System is under maintenance. Please try again later.';
     }
-    
+
     return 'サービスが一時的に利用できません';
   }
 

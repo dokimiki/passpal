@@ -8,9 +8,7 @@ import 'package:riverpod/riverpod.dart';
 
 import 'error_guard_test.mocks.dart';
 
-@GenerateNiceMocks([
-  MockSpec<CrashlyticsReporter>(),
-])
+@GenerateNiceMocks([MockSpec<CrashlyticsReporter>()])
 void main() {
   group('ErrorGuard', () {
     late MockCrashlyticsReporter mockReporter;
@@ -18,7 +16,7 @@ void main() {
 
     setUp(() {
       mockReporter = MockCrashlyticsReporter();
-      
+
       container = ProviderContainer(
         overrides: [
           crashlyticsReporterProvider.overrideWithValue(mockReporter),
@@ -36,27 +34,27 @@ void main() {
 
       // Act & Assert
       expect(
-        () => ErrorGuard.runGuarded(
-          container,
-          () => Future.error(exception),
-        ),
+        () => ErrorGuard.runGuarded(container, () => Future.error(exception)),
         throwsA(isA<NetworkFailure>()),
       );
     });
 
-    test('should handle non-AppException by wrapping in UnknownException', () async {
-      // Arrange
-      final originalException = Exception('Regular exception');
+    test(
+      'should handle non-AppException by wrapping in UnknownException',
+      () async {
+        // Arrange
+        final originalException = Exception('Regular exception');
 
-      // Act & Assert  
-      expect(
-        () => ErrorGuard.runGuarded(
-          container,
-          () => Future.error(originalException),
-        ),
-        throwsA(anything),
-      );
-    });
+        // Act & Assert
+        expect(
+          () => ErrorGuard.runGuarded(
+            container,
+            () => Future.error(originalException),
+          ),
+          throwsA(anything),
+        );
+      },
+    );
 
     test('should handle Flutter errors', () {
       // Arrange
@@ -66,7 +64,10 @@ void main() {
       );
 
       // Act & Assert - This test just verifies no exception is thrown
-      expect(() => ErrorGuard.handleFlutterError(container, flutterError), returnsNormally);
+      expect(
+        () => ErrorGuard.handleFlutterError(container, flutterError),
+        returnsNormally,
+      );
     });
 
     test('should initialize error handlers correctly', () {

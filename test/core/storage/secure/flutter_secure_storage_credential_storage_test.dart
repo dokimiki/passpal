@@ -31,10 +31,12 @@ void main() {
 
         await credentialStorage.save(credentials);
 
-        verify(mockStorage.write(
-          key: 'passpal_credentials',
-          value: anyNamed('value'),
-        )).called(1);
+        verify(
+          mockStorage.write(
+            key: 'passpal_credentials',
+            value: anyNamed('value'),
+          ),
+        ).called(1);
       });
 
       test('should throw SecureIoException when storage write fails', () async {
@@ -43,25 +45,30 @@ void main() {
           password: 'password123',
         );
 
-        when(mockStorage.write(
-          key: anyNamed('key'), 
-          value: anyNamed('value'),
-        )).thenThrow(Exception('Storage error'));
+        when(
+          mockStorage.write(key: anyNamed('key'), value: anyNamed('value')),
+        ).thenThrow(Exception('Storage error'));
 
         await expectLater(
           () => credentialStorage.save(credentials),
-          throwsA(isA<SecureIoException>()
-              .having((e) => e.operation, 'operation', 'save')
-              .having((e) => e.message, 'message', 
-                contains('Failed to save credentials'))),
+          throwsA(
+            isA<SecureIoException>()
+                .having((e) => e.operation, 'operation', 'save')
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Failed to save credentials'),
+                ),
+          ),
         );
       });
     });
 
     group('read', () {
       test('should return null when no credentials stored', () async {
-        when(mockStorage.read(key: anyNamed('key')))
-            .thenAnswer((_) async => null);
+        when(
+          mockStorage.read(key: anyNamed('key')),
+        ).thenAnswer((_) async => null);
 
         final result = await credentialStorage.read();
 
@@ -69,9 +76,11 @@ void main() {
       });
 
       test('should return credentials when valid JSON stored', () async {
-        const jsonString = '{"username":"test@example.com","password":"password123","sessionCookie":"session123","expiresAt":null}';
-        when(mockStorage.read(key: anyNamed('key')))
-            .thenAnswer((_) async => jsonString);
+        const jsonString =
+            '{"username":"test@example.com","password":"password123","sessionCookie":"session123","expiresAt":null}';
+        when(
+          mockStorage.read(key: anyNamed('key')),
+        ).thenAnswer((_) async => jsonString);
 
         final result = await credentialStorage.read();
 
@@ -82,21 +91,28 @@ void main() {
       });
 
       test('should throw SecureIoException when storage read fails', () async {
-        when(mockStorage.read(key: anyNamed('key')))
-            .thenThrow(Exception('Storage error'));
+        when(
+          mockStorage.read(key: anyNamed('key')),
+        ).thenThrow(Exception('Storage error'));
 
         await expectLater(
           () => credentialStorage.read(),
-          throwsA(isA<SecureIoException>()
-              .having((e) => e.operation, 'operation', 'read')
-              .having((e) => e.message, 'message', 
-                contains('Failed to read credentials'))),
+          throwsA(
+            isA<SecureIoException>()
+                .having((e) => e.operation, 'operation', 'read')
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Failed to read credentials'),
+                ),
+          ),
         );
       });
 
       test('should throw SecureIoException when invalid JSON stored', () async {
-        when(mockStorage.read(key: anyNamed('key')))
-            .thenAnswer((_) async => 'invalid json');
+        when(
+          mockStorage.read(key: anyNamed('key')),
+        ).thenAnswer((_) async => 'invalid json');
 
         await expectLater(
           () => credentialStorage.read(),
@@ -112,18 +128,27 @@ void main() {
         verify(mockStorage.delete(key: 'passpal_credentials')).called(1);
       });
 
-      test('should throw SecureIoException when storage delete fails', () async {
-        when(mockStorage.delete(key: anyNamed('key')))
-            .thenThrow(Exception('Storage error'));
+      test(
+        'should throw SecureIoException when storage delete fails',
+        () async {
+          when(
+            mockStorage.delete(key: anyNamed('key')),
+          ).thenThrow(Exception('Storage error'));
 
-        await expectLater(
-          () => credentialStorage.purge(),
-          throwsA(isA<SecureIoException>()
-              .having((e) => e.operation, 'operation', 'purge')
-              .having((e) => e.message, 'message', 
-                contains('Failed to purge credentials'))),
-        );
-      });
+          await expectLater(
+            () => credentialStorage.purge(),
+            throwsA(
+              isA<SecureIoException>()
+                  .having((e) => e.operation, 'operation', 'purge')
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    contains('Failed to purge credentials'),
+                  ),
+            ),
+          );
+        },
+      );
     });
   });
 }

@@ -1,9 +1,6 @@
 /// ストレージ層で発生する例外の基底クラス
 abstract class StorageException implements Exception {
-  const StorageException({
-    required this.message,
-    this.cause,
-  });
+  const StorageException({required this.message, this.cause});
 
   final String message;
   final Object? cause;

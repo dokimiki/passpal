@@ -7,7 +7,7 @@ void main() {
     test('should create network client factory', () {
       // Arrange & Act
       final factory = NetworkClientFactory();
-      
+
       // Assert
       expect(factory, isNotNull);
     });
@@ -15,7 +15,7 @@ void main() {
     test('should create dio instance for each target', () {
       // Arrange
       final factory = NetworkClientFactory();
-      
+
       // Act & Assert
       for (final target in NetworkTarget.values) {
         final dio = factory.create(target);
@@ -27,15 +27,17 @@ void main() {
     test('should have correct interceptor chain order', () {
       // Arrange
       final factory = NetworkClientFactory();
-      
+
       // Act
       final dio = factory.create(NetworkTarget.albo);
-      
+
       // Assert
       expect(dio.interceptors.length, greaterThan(0));
-      
+
       // Check that basic interceptors are present
-      final interceptorTypes = dio.interceptors.map((i) => i.runtimeType.toString()).toList();
+      final interceptorTypes = dio.interceptors
+          .map((i) => i.runtimeType.toString())
+          .toList();
       expect(interceptorTypes, contains('ConnectivityInterceptor'));
       expect(interceptorTypes, contains('RetryInterceptor'));
       expect(interceptorTypes, contains('MaintenanceInterceptor'));
@@ -45,11 +47,11 @@ void main() {
     test('should configure different headers for different targets', () {
       // Arrange
       final factory = NetworkClientFactory();
-      
+
       // Act
       final alboClient = factory.create(NetworkTarget.albo);
       final palapiClient = factory.create(NetworkTarget.palapi);
-      
+
       // Assert
       expect(alboClient.options.headers['Referer'], NetworkTarget.albo.baseUrl);
       expect(palapiClient.options.headers['Content-Type'], 'application/json');

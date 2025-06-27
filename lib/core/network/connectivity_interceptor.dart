@@ -15,7 +15,7 @@ class ConnectivityInterceptor extends Interceptor {
   ) async {
     try {
       final connectivityResults = await _connectivity.checkConnectivity();
-      
+
       // Check if any connection is available
       if (connectivityResults.contains(ConnectivityResult.none)) {
         handler.reject(

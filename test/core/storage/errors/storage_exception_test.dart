@@ -55,23 +55,23 @@ void main() {
         message: 'test message',
       );
 
-      expect(deserializeException.toString(), 
-        equals('DeserializeException(key: test): test message'));
-      expect(secureIoException.toString(), 
-        equals('SecureIoException(operation: read): test message'));
-      expect(kvIoException.toString(), 
-        equals('KvIoException(operation: write): test message'));
+      expect(
+        deserializeException.toString(),
+        equals('DeserializeException(key: test): test message'),
+      );
+      expect(
+        secureIoException.toString(),
+        equals('SecureIoException(operation: read): test message'),
+      );
+      expect(
+        kvIoException.toString(),
+        equals('KvIoException(operation: write): test message'),
+      );
     });
 
     test('exceptions should be different types', () {
-      const exception1 = DeserializeException(
-        key: 'test',
-        message: 'test',
-      );
-      const exception2 = SecureIoException(
-        operation: 'test',
-        message: 'test',
-      );
+      const exception1 = DeserializeException(key: 'test', message: 'test');
+      const exception2 = SecureIoException(operation: 'test', message: 'test');
 
       expect(exception1.runtimeType, isNot(equals(exception2.runtimeType)));
     });

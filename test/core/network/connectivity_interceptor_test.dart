@@ -25,8 +25,9 @@ void main() {
 
     test('should proceed when connectivity is available', () async {
       // Arrange
-      when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => [ConnectivityResult.wifi]);
+      when(
+        mockConnectivity.checkConnectivity(),
+      ).thenAnswer((_) async => [ConnectivityResult.wifi]);
 
       // Act
       interceptor.onRequest(requestOptions, mockHandler);
@@ -37,29 +38,39 @@ void main() {
       verifyNever(mockHandler.reject(any));
     });
 
-    test('should reject with NetworkFailure.offline when no connectivity', () async {
-      // Arrange
-      when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => [ConnectivityResult.none]);
+    test(
+      'should reject with NetworkFailure.offline when no connectivity',
+      () async {
+        // Arrange
+        when(
+          mockConnectivity.checkConnectivity(),
+        ).thenAnswer((_) async => [ConnectivityResult.none]);
 
-      // Act
-      interceptor.onRequest(requestOptions, mockHandler);
+        // Act
+        interceptor.onRequest(requestOptions, mockHandler);
 
-      // Assert
-      await Future.delayed(Duration.zero); // Allow async operations to complete
-      final rejectedCalls = verify(mockHandler.reject(captureAny)).captured;
-      expect(rejectedCalls.length, 1);
-      verifyNever(mockHandler.next(any));
-      
-      final captured = rejectedCalls.first as DioException;
-      expect(captured.error, isA<NetworkFailure>());
-      expect((captured.error as NetworkFailure).kind, NetworkFailureKind.offline);
-    });
+        // Assert
+        await Future.delayed(
+          Duration.zero,
+        ); // Allow async operations to complete
+        final rejectedCalls = verify(mockHandler.reject(captureAny)).captured;
+        expect(rejectedCalls.length, 1);
+        verifyNever(mockHandler.next(any));
+
+        final captured = rejectedCalls.first as DioException;
+        expect(captured.error, isA<NetworkFailure>());
+        expect(
+          (captured.error as NetworkFailure).kind,
+          NetworkFailureKind.offline,
+        );
+      },
+    );
 
     test('should proceed when connectivity check throws exception', () async {
       // Arrange
-      when(mockConnectivity.checkConnectivity())
-          .thenThrow(Exception('Connectivity check failed'));
+      when(
+        mockConnectivity.checkConnectivity(),
+      ).thenThrow(Exception('Connectivity check failed'));
 
       // Act
       interceptor.onRequest(requestOptions, mockHandler);
@@ -72,8 +83,9 @@ void main() {
 
     test('should proceed when mobile connectivity is available', () async {
       // Arrange
-      when(mockConnectivity.checkConnectivity())
-          .thenAnswer((_) async => [ConnectivityResult.mobile]);
+      when(
+        mockConnectivity.checkConnectivity(),
+      ).thenAnswer((_) async => [ConnectivityResult.mobile]);
 
       // Act
       interceptor.onRequest(requestOptions, mockHandler);
