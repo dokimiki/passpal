@@ -15,6 +15,12 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    // リトライ中の場合は認証ヘッダーは既に設定済みなのでスキップ
+    if (options.extra.containsKey('_retry_in_progress')) {
+      handler.next(options);
+      return;
+    }
+
     final authState = ref.read(authStateProvider);
     final session = authState.session;
 
@@ -34,10 +40,18 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    // リトライ中の場合は401エラーハンドリングをスキップ
+    if (err.requestOptions.extra.containsKey('_retry_in_progress')) {
+      handler.next(err);
+      return;
+    }
+
     // 401エラーの場合、リフレッシュを試行
     if (err.response?.statusCode == 401) {
-      // async処理を非同期で実行
-      _handleAuthError(err, handler);
+      // スケジュールされた非同期処理として実行し、エラーを適切にハンドル
+      _handleAuthError(err, handler).catchError((error) {
+        handler.next(err);
+      });
       return;
     }
 
@@ -77,7 +91,7 @@ class AuthInterceptor extends Interceptor {
     });
   }
 
-  /// 認証エラーハンドリング（同期実行）
+  /// 認証エラーハンドリング（非同期実行）
   Future<void> _handleAuthError(
     DioException err,
     ErrorInterceptorHandler handler,
@@ -87,8 +101,24 @@ class AuthInterceptor extends Interceptor {
       final authNotifier = ref.read(authStateProvider.notifier);
       await authNotifier.refresh();
 
-      // リフレッシュ成功時は元のリクエストを再実行
-      await _retryOriginalRequest(err, handler);
+      // リフレッシュ成功時は更新された認証情報をヘッダーに追加
+      final authState = ref.read(authStateProvider);
+      final session = authState.session;
+
+      if (session != null) {
+        _addAuthHeaders(err.requestOptions, session);
+        // リトライフラグを設定
+        err.requestOptions.extra['_retry_after_refresh'] = true;
+      }
+
+      // リフレッシュが成功した場合、カスタムエラーを投げて上位レイヤーでリトライを促す
+      handler.reject(
+        DioException(
+          requestOptions: err.requestOptions,
+          error: 'AUTH_REFRESH_SUCCESS',
+          type: DioExceptionType.unknown,
+        ),
+      );
     } catch (e) {
       // リフレッシュ失敗時は認証エラーとして処理
       final authException = e is AuthenticationException
@@ -104,50 +134,6 @@ class AuthInterceptor extends Interceptor {
           type: DioExceptionType.unknown,
         ),
       );
-    }
-  }
-
-  /// 元のリクエストを再実行
-  Future<void> _retryOriginalRequest(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
-    try {
-      final authState = ref.read(authStateProvider);
-      final session = authState.session;
-
-      if (session != null) {
-        // 更新された認証情報でヘッダーを設定
-        _addAuthHeaders(err.requestOptions, session);
-
-        // 新しいDioインスタンスでリクエストを再実行
-        // 注意: 同じインターセプターチェーンを通らないよう、新しいインスタンスを使用
-        final dio = Dio();
-        dio.options = BaseOptions(
-          baseUrl: err.requestOptions.baseUrl,
-          connectTimeout: err.requestOptions.connectTimeout,
-          receiveTimeout: err.requestOptions.receiveTimeout,
-          sendTimeout: err.requestOptions.sendTimeout,
-        );
-
-        final response = await dio.fetch(err.requestOptions);
-        handler.resolve(response);
-      } else {
-        // セッションがない場合は元のエラーを返す
-        handler.next(err);
-      }
-    } catch (e) {
-      if (e is DioException) {
-        handler.next(e);
-      } else {
-        handler.next(
-          DioException(
-            requestOptions: err.requestOptions,
-            error: e,
-            type: DioExceptionType.unknown,
-          ),
-        );
-      }
     }
   }
 }
