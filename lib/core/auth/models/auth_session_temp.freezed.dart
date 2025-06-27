@@ -15,13 +15,9 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$AuthSessionTemp {
-  String get username;
-  Map<String, String> get cookies;
-  String? get firebaseIdToken;
-  DateTime get expiresAt;
-  DateTime get lastRefreshed;
 
-  /// Create a copy of AuthSessionTemp
+ String get username; Map<String, String> get cookies; String? get firebaseIdToken; DateTime get expiresAt; DateTime get lastRefreshed;
+/// Create a copy of AuthSessionTemp
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')

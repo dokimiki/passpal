@@ -166,7 +166,7 @@ class ErrorOverlay extends StatelessWidget {
       MaintenanceException() => Icons.build,
       ParseFailure() => Icons.error_outline,
       UnknownException() => Icons.error,
-      UpdateRequiredException() => Icons.system_update,
+      ForceUpdateException() => Icons.system_update,
       _ => Icons.error,
     };
   }
@@ -178,7 +178,7 @@ class ErrorOverlay extends StatelessWidget {
       MaintenanceException() => colorScheme.tertiary,
       ParseFailure() => colorScheme.error,
       UnknownException() => colorScheme.error,
-      UpdateRequiredException() => colorScheme.primary,
+      ForceUpdateException() => colorScheme.primary,
       _ => colorScheme.error,
     };
   }
@@ -192,7 +192,7 @@ class ErrorOverlay extends StatelessWidget {
       MaintenanceException() => 'System Maintenance',
       ParseFailure() => 'Data Error',
       UnknownException() => 'Unexpected Error',
-      UpdateRequiredException() => 'Update Required',
+      ForceUpdateException() => 'Update Required',
       _ => 'Error',
     };
   }
@@ -204,7 +204,7 @@ class ErrorOverlay extends StatelessWidget {
       MaintenanceException() => Icons.refresh,
       ParseFailure() => Icons.refresh,
       UnknownException() => Icons.restart_alt,
-      UpdateRequiredException() => Icons.system_update,
+      ForceUpdateException() => Icons.system_update,
       _ => Icons.refresh,
     };
   }
@@ -216,7 +216,7 @@ class ErrorOverlay extends StatelessWidget {
       MaintenanceException() => 'Check Again',
       ParseFailure() => 'Retry',
       UnknownException() => 'Restart App',
-      UpdateRequiredException() => 'Update Now',
+      ForceUpdateException() => 'Update Now',
       _ => 'Retry',
     };
   }

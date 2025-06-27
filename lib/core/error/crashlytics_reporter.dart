@@ -103,7 +103,7 @@ class CrashlyticsReporter {
         });
         break;
 
-      case UpdateRequiredException update:
+      case ForceUpdateException update:
         information.addAll({
           'current_version': update.currentVersion,
           'minimum_version': update.minimumVersion,

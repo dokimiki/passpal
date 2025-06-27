@@ -130,9 +130,22 @@ class UnknownException extends AppException {
   final Exception? originalException;
 }
 
-/// Update required exception
-class UpdateRequiredException extends AppException {
-  const UpdateRequiredException({
+/// Route parsing exceptions
+class RouteParsingException extends AppException {
+  const RouteParsingException({
+    required super.message,
+    super.stack,
+    this.originalUri,
+    this.routePath,
+  }) : super(isFatal: false);
+
+  final Uri? originalUri;
+  final String? routePath;
+}
+
+/// Force update exception (renamed from UpdateRequiredException)
+class ForceUpdateException extends AppException {
+  const ForceUpdateException({
     required super.message,
     super.stack,
     required this.currentVersion,
