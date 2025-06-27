@@ -36,7 +36,6 @@ class AuthInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     // 401エラーの場合、リフレッシュを試行
     if (err.response?.statusCode == 401) {
-      // async処理を非同期で実行
       _handleAuthError(err, handler);
       return;
     }

@@ -86,13 +86,75 @@ class AssignmentRepository {
 
 ## 補足
 
-### AuthInterceptor実装計画
+## 実装状況
 
-core/auth実装後に以下を追加：
+### AuthInterceptor実装 (2025年6月27日)
 
-- SSO Cookie自動付与・更新
-- Bearer Token自動付与・更新  
-- 401エラー時の自動再認証（1回のみ）
+AuthInterceptor実装完了。以下の機能を実装：
+
+1. **認証ヘッダー自動付与**
+   - SSO Cookie自動付与（ALBO、MaNaBo、Cubics）
+   - Bearer Token自動付与（PalAPI）  
+   - ターゲット別の認証方式切り替え
+
+2. **401エラー時自動再認証**
+   - 401エラー検知時、AuthFacade.refresh()を実行
+   - リフレッシュ成功時、リクエスト再実行（1回のみ）
+   - リフレッシュ失敗時、AuthenticationExceptionを伝播
+
+3. **バックグラウンドリフレッシュ**
+   - セッション期限5分前にバックグラウンドでリフレッシュ実行
+   - UI処理をブロックしない非同期実行
+
+4. **テスト実装**
+   - ユニットテスト：認証ヘッダー付与とエラーハンドリング（5テスト）
+   - ネットワーク層統合テスト：30テスト全て通過
+   - 例外伝播シナリオの基本検証
+
+#### Interceptorチェーン順序（実装済み）
+
+```text
+Request  → Connectivity → Auth → Retry → Maintenance → Logging → Server
+Response ← Connectivity ← Auth ← Retry ← Maintenance ← Logging ← Server
+```
+
+#### 使用例
+
+```dart
+// Feature層のRepository実装例（更新版）
+class AssignmentRepository {
+  AssignmentRepository(this._ref);
+  
+  final Ref _ref;
+  
+  Future<List<Assignment>> fetchAssignments() async {
+    try {
+      // AuthInterceptorが自動的に認証ヘッダーを付与
+      final client = _ref.read(networkClientProvider(NetworkTarget.albo));
+      final response = await client.get('/assignments');
+      
+      return AssignmentDto.fromJsonList(response.data)
+          .map((dto) => dto.toDomain())
+          .toList();
+    } on DioException catch (e) {
+      // AuthenticationExceptionは自動的に伝播
+      throw NetworkErrorMapper.mapDioException(e);
+    }
+  }
+}
+```
+
+### 完了済み機能
+
+- ✅ NetworkTarget設定とBaseURL管理
+- ✅ Interceptorチェーン構築（全6種類）
+- ✅ AuthInterceptor（認証ヘッダー自動付与・401リフレッシュ）
+- ✅ ConnectivityInterceptor（オフライン検出）
+- ✅ RetryInterceptor（指数バックオフリトライ）
+- ✅ MaintenanceInterceptor（503メンテナンス検出）
+- ✅ LoggingInterceptor（デバッグcURLログ）
+- ✅ ErrorMapper（例外正規化）
+- ✅ RiverpodProvider統合
 
 ### メンテナンス対応
 
@@ -107,4 +169,5 @@ core/auth実装後に以下を追加：
 
 ## 実装完了日
 
-2025年6月26日
+2025年6月26日（初回）  
+2025年6月27日（AuthInterceptor組込み）
