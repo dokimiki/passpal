@@ -5,7 +5,7 @@ part 'auth_session.g.dart';
 
 /// 認証済みセッション情報
 @freezed
-class AuthSession with _$AuthSession {
+abstract class AuthSession with _$AuthSession {
   const factory AuthSession({
     required String username,
     required Map<String, String> cookies,

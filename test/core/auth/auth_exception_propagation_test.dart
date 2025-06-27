@@ -7,6 +7,7 @@ import 'package:passpal/core/auth/errors/auth_exception.dart';
 import 'package:passpal/core/auth/idp/idp_authenticator.dart';
 import 'package:passpal/core/auth/google/google_link_verifier.dart';
 import 'package:passpal/core/auth/providers/auth_state_notifier.dart';
+import 'package:passpal/core/auth/providers/auth_providers.dart';
 import 'package:passpal/core/storage/secure/credential_storage.dart';
 import 'package:passpal/core/error/crashlytics_reporter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
