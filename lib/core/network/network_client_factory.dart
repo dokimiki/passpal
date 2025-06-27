@@ -2,7 +2,9 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'auth_interceptor.dart';
 import 'connectivity_interceptor.dart';
 import 'logging_interceptor.dart';
 import 'maintenance_interceptor.dart';
@@ -14,16 +16,18 @@ class NetworkClientFactory {
   NetworkClientFactory({
     Connectivity? connectivity,
     CookieJar? cookieJar,
+    this.ref,
   }) : _connectivity = connectivity ?? Connectivity(),
-       _cookieJar = cookieJar;
+       _cookieJar = cookieJar ?? CookieJar();
 
   final Connectivity _connectivity;
-  final CookieJar? _cookieJar;
+  final CookieJar _cookieJar;
+  final ProviderRef? ref;
 
   /// Create a configured Dio instance for the specified target
   Dio create(NetworkTarget target) {
     final dio = Dio();
-    
+
     // Base configuration
     dio.options = BaseOptions(
       baseUrl: target.baseUrl,
@@ -36,15 +40,17 @@ class NetworkClientFactory {
     );
 
     // Add interceptors in the correct order
-    // Order: Connectivity → Auth (TODO) → Retry → Maintenance → Logging
+    // Order: Connectivity → Auth → Retry → Maintenance → Logging
     _addConnectivityInterceptor(dio);
-    // TODO: Add AuthInterceptor when core/auth is implemented
+    if (target.requiresAuth && ref != null) {
+      dio.interceptors.add(AuthInterceptor(ref: ref!, target: target));
+    }
     _addRetryInterceptor(dio);
     _addMaintenanceInterceptor(dio);
     _addLoggingInterceptor(dio);
-    
+
     // Add cookie manager for SSO targets
-    if (target.usesSsoCookies && _cookieJar != null) {
+    if (target.usesSsoCookies) {
       dio.interceptors.add(CookieManager(_cookieJar));
     }
 

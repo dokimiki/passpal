@@ -17,9 +17,9 @@ class Credentials {
       username: json['username'] as String,
       password: json['password'] as String,
       sessionCookie: json['sessionCookie'] as String?,
-      expiresAt: json['expiresAt'] != null 
-        ? DateTime.parse(json['expiresAt'] as String)
-        : null,
+      expiresAt: json['expiresAt'] != null
+          ? DateTime.parse(json['expiresAt'] as String)
+          : null,
     );
   }
 
@@ -30,6 +30,20 @@ class Credentials {
       'sessionCookie': sessionCookie,
       'expiresAt': expiresAt?.toIso8601String(),
     };
+  }
+
+  Credentials copyWith({
+    String? username,
+    String? password,
+    String? sessionCookie,
+    DateTime? expiresAt,
+  }) {
+    return Credentials(
+      username: username ?? this.username,
+      password: password ?? this.password,
+      sessionCookie: sessionCookie ?? this.sessionCookie,
+      expiresAt: expiresAt ?? this.expiresAt,
+    );
   }
 
   @override
