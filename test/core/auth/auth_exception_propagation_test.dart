@@ -28,6 +28,7 @@ void main() {
     late MockIdpAuthenticator mockIdpAuthenticator;
     late MockGoogleLinkVerifier mockGoogleLinkVerifier;
     late MockFirebaseAuth mockFirebaseAuth;
+    // ignore: unused_local_variable
     late MockCrashlyticsReporter mockCrashlyticsReporter;
 
     setUp(() {

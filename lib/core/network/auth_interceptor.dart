@@ -10,7 +10,7 @@ import 'package:passpal/core/network/network_target.dart';
 class AuthInterceptor extends Interceptor {
   AuthInterceptor({required this.ref, required this.target});
 
-  final ProviderRef ref;
+  final Ref ref;
   final NetworkTarget target;
 
   @override

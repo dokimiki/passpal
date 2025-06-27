@@ -22,7 +22,7 @@ class NetworkClientFactory {
 
   final Connectivity _connectivity;
   final CookieJar _cookieJar;
-  final ProviderRef? ref;
+  final Ref? ref;
 
   /// Create a configured Dio instance for the specified target
   Dio create(NetworkTarget target) {
