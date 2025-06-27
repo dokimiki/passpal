@@ -52,9 +52,9 @@ double _calculateContrastRatio(Color color1, Color color2) {
 }
 
 double _calculateRelativeLuminance(Color color) {
-  final r = _sRGBToLinear(color.red / 255.0);
-  final g = _sRGBToLinear(color.green / 255.0);
-  final b = _sRGBToLinear(color.blue / 255.0);
+  final r = _sRGBToLinear(color.r);
+  final g = _sRGBToLinear(color.g);
+  final b = _sRGBToLinear(color.b);
 
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
