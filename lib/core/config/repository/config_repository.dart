@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:passpal/core/config/sources/config_source.dart';
 import 'package:passpal/core/config/sources/dotenv_config_source.dart';
 import 'package:passpal/core/config/sources/remote_config_source.dart';
-import 'package:passpal/core/config/sources/default_config_source.dart';
 import 'package:passpal/core/config/models/app_config.dart';
 import 'package:passpal/core/config/models/api_config.dart';
 import 'package:passpal/core/config/models/feature_flags.dart';
@@ -10,10 +9,7 @@ import 'package:passpal/core/config/models/debug_config.dart';
 
 /// 複数の設定ソースを統合して管理するリポジトリ
 class ConfigRepository {
-  ConfigRepository({
-    required this.dotEnvSource,
-    required this.remoteSource,
-  });
+  ConfigRepository({required this.dotEnvSource, required this.remoteSource});
 
   final DotEnvConfigSource dotEnvSource;
   final RemoteConfigSource remoteSource;

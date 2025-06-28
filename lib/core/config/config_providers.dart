@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:passpal/core/config/sources/dotenv_config_source.dart';
 import 'package:passpal/core/config/sources/remote_config_source.dart';
-import 'package:passpal/core/config/sources/default_config_source.dart';
 import 'package:passpal/core/config/repository/config_repository.dart';
 import 'package:passpal/core/config/service/config_service.dart';
 import 'package:passpal/core/config/models/app_config.dart';
