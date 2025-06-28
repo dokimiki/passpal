@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:passpal/core/auth/idp/idp_authenticator.dart';
 import 'package:passpal/core/auth/errors/auth_exception.dart';
+import 'package:passpal/core/config/models/api_config.dart';
 
 import 'idp_authenticator_test.mocks.dart';
 
@@ -14,11 +15,17 @@ void main() {
     late MockDio mockDio;
     late MockCookieJar mockCookieJar;
     late IdpAuthenticator authenticator;
+    late ApiConfig apiConfig;
 
     setUp(() {
       mockDio = MockDio();
       mockCookieJar = MockCookieJar();
-      authenticator = IdpAuthenticator(dio: mockDio, cookieJar: mockCookieJar);
+      apiConfig = ApiConfig.defaultConfig;
+      authenticator = IdpAuthenticator(
+        dio: mockDio,
+        cookieJar: mockCookieJar,
+        apiConfig: apiConfig,
+      );
     });
 
     group('login', () {
@@ -100,7 +107,7 @@ void main() {
           );
 
           when(
-            mockDio.get(Portal.albo.entryUrl),
+            mockDio.get(Portal.albo.getEntryUrl(apiConfig)),
           ).thenAnswer((_) async => entryResponse);
           when(
             mockDio.get('https://shib.chukyo-u.ac.jp/auth'),
@@ -125,31 +132,31 @@ void main() {
     group('Portal enum', () {
       test('should have correct entry URLs for each portal', () {
         expect(
-          Portal.albo.entryUrl,
-          'https://cubics-pt-out.mng.chukyo-u.ac.jp/uniprove_pt/UnLoginControl',
+          Portal.albo.getEntryUrl(apiConfig),
+          '${apiConfig.alboBaseUrl}/uniprove_pt/UnLoginControl',
         );
         expect(
-          Portal.manabo.entryUrl,
-          'https://manabo.cnc.chukyo-u.ac.jp/auth/shibboleth/',
+          Portal.manabo.getEntryUrl(apiConfig),
+          '${apiConfig.manaboBaseUrl}/auth/shibboleth/',
         );
         expect(
-          Portal.cubics.entryUrl,
-          'https://cubics-as-out.mng.chukyo-u.ac.jp/unias/UnSSOLoginControl2?',
+          Portal.cubics.getEntryUrl(apiConfig),
+          '${apiConfig.cubicsBaseUrl}/unias/UnSSOLoginControl2?',
         );
       });
 
       test('should have correct SAML endpoints for each portal', () {
         expect(
-          Portal.albo.samlEndpoint,
-          'https://cubics-pt-out.mng.chukyo-u.ac.jp/Shibboleth.sso/SAML2/POST',
+          Portal.albo.getSamlEndpoint(apiConfig),
+          '${apiConfig.alboBaseUrl}/Shibboleth.sso/SAML2/POST',
         );
         expect(
-          Portal.manabo.samlEndpoint,
-          'https://manabo.cnc.chukyo-u.ac.jp/Shibboleth.sso/SAML2/POST',
+          Portal.manabo.getSamlEndpoint(apiConfig),
+          '${apiConfig.manaboBaseUrl}/Shibboleth.sso/SAML2/POST',
         );
         expect(
-          Portal.cubics.samlEndpoint,
-          'https://cubics-as-out.mng.chukyo-u.ac.jp/Shibboleth.sso/SAML2/POST',
+          Portal.cubics.getSamlEndpoint(apiConfig),
+          '${apiConfig.cubicsBaseUrl}/Shibboleth.sso/SAML2/POST',
         );
       });
 

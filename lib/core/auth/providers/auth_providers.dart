@@ -33,7 +33,16 @@ final googleLinkVerifierProvider = Provider<GoogleLinkVerifier>((ref) {
 final idpAuthenticatorProvider = Provider<IdpAuthenticator>((ref) {
   final dio = ref.watch(networkClientProvider(NetworkTarget.sso));
   final cookieJar = ref.watch(cookieJarProvider);
-  return IdpAuthenticator(dio: dio, cookieJar: cookieJar);
+  final apiConfig = ref
+      .watch(appConfigProvider)
+      .when(
+        data: (config) => config.api,
+        loading: () => throw StateError('API config is loading'),
+        error: (error, stack) =>
+            throw StateError('Failed to load API config: $error'),
+      );
+
+  return IdpAuthenticator(dio: dio, cookieJar: cookieJar, apiConfig: apiConfig);
 });
 
 /// 認証ファサードプロバイダー

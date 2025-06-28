@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:passpal/core/auth/errors/auth_exception.dart';
 import 'package:passpal/core/auth/models/auth_session.dart';
+import 'package:passpal/core/config/models/api_config.dart';
 
 /// ポータル設定
 enum Portal {
@@ -14,34 +15,29 @@ enum Portal {
   final String displayName;
 
   /// エントリポイントURL
-  String get entryUrl {
+  String getEntryUrl(ApiConfig apiConfig) {
     return switch (this) {
-      Portal.albo =>
-        'https://cubics-pt-out.mng.chukyo-u.ac.jp/uniprove_pt/UnLoginControl',
-      Portal.manabo => 'https://manabo.cnc.chukyo-u.ac.jp/auth/shibboleth/',
-      Portal.cubics =>
-        'https://cubics-as-out.mng.chukyo-u.ac.jp/unias/UnSSOLoginControl2?',
+      Portal.albo => '${apiConfig.alboBaseUrl}/uniprove_pt/UnLoginControl',
+      Portal.manabo => '${apiConfig.manaboBaseUrl}/auth/shibboleth/',
+      Portal.cubics => '${apiConfig.cubicsBaseUrl}/unias/UnSSOLoginControl2?',
     };
   }
 
   /// SAMLエンドポイント
-  String get samlEndpoint {
+  String getSamlEndpoint(ApiConfig apiConfig) {
     return switch (this) {
-      Portal.albo =>
-        'https://cubics-pt-out.mng.chukyo-u.ac.jp/Shibboleth.sso/SAML2/POST',
-      Portal.manabo =>
-        'https://manabo.cnc.chukyo-u.ac.jp/Shibboleth.sso/SAML2/POST',
-      Portal.cubics =>
-        'https://cubics-as-out.mng.chukyo-u.ac.jp/Shibboleth.sso/SAML2/POST',
+      Portal.albo => '${apiConfig.alboBaseUrl}/Shibboleth.sso/SAML2/POST',
+      Portal.manabo => '${apiConfig.manaboBaseUrl}/Shibboleth.sso/SAML2/POST',
+      Portal.cubics => '${apiConfig.cubicsBaseUrl}/Shibboleth.sso/SAML2/POST',
     };
   }
 
   /// ベースURL
-  String get baseUrl {
+  String getBaseUrl(ApiConfig apiConfig) {
     return switch (this) {
-      Portal.albo => 'https://cubics-pt-out.mng.chukyo-u.ac.jp/uniprove_pt',
-      Portal.manabo => 'https://manabo.cnc.chukyo-u.ac.jp',
-      Portal.cubics => 'https://cubics-as-out.mng.chukyo-u.ac.jp/unias',
+      Portal.albo => '${apiConfig.alboBaseUrl}/uniprove_pt',
+      Portal.manabo => apiConfig.manaboBaseUrl,
+      Portal.cubics => '${apiConfig.cubicsBaseUrl}/unias',
     };
   }
 
@@ -57,14 +53,19 @@ enum Portal {
 
 /// IdP認証処理クラス
 class IdpAuthenticator {
-  const IdpAuthenticator({required this.dio, required this.cookieJar});
+  const IdpAuthenticator({
+    required this.dio,
+    required this.cookieJar,
+    required this.apiConfig,
+  });
 
   final Dio dio;
   final CookieJar cookieJar;
+  final ApiConfig apiConfig;
 
   /// ログインURL（共通）
-  static const _loginUrl =
-      'https://shib.chukyo-u.ac.jp/cloudlink/module.php/core/loginuserpass.php?';
+  String get _loginUrl =>
+      '${apiConfig.ssoBaseUrl}/cloudlink/module.php/core/loginuserpass.php?';
 
   /// 指定されたポータルでSSO認証を実行
   Future<AuthSession> login({
@@ -104,7 +105,7 @@ class IdpAuthenticator {
 
   /// エントリポイントにアクセスしてSAMLRequestを取得
   Future<String> _getAuthnRequestUrl(Portal portal) async {
-    final response = await dio.get(portal.entryUrl);
+    final response = await dio.get(portal.getEntryUrl(apiConfig));
 
     if (response.statusCode == 503) {
       throw AuthenticationException.generic(
@@ -188,7 +189,7 @@ class IdpAuthenticator {
     Map<String, String> samlData,
   ) async {
     await dio.post(
-      portal.samlEndpoint,
+      portal.getSamlEndpoint(apiConfig),
       data: samlData,
       options: Options(contentType: Headers.formUrlEncodedContentType),
     );
@@ -197,10 +198,10 @@ class IdpAuthenticator {
   /// Cookieを取得してAuthSessionを構築
   Future<AuthSession> _buildAuthSession(Portal portal, String username) async {
     // Cookieを更新するために再度アクセス
-    await dio.get(portal.entryUrl);
+    await dio.get(portal.getEntryUrl(apiConfig));
 
     final allCookies = await cookieJar.loadForRequest(
-      Uri.parse(portal.baseUrl),
+      Uri.parse(portal.getBaseUrl(apiConfig)),
     );
     final cookieMap = <String, String>{};
 
