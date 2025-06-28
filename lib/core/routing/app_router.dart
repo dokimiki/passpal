@@ -14,6 +14,7 @@ import 'package:passpal/core/auth/providers/auth_providers.dart';
 import 'package:passpal/features/onboarding/presentation/pages/campus_page.dart';
 import 'package:passpal/features/onboarding/presentation/pages/notification_page.dart';
 import 'package:passpal/features/onboarding/presentation/pages/start_page.dart';
+import 'package:passpal/features/settings/presentation/pages/settings_page.dart';
 
 /// Create the app router with all guards and routes
 GoRouter createAppRouter(Ref ref) {
@@ -123,8 +124,7 @@ List<RouteBase> _buildRoutes() {
     GoRoute(
       path: AppRoute.settings.path,
       name: AppRoute.settings.name,
-      builder: (context, state) =>
-          const Placeholder(), // TODO: Implement SettingsPage
+      builder: (context, state) => const SettingsPage(),
     ),
     GoRoute(
       path: AppRoute.maintenance.path,
