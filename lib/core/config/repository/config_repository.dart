@@ -64,11 +64,26 @@ class ConfigRepository {
 
   /// API設定を構築
   Future<ApiConfig> _buildApiConfig() async {
-    final baseUrl =
-        await _getValue('PAL_API_BASE_URL') ?? ApiConfig.defaultConfig.baseUrl;
+    final palapiBaseUrl =
+        await _getValue('PAL_API_BASE_URL') ??
+        ApiConfig.defaultConfig.palapiBaseUrl;
+    final alboBaseUrl =
+        await _getValue('ALBO_BASE_URL') ?? ApiConfig.defaultConfig.alboBaseUrl;
+    final manaboBaseUrl =
+        await _getValue('MANABO_BASE_URL') ??
+        ApiConfig.defaultConfig.manaboBaseUrl;
+    final cubicsBaseUrl =
+        await _getValue('CUBICS_BASE_URL') ??
+        ApiConfig.defaultConfig.cubicsBaseUrl;
+    final ssoBaseUrl =
+        await _getValue('SSO_BASE_URL') ?? ApiConfig.defaultConfig.ssoBaseUrl;
 
     return ApiConfig(
-      baseUrl: baseUrl,
+      palapiBaseUrl: palapiBaseUrl,
+      alboBaseUrl: alboBaseUrl,
+      manaboBaseUrl: manaboBaseUrl,
+      cubicsBaseUrl: cubicsBaseUrl,
+      ssoBaseUrl: ssoBaseUrl,
     );
   }
 

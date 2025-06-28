@@ -116,7 +116,7 @@ class HomePage extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text('デバッグ情報'),
-                              Text('API URL: ${config.api.baseUrl}'),
+                              Text('PalAPI URL: ${config.api.palapiBaseUrl}'),
                               Text('Mock Data: ${config.debug.useMockData}'),
                             ],
                           ),

@@ -1,3 +1,5 @@
+import 'package:passpal/core/config/models/api_config.dart';
+
 /// Network targets for different endpoints
 enum NetworkTarget {
   albo('ALBO'),
@@ -10,14 +12,14 @@ enum NetworkTarget {
 
   final String displayName;
 
-  /// Get the base URL for this target
-  String get baseUrl {
+  /// Get the base URL for this target using the provided config
+  String getBaseUrl(ApiConfig config) {
     return switch (this) {
-      NetworkTarget.albo => 'https://albo.chukyonet.jp',
-      NetworkTarget.manabo => 'https://manabo.chukyonet.jp',
-      NetworkTarget.cubics => 'https://cubics.chukyonet.jp',
-      NetworkTarget.sso => 'https://sso.chukyonet.jp',
-      NetworkTarget.palapi => 'https://api.chukyo-passpal.app/v1',
+      NetworkTarget.albo => config.alboBaseUrl,
+      NetworkTarget.manabo => config.manaboBaseUrl,
+      NetworkTarget.cubics => config.cubicsBaseUrl,
+      NetworkTarget.sso => config.ssoBaseUrl,
+      NetworkTarget.palapi => config.palapiBaseUrl,
     };
   }
 

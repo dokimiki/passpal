@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:passpal/core/config/config_providers.dart';
 
 import 'network_client_factory.dart';
 import 'network_target.dart';
@@ -11,11 +12,18 @@ final networkClientFactoryProvider = Provider.autoDispose<NetworkClientFactory>(
   (ref) {
     final connectivity = ref.watch(connectivityProvider);
     final cookieJar = ref.watch(cookieJarProvider);
+    final appConfigAsync = ref.watch(appConfigProvider);
 
-    return NetworkClientFactory(
-      connectivity: connectivity,
-      cookieJar: cookieJar,
-      ref: ref,
+    return appConfigAsync.when(
+      data: (appConfig) => NetworkClientFactory(
+        apiConfig: appConfig.api,
+        connectivity: connectivity,
+        cookieJar: cookieJar,
+        ref: ref,
+      ),
+      loading: () => throw StateError('Config not loaded yet'),
+      error: (error, stack) =>
+          throw StateError('Failed to load config: $error'),
     );
   },
 );

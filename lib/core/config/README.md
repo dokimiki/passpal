@@ -45,7 +45,7 @@ class ApiClient extends _$ApiClient {
     final apiConfig = await config.getApiConfig();
     
     return Dio(BaseOptions(
-      baseURL: apiConfig.baseUrl,
+      baseURL: apiConfig.palapiBaseUrl,
       connectTimeout: apiConfig.timeout,
     ));
   }

@@ -53,6 +53,10 @@ class DefaultConfigSource implements ConfigSource {
   static const Map<String, dynamic> _defaultValues = {
     // API設定
     'PAL_API_BASE_URL': 'https://api.chukyo-passpal.app/v1',
+    'ALBO_BASE_URL': 'https://cubics-pt-out.mng.chukyo-u.ac.jp',
+    'MANABO_BASE_URL': 'https://manabo.cnc.chukyo-u.ac.jp',
+    'CUBICS_BASE_URL': 'https://cubics-as-out.mng.chukyo-u.ac.jp',
+    'SSO_BASE_URL': 'https://shib.chukyo-u.ac.jp',
 
     // 機能フラグ
     'FEATURE_NEW_ASSIGNMENT_PARSER': false,

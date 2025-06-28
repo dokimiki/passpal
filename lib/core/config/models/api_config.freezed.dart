@@ -16,7 +16,12 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ApiConfig {
 
- String get baseUrl;
+/// PalAPI のベースURL
+ String get palapiBaseUrl;/// ALBO ポータルのベースURL
+ String get alboBaseUrl;/// MaNaBo ポータルのベースURL
+ String get manaboBaseUrl;/// Cubics ポータルのベースURL
+ String get cubicsBaseUrl;/// SSO のベースURL
+ String get ssoBaseUrl;
 /// Create a copy of ApiConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +34,16 @@ $ApiConfigCopyWith<ApiConfig> get copyWith => _$ApiConfigCopyWithImpl<ApiConfig>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiConfig&&(identical(other.baseUrl, baseUrl) || other.baseUrl == baseUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ApiConfig&&(identical(other.palapiBaseUrl, palapiBaseUrl) || other.palapiBaseUrl == palapiBaseUrl)&&(identical(other.alboBaseUrl, alboBaseUrl) || other.alboBaseUrl == alboBaseUrl)&&(identical(other.manaboBaseUrl, manaboBaseUrl) || other.manaboBaseUrl == manaboBaseUrl)&&(identical(other.cubicsBaseUrl, cubicsBaseUrl) || other.cubicsBaseUrl == cubicsBaseUrl)&&(identical(other.ssoBaseUrl, ssoBaseUrl) || other.ssoBaseUrl == ssoBaseUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,baseUrl);
+int get hashCode => Object.hash(runtimeType,palapiBaseUrl,alboBaseUrl,manaboBaseUrl,cubicsBaseUrl,ssoBaseUrl);
 
 @override
 String toString() {
-  return 'ApiConfig(baseUrl: $baseUrl)';
+  return 'ApiConfig(palapiBaseUrl: $palapiBaseUrl, alboBaseUrl: $alboBaseUrl, manaboBaseUrl: $manaboBaseUrl, cubicsBaseUrl: $cubicsBaseUrl, ssoBaseUrl: $ssoBaseUrl)';
 }
 
 
@@ -49,7 +54,7 @@ abstract mixin class $ApiConfigCopyWith<$Res>  {
   factory $ApiConfigCopyWith(ApiConfig value, $Res Function(ApiConfig) _then) = _$ApiConfigCopyWithImpl;
 @useResult
 $Res call({
- String baseUrl
+ String palapiBaseUrl, String alboBaseUrl, String manaboBaseUrl, String cubicsBaseUrl, String ssoBaseUrl
 });
 
 
@@ -66,9 +71,13 @@ class _$ApiConfigCopyWithImpl<$Res>
 
 /// Create a copy of ApiConfig
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? baseUrl = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? palapiBaseUrl = null,Object? alboBaseUrl = null,Object? manaboBaseUrl = null,Object? cubicsBaseUrl = null,Object? ssoBaseUrl = null,}) {
   return _then(_self.copyWith(
-baseUrl: null == baseUrl ? _self.baseUrl : baseUrl // ignore: cast_nullable_to_non_nullable
+palapiBaseUrl: null == palapiBaseUrl ? _self.palapiBaseUrl : palapiBaseUrl // ignore: cast_nullable_to_non_nullable
+as String,alboBaseUrl: null == alboBaseUrl ? _self.alboBaseUrl : alboBaseUrl // ignore: cast_nullable_to_non_nullable
+as String,manaboBaseUrl: null == manaboBaseUrl ? _self.manaboBaseUrl : manaboBaseUrl // ignore: cast_nullable_to_non_nullable
+as String,cubicsBaseUrl: null == cubicsBaseUrl ? _self.cubicsBaseUrl : cubicsBaseUrl // ignore: cast_nullable_to_non_nullable
+as String,ssoBaseUrl: null == ssoBaseUrl ? _self.ssoBaseUrl : ssoBaseUrl // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -80,10 +89,19 @@ as String,
 @JsonSerializable()
 
 class _ApiConfig implements ApiConfig {
-  const _ApiConfig({required this.baseUrl});
+  const _ApiConfig({required this.palapiBaseUrl, required this.alboBaseUrl, required this.manaboBaseUrl, required this.cubicsBaseUrl, required this.ssoBaseUrl});
   factory _ApiConfig.fromJson(Map<String, dynamic> json) => _$ApiConfigFromJson(json);
 
-@override final  String baseUrl;
+/// PalAPI のベースURL
+@override final  String palapiBaseUrl;
+/// ALBO ポータルのベースURL
+@override final  String alboBaseUrl;
+/// MaNaBo ポータルのベースURL
+@override final  String manaboBaseUrl;
+/// Cubics ポータルのベースURL
+@override final  String cubicsBaseUrl;
+/// SSO のベースURL
+@override final  String ssoBaseUrl;
 
 /// Create a copy of ApiConfig
 /// with the given fields replaced by the non-null parameter values.
@@ -98,16 +116,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiConfig&&(identical(other.baseUrl, baseUrl) || other.baseUrl == baseUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ApiConfig&&(identical(other.palapiBaseUrl, palapiBaseUrl) || other.palapiBaseUrl == palapiBaseUrl)&&(identical(other.alboBaseUrl, alboBaseUrl) || other.alboBaseUrl == alboBaseUrl)&&(identical(other.manaboBaseUrl, manaboBaseUrl) || other.manaboBaseUrl == manaboBaseUrl)&&(identical(other.cubicsBaseUrl, cubicsBaseUrl) || other.cubicsBaseUrl == cubicsBaseUrl)&&(identical(other.ssoBaseUrl, ssoBaseUrl) || other.ssoBaseUrl == ssoBaseUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,baseUrl);
+int get hashCode => Object.hash(runtimeType,palapiBaseUrl,alboBaseUrl,manaboBaseUrl,cubicsBaseUrl,ssoBaseUrl);
 
 @override
 String toString() {
-  return 'ApiConfig(baseUrl: $baseUrl)';
+  return 'ApiConfig(palapiBaseUrl: $palapiBaseUrl, alboBaseUrl: $alboBaseUrl, manaboBaseUrl: $manaboBaseUrl, cubicsBaseUrl: $cubicsBaseUrl, ssoBaseUrl: $ssoBaseUrl)';
 }
 
 
@@ -118,7 +136,7 @@ abstract mixin class _$ApiConfigCopyWith<$Res> implements $ApiConfigCopyWith<$Re
   factory _$ApiConfigCopyWith(_ApiConfig value, $Res Function(_ApiConfig) _then) = __$ApiConfigCopyWithImpl;
 @override @useResult
 $Res call({
- String baseUrl
+ String palapiBaseUrl, String alboBaseUrl, String manaboBaseUrl, String cubicsBaseUrl, String ssoBaseUrl
 });
 
 
@@ -135,9 +153,13 @@ class __$ApiConfigCopyWithImpl<$Res>
 
 /// Create a copy of ApiConfig
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? baseUrl = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? palapiBaseUrl = null,Object? alboBaseUrl = null,Object? manaboBaseUrl = null,Object? cubicsBaseUrl = null,Object? ssoBaseUrl = null,}) {
   return _then(_ApiConfig(
-baseUrl: null == baseUrl ? _self.baseUrl : baseUrl // ignore: cast_nullable_to_non_nullable
+palapiBaseUrl: null == palapiBaseUrl ? _self.palapiBaseUrl : palapiBaseUrl // ignore: cast_nullable_to_non_nullable
+as String,alboBaseUrl: null == alboBaseUrl ? _self.alboBaseUrl : alboBaseUrl // ignore: cast_nullable_to_non_nullable
+as String,manaboBaseUrl: null == manaboBaseUrl ? _self.manaboBaseUrl : manaboBaseUrl // ignore: cast_nullable_to_non_nullable
+as String,cubicsBaseUrl: null == cubicsBaseUrl ? _self.cubicsBaseUrl : cubicsBaseUrl // ignore: cast_nullable_to_non_nullable
+as String,ssoBaseUrl: null == ssoBaseUrl ? _self.ssoBaseUrl : ssoBaseUrl // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

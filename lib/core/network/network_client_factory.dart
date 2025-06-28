@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:passpal/core/config/models/api_config.dart';
 
 import 'auth_interceptor.dart';
 import 'connectivity_interceptor.dart';
@@ -14,12 +15,14 @@ import 'retry_interceptor.dart';
 /// Factory for creating configured Dio instances for different network targets
 class NetworkClientFactory {
   NetworkClientFactory({
+    required this.apiConfig,
     Connectivity? connectivity,
     CookieJar? cookieJar,
     this.ref,
   }) : _connectivity = connectivity ?? Connectivity(),
        _cookieJar = cookieJar ?? CookieJar();
 
+  final ApiConfig apiConfig;
   final Connectivity _connectivity;
   final CookieJar _cookieJar;
   final Ref? ref;
@@ -30,7 +33,7 @@ class NetworkClientFactory {
 
     // Base configuration
     dio.options = BaseOptions(
-      baseUrl: target.baseUrl,
+      baseUrl: target.getBaseUrl(apiConfig),
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),
@@ -71,7 +74,7 @@ class NetworkClientFactory {
       case NetworkTarget.albo:
       case NetworkTarget.manabo:
       case NetworkTarget.cubics:
-        headers['Referer'] = target.baseUrl;
+        headers['Referer'] = target.getBaseUrl(apiConfig);
         break;
       case NetworkTarget.palapi:
         headers['Content-Type'] = 'application/json';

@@ -1,14 +1,73 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:passpal/core/network/network_target.dart';
+import 'package:passpal/core/config/models/api_config.dart';
 
 void main() {
   group('NetworkTarget', () {
-    test('should have correct base URLs', () {
-      expect(NetworkTarget.albo.baseUrl, 'https://albo.chukyonet.jp');
-      expect(NetworkTarget.manabo.baseUrl, 'https://manabo.chukyonet.jp');
-      expect(NetworkTarget.cubics.baseUrl, 'https://cubics.chukyonet.jp');
-      expect(NetworkTarget.sso.baseUrl, 'https://sso.chukyonet.jp');
-      expect(NetworkTarget.palapi.baseUrl, 'https://api.chukyo-passpal.app/v1');
+    late ApiConfig testConfig;
+
+    setUp(() {
+      testConfig = const ApiConfig(
+        palapiBaseUrl: 'https://api.chukyo-passpal.app/v1',
+        alboBaseUrl: 'https://albo.chukyonet.jp',
+        manaboBaseUrl: 'https://manabo.chukyonet.jp',
+        cubicsBaseUrl: 'https://cubics.chukyonet.jp',
+        ssoBaseUrl: 'https://sso.chukyonet.jp',
+      );
+    });
+
+    test('should have correct base URLs from config', () {
+      expect(
+        NetworkTarget.albo.getBaseUrl(testConfig),
+        'https://albo.chukyonet.jp',
+      );
+      expect(
+        NetworkTarget.manabo.getBaseUrl(testConfig),
+        'https://manabo.chukyonet.jp',
+      );
+      expect(
+        NetworkTarget.cubics.getBaseUrl(testConfig),
+        'https://cubics.chukyonet.jp',
+      );
+      expect(
+        NetworkTarget.sso.getBaseUrl(testConfig),
+        'https://sso.chukyonet.jp',
+      );
+      expect(
+        NetworkTarget.palapi.getBaseUrl(testConfig),
+        'https://api.chukyo-passpal.app/v1',
+      );
+    });
+
+    test('should support custom URLs from config', () {
+      final customConfig = const ApiConfig(
+        palapiBaseUrl: 'https://test-api.example.com',
+        alboBaseUrl: 'https://test-albo.example.com',
+        manaboBaseUrl: 'https://test-manabo.example.com',
+        cubicsBaseUrl: 'https://test-cubics.example.com',
+        ssoBaseUrl: 'https://test-sso.example.com',
+      );
+
+      expect(
+        NetworkTarget.albo.getBaseUrl(customConfig),
+        'https://test-albo.example.com',
+      );
+      expect(
+        NetworkTarget.manabo.getBaseUrl(customConfig),
+        'https://test-manabo.example.com',
+      );
+      expect(
+        NetworkTarget.cubics.getBaseUrl(customConfig),
+        'https://test-cubics.example.com',
+      );
+      expect(
+        NetworkTarget.sso.getBaseUrl(customConfig),
+        'https://test-sso.example.com',
+      );
+      expect(
+        NetworkTarget.palapi.getBaseUrl(customConfig),
+        'https://test-api.example.com',
+      );
     });
 
     test('should have correct display names', () {
