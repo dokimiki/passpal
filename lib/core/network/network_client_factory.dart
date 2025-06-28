@@ -82,7 +82,7 @@ class NetworkClientFactory {
       case NetworkTarget.sso:
         // SSO might have specific requirements
         break;
-      case NetworkTarget.timetable:
+      case NetworkTarget.chukyolink:
         break;
     }
 

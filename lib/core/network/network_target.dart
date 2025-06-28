@@ -7,7 +7,7 @@ enum NetworkTarget {
   cubics('Cubics'),
   sso('SSO'),
   palapi('PalAPI'),
-  timetable('Timetable');
+  chukyolink('ChukyoLink');
 
   const NetworkTarget(this.displayName);
 
@@ -21,7 +21,7 @@ enum NetworkTarget {
       NetworkTarget.cubics => config.cubicsBaseUrl,
       NetworkTarget.sso => config.ssoBaseUrl,
       NetworkTarget.palapi => config.palapiBaseUrl,
-      NetworkTarget.timetable => 'https://link.lanet.sist.chukyo-u.ac.jp',
+      NetworkTarget.chukyolink => 'https://link.lanet.sist.chukyo-u.ac.jp',
     };
   }
 
@@ -33,7 +33,7 @@ enum NetworkTarget {
       NetworkTarget.cubics => true,
       NetworkTarget.sso => false, // SSO handles auth itself
       NetworkTarget.palapi => true,
-      NetworkTarget.timetable => false, // Public API
+      NetworkTarget.chukyolink => false, // Public API
     };
   }
 
@@ -45,7 +45,7 @@ enum NetworkTarget {
       NetworkTarget.cubics => true,
       NetworkTarget.sso => false,
       NetworkTarget.palapi => false, // Uses Bearer token
-      NetworkTarget.timetable => false, // Public API
+      NetworkTarget.chukyolink => false, // Public API
     };
   }
 
