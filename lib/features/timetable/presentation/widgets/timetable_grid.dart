@@ -93,7 +93,7 @@ class TimetableGrid extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '${period}限',
+                    '$period限',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),

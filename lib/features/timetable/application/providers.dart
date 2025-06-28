@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/repositories/timetable_repository.dart';
 import '../domain/repositories/attendance_repository.dart' as attendance_repo;
@@ -15,7 +16,7 @@ part 'providers.g.dart';
 // Repository Providers
 
 @riverpod
-TimetableRepository timetableRepository(TimetableRepositoryRef ref) {
+TimetableRepository timetableRepository(Ref ref) {
   return TimetableRepositoryImpl(
     manaboTimetableDataSource: ref.read(
       manaboTimetableRemoteDataSourceProvider,
@@ -29,7 +30,7 @@ TimetableRepository timetableRepository(TimetableRepositoryRef ref) {
 
 @riverpod
 attendance_repo.AttendanceRepository attendanceRepository(
-  AttendanceRepositoryRef ref,
+  Ref ref,
 ) {
   return AttendanceRepositoryImpl(
     attendanceDataSource: ref.read(manaboAttendanceRemoteDataSourceProvider),
@@ -40,7 +41,7 @@ attendance_repo.AttendanceRepository attendanceRepository(
 
 @riverpod
 ManaboTimetableRemoteDataSource manaboTimetableRemoteDataSource(
-  ManaboTimetableRemoteDataSourceRef ref,
+  Ref ref,
 ) {
   final dio = ref.watch(networkClientProvider(NetworkTarget.manabo));
   return ManaboTimetableRemoteDataSourceImpl(dio);
@@ -48,7 +49,7 @@ ManaboTimetableRemoteDataSource manaboTimetableRemoteDataSource(
 
 @riverpod
 CubicsTimetableRemoteDataSource cubicsTimetableRemoteDataSource(
-  CubicsTimetableRemoteDataSourceRef ref,
+  Ref ref,
 ) {
   final dio = ref.watch(networkClientProvider(NetworkTarget.cubics));
   return CubicsTimetableRemoteDataSourceImpl(dio);
@@ -56,7 +57,7 @@ CubicsTimetableRemoteDataSource cubicsTimetableRemoteDataSource(
 
 @riverpod
 ManaboClassRemoteDataSource manaboClassRemoteDataSource(
-  ManaboClassRemoteDataSourceRef ref,
+  Ref ref,
 ) {
   final dio = ref.watch(networkClientProvider(NetworkTarget.manabo));
   return ManaboClassRemoteDataSourceImpl(dio);
@@ -64,7 +65,7 @@ ManaboClassRemoteDataSource manaboClassRemoteDataSource(
 
 @riverpod
 ManaboAttendanceRemoteDataSource manaboAttendanceRemoteDataSource(
-  ManaboAttendanceRemoteDataSourceRef ref,
+  Ref ref,
 ) {
   final dio = ref.watch(networkClientProvider(NetworkTarget.manabo));
   return ManaboAttendanceRemoteDataSourceImpl(dio);

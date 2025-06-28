@@ -1,5 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:passpal/features/timetable/domain/repositories/timetable_repository.dart';
-import 'package:riverpod/src/framework.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/entities/attendance_state.dart';
 import '../domain/usecases/monitor_attendance_uc.dart';
@@ -48,7 +48,7 @@ class AttendanceController extends _$AttendanceController {
 /// UseCaseのプロバイダー
 @riverpod
 MonitorAttendanceUseCase monitorAttendanceUseCase(
-  MonitorAttendanceUseCaseRef ref,
+  Ref ref,
 ) {
   final repository = ref.read(
     attendanceRepositoryProvider as ProviderListenable,
@@ -58,7 +58,7 @@ MonitorAttendanceUseCase monitorAttendanceUseCase(
 
 @riverpod
 SubmitAttendanceUseCase submitAttendanceUseCase(
-  SubmitAttendanceUseCaseRef ref,
+  Ref ref,
 ) {
   final repository = ref.read(
     attendanceRepositoryProvider as ProviderListenable,
@@ -69,7 +69,7 @@ SubmitAttendanceUseCase submitAttendanceUseCase(
 // TODO: repositoryプロバイダーを後で実装
 @riverpod
 AttendanceRepository attendanceRepositoryProvider(
-  AttendanceRepositoryProviderRef ref,
+  Ref ref,
 ) {
   throw UnimplementedError('AttendanceRepository provider not implemented yet');
 }

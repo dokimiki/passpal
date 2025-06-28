@@ -13,13 +13,9 @@ class TimetableRepositoryImpl implements TimetableRepository {
     required ManaboTimetableRemoteDataSource manaboTimetableDataSource,
     required CubicsTimetableRemoteDataSource cubicsTimetableDataSource,
     required ManaboClassRemoteDataSource manaboClassDataSource,
-  }) : _manaboTimetableDataSource = manaboTimetableDataSource,
-       _cubicsTimetableDataSource = cubicsTimetableDataSource,
-       _manaboClassDataSource = manaboClassDataSource;
+  }) : _manaboTimetableDataSource = manaboTimetableDataSource;
 
   final ManaboTimetableRemoteDataSource _manaboTimetableDataSource;
-  final CubicsTimetableRemoteDataSource _cubicsTimetableDataSource;
-  final ManaboClassRemoteDataSource _manaboClassDataSource;
 
   @override
   Future<List<TimetableSlot>> getTimetable(
@@ -77,17 +73,6 @@ class TimetableRepositoryImpl implements TimetableRepository {
   @override
   Future<CourseDetail> getCourseDetail(int manaboClassId) async {
     try {
-      // 並行して各種情報を取得
-      final futures = await Future.wait([
-        _manaboClassDataSource.fetchDirectory(manaboClassId),
-        _manaboClassDataSource.fetchNews(manaboClassId),
-        _manaboClassDataSource.fetchSyllabus(manaboClassId),
-      ]);
-
-      final directoryHtml = futures[0];
-      final newsHtml = futures[1];
-      final syllabusHtml = futures[2];
-
       // TODO: HTMLパーサーで解析してドメインエンティティに変換
       // 現在は仮実装
       final course = Course(
