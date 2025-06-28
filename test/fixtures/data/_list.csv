@@ -21,3 +21,6 @@ ALBOお知らせ内容表示,cubics-pt_news_view.html,https://cubics-pt-out.mng.
 出席なし通知,manabo_entry_none.json,https://manabo.cnc.chukyo-u.ac.jp/,POST,application/x-www-form-urlencoded,class_id=85141&is_ajax=1&action=glexa_modal_entry_form
 MaNaBo出席ウィンドウ,manabo_entry_form.html,https://manabo.cnc.chukyo-u.ac.jp/?class_id=85141&action=glexa_modal_entry_form&_=1750386859746,GET,none,none
 MaNaBo出席登録,none,https://manabo.cnc.chukyo-u.ac.jp/?action=glexa_modal_entry_form_accept&class_id=85141&directory_id=0&entry_id=45263&uniqid=9b1e9f349a4cbac489d766f93e8cc96b21e4b559d45097b97bc4c82370993158&_=1750386859747,GET,none,none
+MaNaBoパスワードあり出席ウィンドウ,manabo_entry_pass_form.html,https://manabo.cnc.chukyo-u.ac.jp/?class_id=85141&action=glexa_modal_entry_form&_=1750386859746,GET,none,none
+MaNaBoパスワードあり出席登録(パスワード:pgp 結果:失敗),manabo_entry_failure.json,https://manabo.cnc.chukyo-u.ac.jp/?action=glexa_modal_entry_form_accept&class_id=85146&directory_id=0&entry_id=45321&uniqid=e45f38969c72ee9d4b88702b415f08c762e263cf924a7574de6cb159d0d89700&code=pgp&_=1750641484690,GET,none,none
+MaNaBoパスワードあり出席登録(パスワード:cookie 結果:成功),manabo_entry_success.json,https://manabo.cnc.chukyo-u.ac.jp/?action=glexa_modal_entry_form_accept&class_id=85146&directory_id=0&entry_id=45321&uniqid=e45f38969c72ee9d4b88702b415f08c762e263cf924a7574de6cb159d0d89700&code=cookie&_=1750641484692,GET,none,none
