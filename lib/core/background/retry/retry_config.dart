@@ -4,7 +4,7 @@ part 'retry_config.freezed.dart';
 
 /// Configuration for retry policy
 @freezed
-class RetryConfig with _$RetryConfig {
+abstract class RetryConfig with _$RetryConfig {
   const factory RetryConfig({
     @Default(5) int maxAttempts,
     @Default(Duration(minutes: 1)) Duration baseDelay,

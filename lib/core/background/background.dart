@@ -19,4 +19,4 @@ export 'providers/retry_policy_provider.dart';
 export 'monitoring/crashlytics_reporter.dart';
 export 'monitoring/task_breadcrumbs.dart';
 
-export 'debug/debug_console.dart';
+export 'debugBG/debug_console.dart';

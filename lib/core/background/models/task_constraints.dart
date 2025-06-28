@@ -4,7 +4,7 @@ part 'task_constraints.freezed.dart';
 
 /// Constraints for background task execution
 @freezed
-class TaskConstraints with _$TaskConstraints {
+abstract class TaskConstraints with _$TaskConstraints {
   const factory TaskConstraints({
     @Default(false) bool networkRequired,
     @Default(false) bool chargingRequired,

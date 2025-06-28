@@ -4,7 +4,7 @@ part 'task_result.freezed.dart';
 
 /// Result of background task execution
 @freezed
-class TaskResult with _$TaskResult {
+abstract class TaskResult with _$TaskResult {
   const factory TaskResult.success({
     String? data,
     @Default(0) int executionTimeMs,

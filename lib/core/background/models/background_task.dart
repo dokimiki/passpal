@@ -13,7 +13,7 @@ typedef BackgroundTaskHandler =
 
 /// Background task definition
 @freezed
-class BackgroundTask with _$BackgroundTask {
+abstract class BackgroundTask with _$BackgroundTask {
   const factory BackgroundTask({
     required String id,
     required TaskFrequency frequency,
