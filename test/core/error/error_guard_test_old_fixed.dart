@@ -20,7 +20,9 @@ void main() {
       mockReporter = MockCrashlyticsReporter();
 
       // Setup mock behavior
-      when(mockReporter.recordError(any)).thenAnswer((_) async {});
+      when(mockReporter.recordError(any)).thenAnswer((_) async {
+        return;
+      });
 
       container = ProviderContainer(
         overrides: [
