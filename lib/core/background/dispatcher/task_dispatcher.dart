@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../error/app_exception.dart';
 import '../models/background_task.dart';
 import '../models/task_result.dart';
+import '../providers/task_statistics_provider.dart';
 import 'task_handler.dart';
 import 'task_timeout.dart';
 
@@ -16,11 +17,12 @@ class TaskDispatcher {
   /// Execute task from JSON data (used by WorkManager/BGTaskScheduler)
   Future<TaskResult> executeFromJson(String taskJson) async {
     final stopwatch = Stopwatch()..start();
+    String? taskId;
 
     try {
       // Parse task JSON
       final taskData = jsonDecode(taskJson) as Map<String, dynamic>;
-      final taskId = taskData['id'] as String?;
+      taskId = taskData['id'] as String?;
 
       if (taskId == null) {
         throw BackgroundTaskException.handlerNotFound(
@@ -62,7 +64,22 @@ class TaskDispatcher {
       stopwatch.stop();
 
       // Add execution time to result
-      return result.copyWith(executionTimeMs: stopwatch.elapsedMilliseconds);
+      result = result.copyWith(executionTimeMs: stopwatch.elapsedMilliseconds);
+
+      // Record statistics if possible
+      try {
+        final statsContainer = ProviderContainer();
+        final statisticsService = statsContainer.read(
+          taskStatisticsServiceProvider,
+        );
+        await statisticsService.recordExecution(taskId, result);
+        await statisticsService.updateGlobalStatistics(result);
+        statsContainer.dispose();
+      } catch (e) {
+        // Ignore statistics recording errors
+      }
+
+      return result;
     } catch (e, stack) {
       stopwatch.stop();
 
@@ -72,12 +89,27 @@ class TaskDispatcher {
       }
 
       // Wrap other exceptions
-      return TaskResult.failure(
+      final result = TaskResult.failure(
         error: e.toString(),
         stackTrace: stack,
         executionTimeMs: stopwatch.elapsedMilliseconds,
         shouldRetry: _shouldRetry(e),
       );
+
+      // Record statistics if possible
+      try {
+        final statsContainer = ProviderContainer();
+        final statisticsService = statsContainer.read(
+          taskStatisticsServiceProvider,
+        );
+        await statisticsService.recordExecution(taskId ?? 'unknown', result);
+        await statisticsService.updateGlobalStatistics(result);
+        statsContainer.dispose();
+      } catch (statsError) {
+        // Ignore statistics recording errors
+      }
+
+      return result;
     }
   }
 
@@ -105,16 +137,46 @@ class TaskDispatcher {
       stopwatch.stop();
 
       // Add execution time to result
-      return result.copyWith(executionTimeMs: stopwatch.elapsedMilliseconds);
+      result = result.copyWith(executionTimeMs: stopwatch.elapsedMilliseconds);
+
+      // Record statistics if possible
+      try {
+        final statsContainer = ProviderContainer();
+        final statisticsService = statsContainer.read(
+          taskStatisticsServiceProvider,
+        );
+        await statisticsService.recordExecution(task.id, result);
+        await statisticsService.updateGlobalStatistics(result);
+        statsContainer.dispose();
+      } catch (e) {
+        // Ignore statistics recording errors
+      }
+
+      return result;
     } catch (e, stack) {
       stopwatch.stop();
 
-      return TaskResult.failure(
+      final result = TaskResult.failure(
         error: e.toString(),
         stackTrace: stack,
         executionTimeMs: stopwatch.elapsedMilliseconds,
         shouldRetry: _shouldRetry(e),
       );
+
+      // Record statistics if possible
+      try {
+        final statsContainer = ProviderContainer();
+        final statisticsService = statsContainer.read(
+          taskStatisticsServiceProvider,
+        );
+        await statisticsService.recordExecution(task.id, result);
+        await statisticsService.updateGlobalStatistics(result);
+        statsContainer.dispose();
+      } catch (statsError) {
+        // Ignore statistics recording errors
+      }
+
+      return result;
     }
   }
 

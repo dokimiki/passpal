@@ -18,7 +18,10 @@ class DebugConsole {
   bool get isAvailable => kDebugMode;
 
   /// Run task immediately for testing
-  Future<TaskResult> runTaskNow(String taskId, [Map<String, dynamic>? data]) async {
+  Future<TaskResult> runTaskNow(
+    String taskId, [
+    Map<String, dynamic>? data,
+  ]) async {
     if (!isAvailable) {
       throw UnsupportedError('Debug console only available in debug mode');
     }
@@ -63,7 +66,7 @@ class DebugConsole {
   Future<Map<String, dynamic>> getExecutionStats() async {
     if (!isAvailable) return {};
 
-    return await _executor.getExecutionStats();
+    return await _executor.getExecutionStats(ProviderContainer(overrides: []));
   }
 
   /// Test task with various scenarios
@@ -81,7 +84,12 @@ class DebugConsole {
     results.add(await runTaskNow(taskId, {'scenario': 'network_error'}));
 
     // Test with large data
-    results.add(await runTaskNow(taskId, {'scenario': 'large_data', 'data': List.generate(1000, (i) => 'item_$i')}));
+    results.add(
+      await runTaskNow(taskId, {
+        'scenario': 'large_data',
+        'data': List.generate(1000, (i) => 'item_$i'),
+      }),
+    );
 
     return results;
   }
