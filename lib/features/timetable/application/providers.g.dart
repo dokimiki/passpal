@@ -7,7 +7,7 @@ part of 'providers.dart';
 // **************************************************************************
 
 String _$timetableRepositoryHash() =>
-    r'52565e7542e1a4e7daeff916cb288658eb13a0ac';
+    r'fdeeaf9f37182c2c10c683e3672ef17f65c9afd5';
 
 /// See also [timetableRepository].
 @ProviderFor(timetableRepository)
@@ -26,7 +26,7 @@ final timetableRepositoryProvider =
 // ignore: unused_element
 typedef TimetableRepositoryRef = AutoDisposeProviderRef<TimetableRepository>;
 String _$attendanceRepositoryHash() =>
-    r'945c087588754b73812ac4f7726bdc9f87fd7a9a';
+    r'34cdf94f277c6f1aee6056ae5af8447c34239b3b';
 
 /// See also [attendanceRepository].
 @ProviderFor(attendanceRepository)
@@ -46,7 +46,7 @@ final attendanceRepositoryProvider =
 typedef AttendanceRepositoryRef =
     AutoDisposeProviderRef<attendance_repo.AttendanceRepository>;
 String _$manaboTimetableRemoteDataSourceHash() =>
-    r'a59955bce56d381419273b9fd086dbe3aefebccd';
+    r'7a0adf46a0e83aa7778725f0a5d564b7e5171d37';
 
 /// See also [manaboTimetableRemoteDataSource].
 @ProviderFor(manaboTimetableRemoteDataSource)
@@ -66,7 +66,7 @@ final manaboTimetableRemoteDataSourceProvider =
 typedef ManaboTimetableRemoteDataSourceRef =
     AutoDisposeProviderRef<ManaboTimetableRemoteDataSource>;
 String _$cubicsTimetableRemoteDataSourceHash() =>
-    r'c86645e047472cd0350fbfa61a0de0e375da49dd';
+    r'82033e8deddf97fffb005da4b7ec96d0ec01d3e4';
 
 /// See also [cubicsTimetableRemoteDataSource].
 @ProviderFor(cubicsTimetableRemoteDataSource)
@@ -86,7 +86,7 @@ final cubicsTimetableRemoteDataSourceProvider =
 typedef CubicsTimetableRemoteDataSourceRef =
     AutoDisposeProviderRef<CubicsTimetableRemoteDataSource>;
 String _$manaboClassRemoteDataSourceHash() =>
-    r'04978feb9fb44761eeb039075280152dbcd40dda';
+    r'3c7ce3522ad914aae14e219af07ecea7ef98101a';
 
 /// See also [manaboClassRemoteDataSource].
 @ProviderFor(manaboClassRemoteDataSource)
@@ -106,7 +106,7 @@ final manaboClassRemoteDataSourceProvider =
 typedef ManaboClassRemoteDataSourceRef =
     AutoDisposeProviderRef<ManaboClassRemoteDataSource>;
 String _$manaboAttendanceRemoteDataSourceHash() =>
-    r'd7b03f192cf7f7960ce6e180714acd3e0fa1c474';
+    r'31808ed99254966a6eb1aed8a3a43d7a42c7f8e2';
 
 /// See also [manaboAttendanceRemoteDataSource].
 @ProviderFor(manaboAttendanceRemoteDataSource)

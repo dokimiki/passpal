@@ -15,6 +15,7 @@ import 'package:passpal/features/onboarding/presentation/pages/campus_page.dart'
 import 'package:passpal/features/onboarding/presentation/pages/notification_page.dart';
 import 'package:passpal/features/onboarding/presentation/pages/start_page.dart';
 import 'package:passpal/features/settings/presentation/pages/settings_page.dart';
+import 'package:passpal/features/assignments/presentation/pages/assignments_page.dart';
 
 /// Create the app router with all guards and routes
 GoRouter createAppRouter(Ref ref) {
@@ -114,8 +115,7 @@ List<RouteBase> _buildRoutes() {
         GoRoute(
           path: AppRoute.mainAssignments.path,
           name: AppRoute.mainAssignments.name,
-          builder: (context, state) =>
-              const Placeholder(), // TODO: Implement AssignmentsPage
+          builder: (context, state) => const AssignmentsPage(),
         ),
       ],
     ),

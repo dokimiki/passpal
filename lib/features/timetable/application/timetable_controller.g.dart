@@ -7,7 +7,7 @@ part of 'timetable_controller.dart';
 // **************************************************************************
 
 String _$fetchTimetableUseCaseHash() =>
-    r'bf823a1f075a6dd49d4f655cff56f1886cd56ead';
+    r'6a113e71762d3d089ec3a823369282a1bb968597';
 
 /// UseCaseのプロバイダー
 ///
@@ -29,7 +29,7 @@ final fetchTimetableUseCaseProvider =
 typedef FetchTimetableUseCaseRef =
     AutoDisposeProviderRef<FetchTimetableUseCase>;
 String _$refreshTimetableUseCaseHash() =>
-    r'31467d4c634ff4ad14e6ec9906c07bec888cc912';
+    r'b70a5cb34f95ff89ceb69a4b0460b549287f1e3f';
 
 /// See also [refreshTimetableUseCase].
 @ProviderFor(refreshTimetableUseCase)
@@ -49,7 +49,7 @@ final refreshTimetableUseCaseProvider =
 typedef RefreshTimetableUseCaseRef =
     AutoDisposeProviderRef<RefreshTimetableUseCase>;
 String _$fetchCourseDetailUseCaseHash() =>
-    r'be136df820f3cd76d62bace31a035441fd54cd36';
+    r'b91fa03b1b7e9eb1a3f212c43d382ac2be42d69d';
 
 /// See also [fetchCourseDetailUseCase].
 @ProviderFor(fetchCourseDetailUseCase)
@@ -69,7 +69,7 @@ final fetchCourseDetailUseCaseProvider =
 typedef FetchCourseDetailUseCaseRef =
     AutoDisposeProviderRef<FetchCourseDetailUseCase>;
 String _$timetableRepositoryProviderHash() =>
-    r'fa68c9424b1682adcfc08d1cbe5426730e1f94ff';
+    r'57cf29e8766e4655ec3e57a3f3b2220e8f0c11ab';
 
 /// See also [timetableRepositoryProvider].
 @ProviderFor(timetableRepositoryProvider)

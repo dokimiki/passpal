@@ -7,7 +7,7 @@ part of 'attendance_controller.dart';
 // **************************************************************************
 
 String _$monitorAttendanceUseCaseHash() =>
-    r'2ceff22a2a7224656a0005728decc0d93e4d244a';
+    r'58a08bad0eec63ab537c314e9e83f07fb4699b63';
 
 /// UseCaseのプロバイダー
 ///
@@ -29,7 +29,7 @@ final monitorAttendanceUseCaseProvider =
 typedef MonitorAttendanceUseCaseRef =
     AutoDisposeProviderRef<MonitorAttendanceUseCase>;
 String _$submitAttendanceUseCaseHash() =>
-    r'9ed5d9718e238b4af774baa3a8d87c524404b06a';
+    r'2930dd3a1614349dc33edce7aba4895c399a0a2e';
 
 /// See also [submitAttendanceUseCase].
 @ProviderFor(submitAttendanceUseCase)
@@ -49,7 +49,7 @@ final submitAttendanceUseCaseProvider =
 typedef SubmitAttendanceUseCaseRef =
     AutoDisposeProviderRef<SubmitAttendanceUseCase>;
 String _$attendanceRepositoryProviderHash() =>
-    r'c30f6d43569072e5f980ae8a714303a9219890d8';
+    r'eccdffb70e6c47221be6c5b799b29cc9682f1d84';
 
 /// See also [attendanceRepositoryProvider].
 @ProviderFor(attendanceRepositoryProvider)

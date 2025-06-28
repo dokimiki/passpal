@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:passpal/core/background/background.dart';
+import 'package:passpal/features/assignments/application/providers.dart';
 
 /// Service responsible for scheduling background tasks after onboarding completion
 class PostOnboardingTasks {
@@ -92,9 +93,19 @@ class PostOnboardingTasks {
   Future<TaskResult> _assignmentsSyncHandler(ProviderContainer context) async {
     try {
       debugPrint('[PostOnboardingTasks] Executing assignments sync');
-      // TODO: Implement actual assignments sync
-      // final repository = context.read(assignmentsRepositoryProvider);
-      // await repository.sync();
+
+      // Use the sync assignments use case
+      final syncAssignments = context.read(syncAssignmentsUseCaseProvider);
+
+      // Get current term (for now, hardcode to spring 2025, can be made configurable later)
+      // TODO: Get current term from user preferences or configuration
+      final newCount = await syncAssignments(
+        '20',
+      ); // archive_id for 2025 spring term
+
+      debugPrint(
+        '[PostOnboardingTasks] Assignments sync successful: $newCount new items',
+      );
       return const TaskResult.success();
     } catch (e) {
       debugPrint('[PostOnboardingTasks] Assignments sync failed: $e');
