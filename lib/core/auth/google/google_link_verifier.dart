@@ -1,14 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:passpal/core/auth/errors/auth_exception.dart';
+import 'package:passpal/core/config/models/auth_config.dart';
 
 /// Google認証のドメイン検証クラス
 class GoogleLinkVerifier {
-  const GoogleLinkVerifier({required this.firebaseAuth});
+  const GoogleLinkVerifier({
+    required this.firebaseAuth,
+    required this.authConfig,
+  });
 
   final FirebaseAuth firebaseAuth;
-
-  /// 許可されたドメイン
-  static const _allowedDomain = '@m.chukyo-u.ac.jp';
+  final AuthConfig authConfig;
 
   /// 現在のFirebaseユーザーが大学ドメインかつ認証済みかを確認
   Future<void> ensureLinked() async {
@@ -21,9 +23,10 @@ class GoogleLinkVerifier {
     }
 
     // メールアドレスの検証
-    if (user.email == null || !user.email!.endsWith(_allowedDomain)) {
+    if (user.email == null ||
+        !user.email!.endsWith(authConfig.allowedMailDomain)) {
       throw AccountLinkException.domainMismatch(
-        message: '中京大学のメールアドレス($_allowedDomain)でサインインしてください。',
+        message: '中京大学のメールアドレス(${authConfig.allowedMailDomain})でサインインしてください。',
       );
     }
 

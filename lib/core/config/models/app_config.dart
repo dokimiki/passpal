@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:passpal/core/config/models/api_config.dart';
+import 'package:passpal/core/config/models/auth_config.dart';
 import 'package:passpal/core/config/models/feature_flags.dart';
 import 'package:passpal/core/config/models/debug_config.dart';
 import 'package:passpal/core/config/models/admin_config.dart';
@@ -15,6 +16,7 @@ abstract class AppConfig with _$AppConfig {
     required FeatureFlags features,
     required DebugConfig debug,
     required AdminConfig admin,
+    required AuthConfig auth,
   }) = _AppConfig;
 
   factory AppConfig.fromJson(Map<String, dynamic> json) =>
@@ -26,5 +28,6 @@ abstract class AppConfig with _$AppConfig {
     features: FeatureFlags.defaultConfig,
     debug: DebugConfig.defaultConfig,
     admin: AdminConfig.defaultConfig,
+    auth: AuthConfig.defaultConfig,
   );
 }

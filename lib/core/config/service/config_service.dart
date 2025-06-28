@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:passpal/core/config/models/admin_config.dart';
+import 'package:passpal/core/config/models/auth_config.dart';
 import 'package:passpal/core/config/repository/config_repository.dart';
 import 'package:passpal/core/config/models/app_config.dart';
 import 'package:passpal/core/config/models/api_config.dart';
@@ -39,6 +40,12 @@ class ConfigService {
   Future<AdminConfig> getAdminConfig() async {
     final config = await getAppConfig();
     return config.admin;
+  }
+
+  /// 認証設定を取得
+  Future<AuthConfig> getAuthConfig() async {
+    final config = await getAppConfig();
+    return config.auth;
   }
 
   /// 特定の機能フラグの状態を取得

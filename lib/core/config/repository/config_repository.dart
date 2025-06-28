@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:passpal/core/config/models/admin_config.dart';
+import 'package:passpal/core/config/models/auth_config.dart';
 import 'package:passpal/core/config/sources/config_source.dart';
 import 'package:passpal/core/config/sources/dotenv_config_source.dart';
 import 'package:passpal/core/config/sources/remote_config_source.dart';
@@ -48,12 +49,14 @@ class ConfigRepository {
     final featureFlags = await _buildFeatureFlags();
     final debugConfig = await _buildDebugConfig();
     final adminConfig = await _buildAdminConfig();
+    final authConfig = await _buildAuthConfig();
 
     _cachedConfig = AppConfig(
       api: apiConfig,
       features: featureFlags,
       debug: debugConfig,
       admin: adminConfig,
+      auth: authConfig,
     );
 
     return _cachedConfig!;
@@ -84,6 +87,15 @@ class ConfigRepository {
       cubicsBaseUrl: cubicsBaseUrl,
       ssoBaseUrl: ssoBaseUrl,
     );
+  }
+
+  /// 認証設定を構築
+  Future<AuthConfig> _buildAuthConfig() async {
+    final allowedMailDomain =
+        await _getValue<String>('AUTH_ALLOWED_MAIL_DOMAIN') ??
+        AuthConfig.defaultConfig.allowedMailDomain;
+
+    return AuthConfig(allowedMailDomain: allowedMailDomain);
   }
 
   /// 機能フラグを構築

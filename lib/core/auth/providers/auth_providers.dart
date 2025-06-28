@@ -7,6 +7,7 @@ import 'package:passpal/core/auth/providers/auth_state_notifier.dart';
 import 'package:passpal/core/network/providers.dart';
 import 'package:passpal/core/network/network_target.dart';
 import 'package:passpal/core/storage/storage_providers.dart';
+import 'package:passpal/core/config/config_providers.dart';
 
 /// Firebase Auth インスタンス
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
@@ -16,7 +17,16 @@ final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
 /// Google認証検証プロバイダー
 final googleLinkVerifierProvider = Provider<GoogleLinkVerifier>((ref) {
   final firebaseAuth = ref.watch(firebaseAuthProvider);
-  return GoogleLinkVerifier(firebaseAuth: firebaseAuth);
+  final authConfig = ref
+      .watch(appConfigProvider)
+      .when(
+        data: (config) => config.auth,
+        loading: () => throw StateError('Auth config is loading'),
+        error: (error, stack) =>
+            throw StateError('Failed to load auth config: $error'),
+      );
+
+  return GoogleLinkVerifier(firebaseAuth: firebaseAuth, authConfig: authConfig);
 });
 
 /// IdP認証プロバイダー
