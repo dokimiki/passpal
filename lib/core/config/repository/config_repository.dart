@@ -13,12 +13,10 @@ class ConfigRepository {
   ConfigRepository({
     required this.dotEnvSource,
     required this.remoteSource,
-    required this.defaultSource,
   });
 
   final DotEnvConfigSource dotEnvSource;
   final RemoteConfigSource remoteSource;
-  final DefaultConfigSource defaultSource;
 
   final StreamController<AppConfig> _configChangeController =
       StreamController<AppConfig>.broadcast();
@@ -30,7 +28,7 @@ class ConfigRepository {
 
   /// 初期化処理
   Future<void> initialize() async {
-    _sources = [remoteSource, dotEnvSource, defaultSource];
+    _sources = [remoteSource, dotEnvSource];
 
     // 各ソースを初期化
     for (final source in _sources) {

@@ -17,17 +17,11 @@ final remoteConfigSourceProvider = Provider<RemoteConfigSource>((ref) {
   return RemoteConfigSource(FirebaseRemoteConfig.instance);
 });
 
-/// デフォルト設定ソースのProvider
-final defaultConfigSourceProvider = Provider<DefaultConfigSource>((ref) {
-  return const DefaultConfigSource();
-});
-
 /// 設定リポジトリのProvider
 final configRepositoryProvider = Provider<ConfigRepository>((ref) {
   return ConfigRepository(
     dotEnvSource: ref.watch(dotEnvConfigSourceProvider),
     remoteSource: ref.watch(remoteConfigSourceProvider),
-    defaultSource: ref.watch(defaultConfigSourceProvider),
   );
 });
 
