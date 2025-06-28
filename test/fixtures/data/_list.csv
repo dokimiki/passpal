@@ -12,8 +12,7 @@ MaNaBoメール宛先検索,manabo_mail_member.html,https://manabo.cnc.chukyo-u.
 授業のシラバス,manabo_class_syllabus.html,https://manabo.cnc.chukyo-u.ac.jp/,POST,application/x-www-form-urlencoded,class_id=85131&action=addon_syllabus_api_top
 授業のコンテンツ,manabo_class_content.html,https://manabo.cnc.chukyo-u.ac.jp/,POST,application/x-www-form-urlencoded,class_id=85131&directory_id=1214705&action=glexa_ajax_class_content_list
 授業の出席表,manabo_class_entry.html,https://manabo.cnc.chukyo-u.ac.jp/,POST,application/x-www-form-urlencoded,class_id=85140&action=glexa_modal_entry_view&_=1750502228024
-課題の結果,manabo_class_quiz_result.html,
-https://manabo.cnc.chukyo-u.ac.jp/?plugin_id=156891&classId=85146&id=839583&directory_id=1214937&attend_id=10006467&result=0&p=0&action=plugin_quiz_ajax_result_list&_=1750502653031,GET,none,none
+課題の結果,manabo_class_quiz_result.html,https://manabo.cnc.chukyo-u.ac.jp/?plugin_id=156891&classId=85146&id=839583&directory_id=1214937&attend_id=10006467&result=0&p=0&action=plugin_quiz_ajax_result_list&_=1750502653031,GET,none,none
 未受講のコンテンツ,manabo_class_not_attend_content.html,https://manabo.cnc.chukyo-u.ac.jp/,POST,application/x-www-form-urlencoded,view_type=3&class_id=85120&directory_id=1214551&action=glexa_ajax_class_content_list
 ALBOお知らせ,cubics-pt_news.html,https://cubics-pt-out.mng.chukyo-u.ac.jp/uniprove_pt/portal/_ns:YXJldHJvLXN0dWRlbnQtMTAwMDN8ZDI_,GET,none,none
 ALBOお知らせ内容表示,cubics-pt_news_view.html,https://cubics-pt-out.mng.chukyo-u.ac.jp/uniprove_pt/PMA020PVI01Action.do,GET,none,none
