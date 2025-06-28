@@ -7,11 +7,7 @@ class AlboNewsSection extends StatelessWidget {
   final AsyncValue<List<AlboNewsItem>> newsState;
   final VoidCallback? onRetry;
 
-  const AlboNewsSection({
-    super.key,
-    required this.newsState,
-    this.onRetry,
-  });
+  const AlboNewsSection({super.key, required this.newsState, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +48,7 @@ class AlboNewsSection extends StatelessWidget {
     if (news.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(16),
-        child: Center(
-          child: Text('新しいお知らせはありません'),
-        ),
+        child: Center(child: Text('新しいお知らせはありません')),
       );
     }
 
@@ -75,7 +69,7 @@ class _AlboNewsListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return ListTile(
       leading: _buildCategoryIcon(),
       title: Row(
@@ -113,7 +107,9 @@ class _AlboNewsListTile extends StatelessWidget {
             child: Text(
               newsItem.title,
               style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: newsItem.isRead ? FontWeight.normal : FontWeight.bold,
+                fontWeight: newsItem.isRead
+                    ? FontWeight.normal
+                    : FontWeight.bold,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -126,11 +122,7 @@ class _AlboNewsListTile extends StatelessWidget {
           _buildCategoryChip(),
           const Spacer(),
           if (newsItem.hasAttachment == true) ...[
-            const Icon(
-              Icons.attach_file,
-              size: 14,
-              color: Colors.grey,
-            ),
+            const Icon(Icons.attach_file, size: 14, color: Colors.grey),
             const SizedBox(width: 4),
           ],
           Text(
@@ -180,11 +172,7 @@ class _AlboNewsListTile extends StatelessWidget {
         color: color.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
-      child: Icon(
-        icon,
-        size: 16,
-        color: color,
-      ),
+      child: Icon(icon, size: 16, color: color),
     );
   }
 
@@ -248,17 +236,12 @@ class _AlboNewsListTile extends StatelessWidget {
 
   Future<void> _openNews(BuildContext context) async {
     try {
-      await launchUrl(
-        newsItem.detailUrl,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(newsItem.detailUrl, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('リンクを開けませんでした'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('リンクを開けませんでした')));
       }
     }
   }
@@ -309,7 +292,10 @@ class _AlboNewsShimmer extends StatelessWidget {
               ),
             ],
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
         ),
       ),
     );
@@ -320,10 +306,7 @@ class _ErrorSection extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorSection({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ErrorSection({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -331,11 +314,7 @@ class _ErrorSection extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 32,
-            color: Colors.red.shade400,
-          ),
+          Icon(Icons.error_outline, size: 32, color: Colors.red.shade400),
           const SizedBox(height: 8),
           Text(
             message,
@@ -343,10 +322,7 @@ class _ErrorSection extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          TextButton(
-            onPressed: onRetry,
-            child: const Text('再試行'),
-          ),
+          TextButton(onPressed: onRetry, child: const Text('再試行')),
         ],
       ),
     );

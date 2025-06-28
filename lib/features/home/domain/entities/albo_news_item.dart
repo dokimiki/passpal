@@ -5,13 +5,13 @@ part 'albo_news_item.g.dart';
 
 enum AlboNewsCategory {
   @JsonValue('kyoumu')
-  kyoumu,      // 教務
+  kyoumu, // 教務
   @JsonValue('studentLife')
   studentLife, // 学生生活
   @JsonValue('kyoshoku')
-  kyoshoku,    // 教職
+  kyoshoku, // 教職
   @JsonValue('career')
-  career,      // キャリア・資格
+  career, // キャリア・資格
   @JsonValue('international')
   international, // 国際・留学
 }
@@ -29,5 +29,6 @@ abstract class AlboNewsItem with _$AlboNewsItem {
     bool? hasAttachment,
   }) = _AlboNewsItem;
 
-  factory AlboNewsItem.fromJson(Map<String, dynamic> json) => _$AlboNewsItemFromJson(json);
+  factory AlboNewsItem.fromJson(Map<String, dynamic> json) =>
+      _$AlboNewsItemFromJson(json);
 }

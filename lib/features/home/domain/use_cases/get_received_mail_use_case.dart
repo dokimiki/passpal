@@ -6,13 +6,7 @@ class GetReceivedMailUseCase {
 
   const GetReceivedMailUseCase(this._repository);
 
-  Future<List<MailSummary>> execute({
-    int? limit,
-    int page = 1,
-  }) async {
-    return await _repository.getReceivedMail(
-      limit: limit,
-      page: page,
-    );
+  Future<List<MailSummary>> execute({int? limit, int page = 1}) async {
+    return await _repository.getReceivedMail(limit: limit, page: page);
   }
 }

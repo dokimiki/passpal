@@ -17,37 +17,34 @@ class HomePage extends ConsumerWidget {
         onRefresh: () => ref.read(homeNotifierProvider.notifier).refresh(),
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar(
-              title: Text('ホーム'),
-              floating: true,
-              snap: true,
-            ),
+            const SliverAppBar(title: Text('ホーム'), floating: true, snap: true),
             SliverToBoxAdapter(
               child: homeState.when(
                 data: (state) => Column(
                   children: [
                     SystemNewsSection(
                       newsState: state.systemNews,
-                      onRetry: () => ref.read(homeNotifierProvider.notifier).refresh(),
+                      onRetry: () =>
+                          ref.read(homeNotifierProvider.notifier).refresh(),
                     ),
                     const SizedBox(height: 16),
                     MailSection(
                       mailState: state.receivedMail,
-                      onRetry: () => ref.read(homeNotifierProvider.notifier).refresh(),
+                      onRetry: () =>
+                          ref.read(homeNotifierProvider.notifier).refresh(),
                     ),
                     const SizedBox(height: 16),
                     AlboNewsSection(
                       newsState: state.alboNews,
-                      onRetry: () => ref.read(homeNotifierProvider.notifier).refresh(),
+                      onRetry: () =>
+                          ref.read(homeNotifierProvider.notifier).refresh(),
                     ),
                     const SizedBox(height: 32), // 最下部の余白
                   ],
                 ),
                 loading: () => const Padding(
                   padding: EdgeInsets.all(32),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: Center(child: CircularProgressIndicator()),
                 ),
                 error: (error, stack) => Padding(
                   padding: const EdgeInsets.all(16),
@@ -71,7 +68,8 @@ class HomePage extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: () => ref.read(homeNotifierProvider.notifier).refresh(),
+                        onPressed: () =>
+                            ref.read(homeNotifierProvider.notifier).refresh(),
                         child: const Text('再試行'),
                       ),
                     ],

@@ -15,5 +15,6 @@ abstract class MailBody with _$MailBody {
     String? replyToMailId,
   }) = _MailBody;
 
-  factory MailBody.fromJson(Map<String, dynamic> json) => _$MailBodyFromJson(json);
+  factory MailBody.fromJson(Map<String, dynamic> json) =>
+      _$MailBodyFromJson(json);
 }

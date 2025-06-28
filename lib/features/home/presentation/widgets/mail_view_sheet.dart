@@ -6,10 +6,7 @@ import '../../domain/entities/mail_body.dart';
 class MailViewSheet extends ConsumerWidget {
   final String mailId;
 
-  const MailViewSheet({
-    super.key,
-    required this.mailId,
-  });
+  const MailViewSheet({super.key, required this.mailId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +37,10 @@ class MailViewSheet extends ConsumerWidget {
               ),
               // ヘッダー
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -62,8 +62,10 @@ class MailViewSheet extends ConsumerWidget {
               // コンテンツ
               Expanded(
                 child: mailViewState.when(
-                  data: (mailBody) => _buildMailContent(context, mailBody, scrollController),
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  data: (mailBody) =>
+                      _buildMailContent(context, mailBody, scrollController),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (error, stack) => _buildError(context, error),
                 ),
               ),
@@ -74,7 +76,11 @@ class MailViewSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildMailContent(BuildContext context, MailBody mailBody, ScrollController scrollController) {
+  Widget _buildMailContent(
+    BuildContext context,
+    MailBody mailBody,
+    ScrollController scrollController,
+  ) {
     return SingleChildScrollView(
       controller: scrollController,
       padding: const EdgeInsets.all(16),
@@ -84,9 +90,9 @@ class MailViewSheet extends ConsumerWidget {
           // タイトル
           Text(
             mailBody.title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           // 送信者情報
@@ -115,9 +121,9 @@ class MailViewSheet extends ConsumerWidget {
                     ),
                     Text(
                       '${mailBody.receivedAt.year}年${mailBody.receivedAt.month}月${mailBody.receivedAt.day}日 ${mailBody.receivedAt.hour}:${mailBody.receivedAt.minute.toString().padLeft(2, '0')}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                     ),
                   ],
                 ),

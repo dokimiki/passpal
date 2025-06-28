@@ -56,7 +56,7 @@ void main() {
           publishedAt: DateTime.now(),
           bodyHtml: 'Content 1',
           detailUrl: Uri.parse('https://test1.com'),
-        )
+        ),
       ];
 
       final homeState = HomeState(

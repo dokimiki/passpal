@@ -44,13 +44,13 @@ class HomeRepositoryImpl implements HomeRepository {
     ManaboNewsParser? newsParser,
     ManaboMailParser? mailParser,
     AlboNewsParser? alboParser,
-  })  : _systemNewsDs = systemNewsDs,
-        _receivedMailDs = receivedMailDs,
-        _mailViewDs = mailViewDs,
-        _alboNewsDs = alboNewsDs,
-        _newsParser = newsParser ?? ManaboNewsParser(),
-        _mailParser = mailParser ?? ManaboMailParser(),
-        _alboParser = alboParser ?? AlboNewsParser();
+  }) : _systemNewsDs = systemNewsDs,
+       _receivedMailDs = receivedMailDs,
+       _mailViewDs = mailViewDs,
+       _alboNewsDs = alboNewsDs,
+       _newsParser = newsParser ?? ManaboNewsParser(),
+       _mailParser = mailParser ?? ManaboMailParser(),
+       _alboParser = alboParser ?? AlboNewsParser();
 
   @override
   Future<List<NewsItem>> getSystemNews() async {
@@ -89,7 +89,6 @@ class HomeRepositoryImpl implements HomeRepository {
       final html = await _mailViewDs.fetchMailView(mailId);
       final dto = _mailParser.parseMailView(html, mailId);
       return dto.toDomain();
-      
     } on DioException catch (e) {
       throw NetworkErrorMapper.mapDioException(e);
     } catch (error, stackTrace) {
@@ -133,12 +132,12 @@ class HomeRepositoryImpl implements HomeRepository {
       final html = await _receivedMailDs.fetchReceivedMail(page: page);
       final dtos = _mailParser.parseMailList(html);
       var entities = dtos.map((dto) => dto.toDomain()).toList();
-      
+
       // limitが指定されている場合は制限
       if (limit != null && entities.length > limit) {
         entities = entities.take(limit).toList();
       }
-      
+
       return entities;
     } on DioException catch (e) {
       throw NetworkErrorMapper.mapDioException(e);
@@ -150,12 +149,12 @@ class HomeRepositoryImpl implements HomeRepository {
       final html = await _alboNewsDs.fetchAlboNews();
       final dtos = _alboParser.parseNewsList(html);
       var entities = dtos.map((dto) => dto.toDomain()).toList();
-      
+
       // limitが指定されている場合は制限
       if (limit != null && entities.length > limit) {
         entities = entities.take(limit).toList();
       }
-      
+
       return entities;
     } on DioException catch (e) {
       throw NetworkErrorMapper.mapDioException(e);

@@ -26,7 +26,9 @@ class HomeBackgroundTasks {
       await _backgroundScheduler.registerUnique(
         BackgroundTask(
           id: 'home.mail.sync',
-          frequency: const TaskFrequency.periodic(interval: Duration(minutes: 30)),
+          frequency: const TaskFrequency.periodic(
+            interval: Duration(minutes: 30),
+          ),
           constraints: const TaskConstraints(networkRequired: true),
           handler: _mailSyncHandler,
         ),
@@ -65,12 +67,16 @@ class HomeBackgroundTasks {
   }
 
   /// Handler for system news background sync
-  static Future<TaskResult> _systemNewsSyncHandler(ProviderContainer container) async {
+  static Future<TaskResult> _systemNewsSyncHandler(
+    ProviderContainer container,
+  ) async {
     try {
       final useCase = container.read(getSystemNewsUseCaseProvider);
       final news = await useCase.execute();
-      
-      debugPrint('[HomeBackgroundTasks] System news sync completed: ${news.length} items');
+
+      debugPrint(
+        '[HomeBackgroundTasks] System news sync completed: ${news.length} items',
+      );
       return const TaskResult.success();
     } catch (e, stackTrace) {
       debugPrint('[HomeBackgroundTasks] System news sync failed: $e');
@@ -82,12 +88,16 @@ class HomeBackgroundTasks {
   }
 
   /// Handler for mail background sync
-  static Future<TaskResult> _mailSyncHandler(ProviderContainer container) async {
+  static Future<TaskResult> _mailSyncHandler(
+    ProviderContainer container,
+  ) async {
     try {
       final useCase = container.read(getReceivedMailUseCaseProvider);
       final mails = await useCase.execute();
-      
-      debugPrint('[HomeBackgroundTasks] Mail sync completed: ${mails.length} items');
+
+      debugPrint(
+        '[HomeBackgroundTasks] Mail sync completed: ${mails.length} items',
+      );
       return const TaskResult.success();
     } catch (e, stackTrace) {
       debugPrint('[HomeBackgroundTasks] Mail sync failed: $e');
@@ -99,12 +109,16 @@ class HomeBackgroundTasks {
   }
 
   /// Handler for ALBO news background sync
-  static Future<TaskResult> _alboNewsSyncHandler(ProviderContainer container) async {
+  static Future<TaskResult> _alboNewsSyncHandler(
+    ProviderContainer container,
+  ) async {
     try {
       final useCase = container.read(getAlboNewsUseCaseProvider);
       final news = await useCase.execute();
-      
-      debugPrint('[HomeBackgroundTasks] ALBO news sync completed: ${news.length} items');
+
+      debugPrint(
+        '[HomeBackgroundTasks] ALBO news sync completed: ${news.length} items',
+      );
       return const TaskResult.success();
     } catch (e, stackTrace) {
       debugPrint('[HomeBackgroundTasks] ALBO news sync failed: $e');

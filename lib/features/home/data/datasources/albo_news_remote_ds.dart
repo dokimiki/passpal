@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 
 class AlboNewsRemoteDs {
   final Dio _dio;
-  
+
   const AlboNewsRemoteDs(this._dio);
-  
+
   /// ALBOお知らせを取得
   Future<String> fetchAlboNews() async {
     // TODO: 実際のURLパスを設定する必要があります

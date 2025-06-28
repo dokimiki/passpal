@@ -6,11 +6,7 @@ class SystemNewsSection extends StatelessWidget {
   final AsyncValue<List<NewsItem>> newsState;
   final VoidCallback? onRetry;
 
-  const SystemNewsSection({
-    super.key,
-    required this.newsState,
-    this.onRetry,
-  });
+  const SystemNewsSection({super.key, required this.newsState, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +52,15 @@ class SystemNewsSection extends StatelessWidget {
     }
 
     return Column(
-      children: news.take(5).map((item) => _NewsListTile(
-        news: item,
-        onTap: () => _showNewsDetail(context, item),
-      )).toList(),
+      children: news
+          .take(5)
+          .map(
+            (item) => _NewsListTile(
+              news: item,
+              onTap: () => _showNewsDetail(context, item),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -84,20 +85,13 @@ class _NewsListTile extends StatelessWidget {
   final NewsItem news;
   final VoidCallback onTap;
 
-  const _NewsListTile({
-    required this.news,
-    required this.onTap,
-  });
+  const _NewsListTile({required this.news, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.article_outlined),
-      title: Text(
-        news.title,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: Text(news.title, maxLines: 2, overflow: TextOverflow.ellipsis),
       subtitle: Text(
         '${news.publishedAt.month}/${news.publishedAt.day}',
         style: Theme.of(context).textTheme.bodySmall,
@@ -114,31 +108,34 @@ class _NewsShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: List.generate(3, (index) => ListTile(
-        leading: Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(4),
+      children: List.generate(
+        3,
+        (index) => ListTile(
+          leading: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          title: Container(
+            height: 16,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          subtitle: Container(
+            height: 12,
+            width: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
         ),
-        title: Container(
-          height: 16,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-        subtitle: Container(
-          height: 12,
-          width: 60,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(4),
-          ),
-        ),
-      )),
+      ),
     );
   }
 }
@@ -147,10 +144,7 @@ class _ErrorSection extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const _ErrorSection({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ErrorSection({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -158,10 +152,7 @@ class _ErrorSection extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Icon(
-            Icons.error_outline,
-            color: Theme.of(context).colorScheme.error,
-          ),
+          Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error),
           const SizedBox(height: 8),
           Text(
             message,
@@ -169,10 +160,7 @@ class _ErrorSection extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          TextButton(
-            onPressed: onRetry,
-            child: const Text('再試行'),
-          ),
+          TextButton(onPressed: onRetry, child: const Text('再試行')),
         ],
       ),
     );

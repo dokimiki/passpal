@@ -8,10 +8,7 @@ abstract class HomeRepository {
   Future<List<NewsItem>> getSystemNews();
 
   /// 受信メール一覧を取得
-  Future<List<MailSummary>> getReceivedMail({
-    int? limit,
-    int page = 1,
-  });
+  Future<List<MailSummary>> getReceivedMail({int? limit, int page = 1});
 
   /// メール本文を取得
   Future<MailBody> getMailBody(String mailId);
