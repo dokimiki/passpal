@@ -23,11 +23,10 @@ PassPalアプリケーションにおいて、以下の設定管理が必要：
 ### 1. ConfigSource（設定ソース）
 - **DotEnvConfigSource**: flutter_dotenvを使用した.env読み込み
 - **RemoteConfigSource**: Firebase Remote Configからの動的設定
-- **DefaultConfigSource**: フォールバック用のデフォルト値
 
 ### 2. ConfigRepository（統合管理）
 - **目的**: 複数ソースからの設定値統合と優先度管理
-- **優先度**: Remote Config > .env > Default
+- **優先度**: Remote Config > .env
 - **キャッシュ**: Remote Configは15分間キャッシュ
 - **リアクティブ**: StreamControllerによる変更通知
 
@@ -82,8 +81,6 @@ class FeatureFlags with _$FeatureFlags {
 1. Remote Config（最優先）
    ↓ なし/エラー時
 2. .env ファイル
-   ↓ なし/エラー時  
-3. Default値（必須）
 ```
 
 ## DI設計
@@ -101,7 +98,6 @@ final configRepositoryProvider = Provider<ConfigRepository>((ref) {
   return ConfigRepository(
     dotEnvSource: ref.watch(dotEnvConfigSourceProvider),
     remoteSource: ref.watch(remoteConfigSourceProvider),
-    defaultSource: const DefaultConfigSource(),
   );
 });
 
@@ -206,7 +202,6 @@ final testConfigService = ConfigService(
   ConfigRepository(
     dotEnvSource: MockDotEnvConfigSource(),
     remoteSource: MockRemoteConfigSource(),
-    defaultSource: TestDefaultConfigSource(),
   ),
 );
 
@@ -246,7 +241,6 @@ lib/core/config/
  │   ├─ config_source.dart        # ベースインターフェース
  │   ├─ dotenv_config_source.dart # .env読み込み
  │   ├─ remote_config_source.dart # Remote Config
- │   └─ default_config_source.dart # デフォルト値
  ├─ repository/
  │   └─ config_repository.dart    # 統合管理
  ├─ service/
