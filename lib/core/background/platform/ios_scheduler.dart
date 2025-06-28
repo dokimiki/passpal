@@ -33,10 +33,9 @@ class IosScheduler implements BackgroundScheduler {
           stopOnTerminate: false,
           enableHeadless: true,
           startOnBoot: true,
-          // TODO: Fix NetworkType values for background_fetch package
-          // requiredNetworkType: task.constraints.networkRequired
-          //     ? bg.NetworkType.connected
-          //     : bg.NetworkType.none,
+          requiredNetworkType: task.constraints.networkRequired
+              ? bg.NetworkType.ANY
+              : bg.NetworkType.NONE,
         ),
         (String taskId) async {
           // Handle background fetch event
@@ -90,10 +89,9 @@ class IosScheduler implements BackgroundScheduler {
           stopOnTerminate: false,
           enableHeadless: true,
           startOnBoot: true,
-          // TODO: Fix NetworkType values for background_fetch package
-          // requiredNetworkType: task.constraints.networkRequired
-          //     ? bg.NetworkType.connected
-          //     : bg.NetworkType.none,
+          requiredNetworkType: task.constraints.networkRequired
+              ? bg.NetworkType.ANY
+              : bg.NetworkType.NONE,
         ),
         (String taskId) async {
           await _handleBackgroundFetch(taskId);
