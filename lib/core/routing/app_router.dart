@@ -11,6 +11,9 @@ import 'package:passpal/core/routing/providers.dart';
 import 'package:passpal/core/routing/pages/error_page.dart';
 import 'package:passpal/core/error/app_exception.dart';
 import 'package:passpal/core/auth/providers/auth_providers.dart';
+import 'package:passpal/features/onboarding/presentation/pages/campus_page.dart';
+import 'package:passpal/features/onboarding/presentation/pages/notification_page.dart';
+import 'package:passpal/features/onboarding/presentation/pages/start_page.dart';
 
 /// Create the app router with all guards and routes
 GoRouter createAppRouter(Ref ref) {
@@ -49,18 +52,17 @@ List<RouteBase> _buildRoutes() {
     GoRoute(
       path: AppRoute.setupCampus.path,
       name: AppRoute.setupCampus.name,
-      builder: (context, state) =>
-          const Placeholder(), // TODO: Implement SetupPage
+      builder: (context, state) => const CampusPage(),
     ),
     GoRoute(
       path: AppRoute.setupNotification.path,
       name: AppRoute.setupNotification.name,
-      builder: (context, state) => const Placeholder(),
+      builder: (context, state) => const NotificationPage(),
     ),
     GoRoute(
       path: AppRoute.setupStart.path,
       name: AppRoute.setupStart.name,
-      builder: (context, state) => const Placeholder(),
+      builder: (context, state) => const StartPage(),
     ),
 
     // Main routes (ShellRoute for tabs)

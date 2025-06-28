@@ -5,7 +5,7 @@ import 'package:passpal/core/routing/observers/navigation_observer.dart';
 import 'package:passpal/core/routing/app_router.dart';
 import 'package:passpal/core/config/config_providers.dart';
 import 'package:passpal/core/config/service/config_service.dart';
-import 'package:passpal/core/storage/storage_providers.dart';
+import 'package:passpal/features/onboarding/application/onboarding_controller.dart';
 
 /// GoRouter provider
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -24,17 +24,9 @@ final navigationObserverProvider = Provider<NavigationObserver>((ref) {
 });
 
 /// Setup completion status provider
-/// ユーザーがキャンパス設定や通知設定を完了しているかを判定
+/// オンボーディングが完了しているかを判定
 final setupCompletedProvider = Provider<bool>((ref) {
-  final userPrefs = ref.watch(userPrefsProvider);
-
-  // キャンパスが設定されており、通知設定が保存されていれば完了とみなす
-  final hasCampus = userPrefs.campus != null && userPrefs.campus!.isNotEmpty;
-  // 通知設定は初期値がtrueなので、設定されていればOK
-  final hasNotificationSettings =
-      true; // notificationsEnabledはデフォルト値があるため常にtrue
-
-  return hasCampus && hasNotificationSettings;
+  return ref.watch(setupCompletedFromOnboardingProvider);
 });
 
 /// Maintenance flag provider

@@ -105,8 +105,6 @@ lib/features/<feature>/
 
 Add the following block **verbatim** at the end of `instructions.md`.
 
----
-
 ## 12. Portal-Data Transformation & Test Fixtures
 
 * **Source formats**: the university portals return either raw **HTML** or **JSON**.
