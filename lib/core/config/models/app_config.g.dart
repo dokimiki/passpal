@@ -10,6 +10,7 @@ _AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => _AppConfig(
   api: ApiConfig.fromJson(json['api'] as Map<String, dynamic>),
   features: FeatureFlags.fromJson(json['features'] as Map<String, dynamic>),
   debug: DebugConfig.fromJson(json['debug'] as Map<String, dynamic>),
+  admin: AdminConfig.fromJson(json['admin'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$AppConfigToJson(_AppConfig instance) =>
@@ -17,4 +18,5 @@ Map<String, dynamic> _$AppConfigToJson(_AppConfig instance) =>
       'api': instance.api,
       'features': instance.features,
       'debug': instance.debug,
+      'admin': instance.admin,
     };

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:passpal/core/config/models/admin_config.dart';
 import 'package:passpal/core/config/sources/config_source.dart';
 import 'package:passpal/core/config/sources/dotenv_config_source.dart';
 import 'package:passpal/core/config/sources/remote_config_source.dart';
@@ -46,11 +47,13 @@ class ConfigRepository {
     final apiConfig = await _buildApiConfig();
     final featureFlags = await _buildFeatureFlags();
     final debugConfig = await _buildDebugConfig();
+    final adminConfig = await _buildAdminConfig();
 
     _cachedConfig = AppConfig(
       api: apiConfig,
       features: featureFlags,
       debug: debugConfig,
+      admin: adminConfig,
     );
 
     return _cachedConfig!;
@@ -59,18 +62,20 @@ class ConfigRepository {
   /// API設定を構築
   Future<ApiConfig> _buildApiConfig() async {
     final palapiBaseUrl =
-        await _getValue('PAL_API_BASE_URL') ??
+        await _getValue('API_PAL_API_BASE_URL') ??
         ApiConfig.defaultConfig.palapiBaseUrl;
     final alboBaseUrl =
-        await _getValue('ALBO_BASE_URL') ?? ApiConfig.defaultConfig.alboBaseUrl;
+        await _getValue('API_ALBO_BASE_URL') ??
+        ApiConfig.defaultConfig.alboBaseUrl;
     final manaboBaseUrl =
-        await _getValue('MANABO_BASE_URL') ??
+        await _getValue('API_MANABO_BASE_URL') ??
         ApiConfig.defaultConfig.manaboBaseUrl;
     final cubicsBaseUrl =
-        await _getValue('CUBICS_BASE_URL') ??
+        await _getValue('API_CUBICS_BASE_URL') ??
         ApiConfig.defaultConfig.cubicsBaseUrl;
     final ssoBaseUrl =
-        await _getValue('SSO_BASE_URL') ?? ApiConfig.defaultConfig.ssoBaseUrl;
+        await _getValue('API_SSO_BASE_URL') ??
+        ApiConfig.defaultConfig.ssoBaseUrl;
 
     return ApiConfig(
       palapiBaseUrl: palapiBaseUrl,
@@ -124,6 +129,20 @@ class ConfigRepository {
       useMockData: useMockData,
       enableNetworkLogging: enableNetworkLogging,
       enablePerformanceMonitoring: enablePerformanceMonitoring,
+    );
+  }
+
+  Future<AdminConfig> _buildAdminConfig() async {
+    final maintenanceMode =
+        await _getBoolValue('ADMIN_MAINTENANCE_MODE') ??
+        AdminConfig.defaultConfig.maintenanceMode;
+    final minimumVersion =
+        await _getValue<String>('ADMIN_MINIMUM_VERSION') ??
+        AdminConfig.defaultConfig.minimumVersion;
+
+    return AdminConfig(
+      maintenanceMode: maintenanceMode,
+      minimumVersion: minimumVersion,
     );
   }
 

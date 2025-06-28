@@ -152,7 +152,11 @@ List<RouteBase> _buildRoutes() {
 }
 
 /// Handle route redirection with guards
-String? _handleRedirect(BuildContext context, GoRouterState state, Ref ref) {
+Future<String?> _handleRedirect(
+  BuildContext context,
+  GoRouterState state,
+  Ref ref,
+) async {
   final currentPath = state.matchedLocation;
 
   // 1. Force-Update Guard (highest priority)
@@ -160,7 +164,7 @@ String? _handleRedirect(BuildContext context, GoRouterState state, Ref ref) {
   final forceUpdateGuard = ForceUpdateGuard();
   final forceUpdateRedirect = forceUpdateGuard.evaluate(
     currentVersion: '1.0.0', // TODO: Get actual app version
-    minimumVersion: remoteConfig.minimumVersion,
+    minimumVersion: await remoteConfig.minimumVersion,
     currentPath: currentPath,
   );
   if (forceUpdateRedirect != null) return forceUpdateRedirect;

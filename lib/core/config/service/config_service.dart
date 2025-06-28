@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:passpal/core/config/models/admin_config.dart';
 import 'package:passpal/core/config/repository/config_repository.dart';
 import 'package:passpal/core/config/models/app_config.dart';
 import 'package:passpal/core/config/models/api_config.dart';
@@ -34,6 +35,12 @@ class ConfigService {
     return config.debug;
   }
 
+  /// 管理者設定を取得
+  Future<AdminConfig> getAdminConfig() async {
+    final config = await getAppConfig();
+    return config.admin;
+  }
+
   /// 特定の機能フラグの状態を取得
   Future<bool> isFeatureEnabled(String featureName) async {
     final features = await getFeatureFlags();
@@ -49,6 +56,13 @@ class ConfigService {
       default:
         return false;
     }
+  }
+
+  /// 最小必須バージョンを取得
+  Future<String?> getMinimumVersion() async {
+    final adminConfig = await getAdminConfig();
+    final minVersion = adminConfig.minimumVersion;
+    return minVersion.isEmpty || minVersion == '0.0.0' ? null : minVersion;
   }
 
   /// 設定変更のストリーム
