@@ -8,7 +8,7 @@ void main() {
       expect(NetworkTarget.manabo.baseUrl, 'https://manabo.chukyonet.jp');
       expect(NetworkTarget.cubics.baseUrl, 'https://cubics.chukyonet.jp');
       expect(NetworkTarget.sso.baseUrl, 'https://sso.chukyonet.jp');
-      expect(NetworkTarget.palapi.baseUrl, 'https://api.passpal.app');
+      expect(NetworkTarget.palapi.baseUrl, 'https://api.chukyo-passpal.app/v1');
     });
 
     test('should have correct display names', () {

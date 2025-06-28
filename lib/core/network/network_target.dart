@@ -17,7 +17,7 @@ enum NetworkTarget {
       NetworkTarget.manabo => 'https://manabo.chukyonet.jp',
       NetworkTarget.cubics => 'https://cubics.chukyonet.jp',
       NetworkTarget.sso => 'https://sso.chukyonet.jp',
-      NetworkTarget.palapi => 'https://api.passpal.app',
+      NetworkTarget.palapi => 'https://api.chukyo-passpal.app/v1',
     };
   }
 
