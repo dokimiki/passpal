@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../domain/entities/timetable_slot.dart';
 import '../domain/entities/course.dart';
-import '../domain/repositories/timetable_repository.dart';
 import '../domain/value_objects/term.dart';
 import '../domain/usecases/fetch_timetable_uc.dart';
 import '../domain/usecases/refresh_timetable_uc.dart';
 import '../domain/usecases/fetch_course_detail_uc.dart';
+import 'providers.dart';
 
 part 'timetable_controller.g.dart';
 
@@ -61,24 +61,18 @@ class CourseDetailController extends _$CourseDetailController {
 /// UseCaseのプロバイダー
 @riverpod
 FetchTimetableUseCase fetchTimetableUseCase(Ref ref) {
-  final repository = timetableRepositoryProvider(ref);
+  final repository = ref.read(timetableRepositoryProvider);
   return FetchTimetableUseCase(repository);
 }
 
 @riverpod
 RefreshTimetableUseCase refreshTimetableUseCase(Ref ref) {
-  final repository = timetableRepositoryProvider(ref);
+  final repository = ref.read(timetableRepositoryProvider);
   return RefreshTimetableUseCase(repository);
 }
 
 @riverpod
 FetchCourseDetailUseCase fetchCourseDetailUseCase(Ref ref) {
-  final repository = timetableRepositoryProvider(ref);
+  final repository = ref.read(timetableRepositoryProvider);
   return FetchCourseDetailUseCase(repository);
-}
-
-// TODO: repositoryプロバイダーを後で実装
-@riverpod
-TimetableRepository timetableRepositoryProvider(Ref ref) {
-  throw UnimplementedError('TimetableRepository provider not implemented yet');
 }

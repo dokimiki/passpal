@@ -7,7 +7,7 @@ part of 'timetable_controller.dart';
 // **************************************************************************
 
 String _$fetchTimetableUseCaseHash() =>
-    r'6a113e71762d3d089ec3a823369282a1bb968597';
+    r'c04c30964329b68e152fe44e603416bac59b07e4';
 
 /// UseCaseのプロバイダー
 ///
@@ -29,7 +29,7 @@ final fetchTimetableUseCaseProvider =
 typedef FetchTimetableUseCaseRef =
     AutoDisposeProviderRef<FetchTimetableUseCase>;
 String _$refreshTimetableUseCaseHash() =>
-    r'b70a5cb34f95ff89ceb69a4b0460b549287f1e3f';
+    r'9c681b129d45814d80fd4b399c680fd158cd7035';
 
 /// See also [refreshTimetableUseCase].
 @ProviderFor(refreshTimetableUseCase)
@@ -49,7 +49,7 @@ final refreshTimetableUseCaseProvider =
 typedef RefreshTimetableUseCaseRef =
     AutoDisposeProviderRef<RefreshTimetableUseCase>;
 String _$fetchCourseDetailUseCaseHash() =>
-    r'b91fa03b1b7e9eb1a3f212c43d382ac2be42d69d';
+    r'cfba8b7f32c327cdc206c5b6f31bce76e585f7a1';
 
 /// See also [fetchCourseDetailUseCase].
 @ProviderFor(fetchCourseDetailUseCase)
@@ -68,26 +68,6 @@ final fetchCourseDetailUseCaseProvider =
 // ignore: unused_element
 typedef FetchCourseDetailUseCaseRef =
     AutoDisposeProviderRef<FetchCourseDetailUseCase>;
-String _$timetableRepositoryProviderHash() =>
-    r'57cf29e8766e4655ec3e57a3f3b2220e8f0c11ab';
-
-/// See also [timetableRepositoryProvider].
-@ProviderFor(timetableRepositoryProvider)
-final timetableRepositoryProviderProvider =
-    AutoDisposeProvider<TimetableRepository>.internal(
-      timetableRepositoryProvider,
-      name: r'timetableRepositoryProviderProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$timetableRepositoryProviderHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef TimetableRepositoryProviderRef =
-    AutoDisposeProviderRef<TimetableRepository>;
 String _$timetableControllerHash() =>
     r'570691d266e05f08c39a1d6aeaf4528f3a1d5488';
 
