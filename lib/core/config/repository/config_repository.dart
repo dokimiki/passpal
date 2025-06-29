@@ -20,27 +20,52 @@ class ConfigRepository {
       StreamController<AppConfig>.broadcast();
   late final List<ConfigSource> _sources;
   AppConfig? _cachedConfig;
+  bool _isInitialized = false;
+  Completer<void>? _initCompleter;
 
   /// 設定変更のストリーム
   Stream<AppConfig> get configStream => _configChangeController.stream;
 
   /// 初期化処理
   Future<void> initialize() async {
-    _sources = [remoteSource, dotEnvSource];
+    if (_isInitialized) return; // 既に初期化済みの場合は何もしない
 
-    // 各ソースを初期化
-    for (final source in _sources) {
-      await source.initialize();
+    if (_initCompleter != null) {
+      // 初期化が進行中の場合は完了を待つ
+      return _initCompleter!.future;
+    }
 
-      // 設定変更を監視
-      source.onConfigChanged.listen((_) {
-        _onConfigChanged();
-      });
+    _initCompleter = Completer<void>();
+
+    try {
+      _sources = [remoteSource, dotEnvSource];
+
+      // 各ソースを初期化
+      for (final source in _sources) {
+        await source.initialize();
+
+        // 設定変更を監視
+        source.onConfigChanged.listen((_) {
+          _onConfigChanged();
+        });
+      }
+
+      _isInitialized = true;
+      _initCompleter!.complete();
+    } catch (e) {
+      _initCompleter!.completeError(e);
+      _initCompleter = null; // エラー時はリセットして再試行可能にする
+      rethrow;
     }
   }
 
   /// 統合されたアプリ設定を取得
   Future<AppConfig> getAppConfig() async {
+    // まだ初期化されていない場合は初期化を実行
+    if (!_isInitialized) {
+      await initialize();
+    }
+
     if (_cachedConfig != null) {
       return _cachedConfig!;
     }

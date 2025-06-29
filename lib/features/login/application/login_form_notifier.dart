@@ -54,10 +54,20 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
       // Navigate to Google sign-in page
       final router = ref.read(goRouterProvider);
       router.pushNamed(AppRoute.loginGoogle.name);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(
-        login.InvalidStudentIdException(rawStudentId),
-        stackTrace,
+    } catch (e) {
+      // 設定初期化エラーかその他のエラーかを判定
+      String errorMessage;
+      if (e.toString().contains('LateInitializationError') ||
+          e.toString().contains('_sources')) {
+        errorMessage = 'アプリの初期化に失敗しました。アプリを再起動してください。';
+      } else if (e is login.InvalidStudentIdException) {
+        errorMessage = '学籍番号の形式が正しくありません。';
+      } else {
+        errorMessage = '予期しないエラーが発生しました。';
+      }
+
+      state = AsyncValue.data(
+        state.value!.copyWith(errorMessage: errorMessage, isLoading: false),
       );
     }
   }

@@ -31,6 +31,8 @@ final configServiceProvider = Provider<ConfigService>((ref) {
 
 /// アプリ設定の非同期Provider
 final appConfigProvider = FutureProvider<AppConfig>((ref) async {
+  // 初期化を確実に実行してから設定を取得
+  await ref.watch(configInitializationProvider.future);
   final service = ref.watch(configServiceProvider);
   return service.getAppConfig();
 });
