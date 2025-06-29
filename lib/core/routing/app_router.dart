@@ -11,6 +11,8 @@ import 'package:passpal/core/routing/providers.dart';
 import 'package:passpal/core/routing/pages/error_page.dart';
 import 'package:passpal/core/error/app_exception.dart';
 import 'package:passpal/core/auth/providers/auth_providers.dart';
+import 'package:passpal/features/bus_schedule/presentation/pages/bus_schedule_page.dart';
+import 'package:passpal/features/home/presentation/pages/home_page.dart';
 import 'package:passpal/features/onboarding/presentation/pages/campus_page.dart';
 import 'package:passpal/features/onboarding/presentation/pages/notification_page.dart';
 import 'package:passpal/features/onboarding/presentation/pages/start_page.dart';
@@ -20,6 +22,9 @@ import 'package:passpal/core/routing/widgets/main_shell.dart';
 import 'package:passpal/features/login/presentation/pages/student_id_page.dart';
 import 'package:passpal/features/login/presentation/pages/google_signin_page.dart';
 import 'package:passpal/features/login/presentation/pages/cu_id_page.dart';
+import 'package:passpal/features/system/force_update/presentation/force_update_page.dart';
+import 'package:passpal/features/system/maintenance/presentation/maintenance_page.dart';
+import 'package:passpal/features/timetable/presentation/pages/timetable_page.dart';
 
 /// Create the app router with all guards and routes
 GoRouter createAppRouter(Ref ref) {
@@ -79,14 +84,12 @@ List<RouteBase> _buildRoutes() {
         GoRoute(
           path: AppRoute.mainHome.path,
           name: AppRoute.mainHome.name,
-          builder: (context, state) =>
-              const Placeholder(), // TODO: Implement HomePage
+          builder: (context, state) => const HomePage(),
         ),
         GoRoute(
           path: AppRoute.mainTimetable.path,
           name: AppRoute.mainTimetable.name,
-          builder: (context, state) =>
-              const Placeholder(), // TODO: Implement TimetablePage
+          builder: (context, state) => const TimetablePage(),
           routes: [
             GoRoute(
               path:
@@ -107,8 +110,7 @@ List<RouteBase> _buildRoutes() {
         GoRoute(
           path: AppRoute.mainBus.path,
           name: AppRoute.mainBus.name,
-          builder: (context, state) =>
-              const Placeholder(), // TODO: Implement BusPage
+          builder: (context, state) => const BusSchedulePage(),
         ),
         GoRoute(
           path: AppRoute.mainAssignments.path,
@@ -127,14 +129,12 @@ List<RouteBase> _buildRoutes() {
     GoRoute(
       path: AppRoute.maintenance.path,
       name: AppRoute.maintenance.name,
-      builder: (context, state) =>
-          const Placeholder(), // TODO: Implement MaintenancePage
+      builder: (context, state) => const MaintenancePage(),
     ),
     GoRoute(
       path: AppRoute.forceUpdate.path,
       name: AppRoute.forceUpdate.name,
-      builder: (context, state) =>
-          const Placeholder(), // TODO: Implement ForceUpdatePage
+      builder: (context, state) => const ForceUpdatePage(),
     ),
     GoRoute(
       path: AppRoute.error.path,

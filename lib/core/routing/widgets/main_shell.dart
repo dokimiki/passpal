@@ -3,10 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:passpal/core/routing/routes.dart';
 
 class MainShell extends StatefulWidget {
-  const MainShell({
-    super.key,
-    required this.child,
-  });
+  const MainShell({super.key, required this.child});
 
   final Widget child;
 
@@ -40,8 +37,19 @@ class _MainShellState extends State<MainShell> {
     }
   }
 
+  int _getCurrentIndex(String currentPath) {
+    if (currentPath.startsWith('/main/home')) return 0;
+    if (currentPath.startsWith('/main/timetable')) return 1;
+    if (currentPath.startsWith('/main/assignments')) return 2;
+    if (currentPath.startsWith('/main/bus')) return 3;
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final currentPath = GoRouterState.of(context).matchedLocation;
+    _currentIndex = _getCurrentIndex(currentPath);
+
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
