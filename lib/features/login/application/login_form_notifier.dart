@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:passpal/core/auth/providers/auth_providers.dart';
 import 'package:passpal/core/auth/errors/auth_exception.dart' as core_auth;
 import 'package:passpal/core/auth/idp/idp_authenticator.dart';
@@ -90,30 +92,44 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
       final googleLinkVerifier = ref.read(googleLinkVerifierProvider);
       final firebaseAuth = ref.read(firebaseAuthProvider);
 
-      // For now, we'll use a simplified approach
-      // In a real implementation, Google sign-in would be triggered here
-      // and the user would be signed in to Firebase
-
-      // Simulate Google sign-in success for development
-      // This should be replaced with actual Google sign-in implementation
-
-      // For the example, let's assume the user is already signed in via Google
-      // and we just need to verify the email domain
-      final user = firebaseAuth.currentUser;
-      if (user?.email == null) {
-        throw const core_auth.AuthenticationException.generic(
-          message: 'Please sign in with Google first',
-        );
-      }
-
       // Get auth config
       final appConfig = await ref.read(appConfigProvider.future);
       final authConfig = appConfig.auth;
 
+      // Firebase Auth direct Google Sign-In for Android/iOS
+      final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      googleProvider.addScope('email');
+      
+      // Set hint for the expected email
+      googleProvider.setCustomParameters({
+        'login_hint': currentState.studentId!.expectedEmail,
+      });
+
+      // Sign out any existing users first
+      await firebaseAuth.signOut();
+
+      // Add debug logging
+      debugPrint('Starting Google Sign-In with provider');
+      debugPrint('Expected email: ${currentState.studentId!.expectedEmail}');
+
+      // Use signInWithProvider for native platforms (Android/iOS)
+      final UserCredential userCredential = await firebaseAuth.signInWithProvider(googleProvider);
+      
+      debugPrint('Google Sign-In completed, checking user data...');
+      final User? user = userCredential.user;
+      
+      if (user == null || user.email == null) {
+        throw const core_auth.AuthenticationException.generic(
+          message: 'Google認証からユーザー情報を取得できませんでした。',
+        );
+      }
+      
+      debugPrint('User signed in successfully: ${user.email}');
+
       // Verify email matches expected student email
       final expectedEmail = currentState.studentId!.expectedEmail;
       if (!LoginValidators.isValidStudentEmail(
-        user!.email!,
+        user.email!,
         currentState.studentId!.value,
         authConfig,
       )) {
@@ -140,14 +156,34 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
       // Navigate to CU-ID page
       final router = ref.read(goRouterProvider);
       router.pushNamed(AppRoute.loginCuId.name);
-    } catch (e, stackTrace) {
-      if (e is login.AccountLinkException) {
-        state = AsyncValue.data(
-          currentState!.copyWith(errorMessage: e.message, isLoading: false),
-        );
+    } catch (e) {
+      // Handle different types of errors
+      debugPrint('Google Sign-In error: $e');
+      debugPrint('Error type: ${e.runtimeType}');
+      
+      String errorMessage;
+      
+      if (e.toString().contains('sign_in_canceled') || 
+          e.toString().contains('ERROR_ABORTED_BY_USER') ||
+          e.toString().contains('canceled') ||
+          e.toString().contains('cancelled')) {
+        errorMessage = 'Googleサインインがキャンセルされました';
+      } else if (e is login.AccountLinkException) {
+        errorMessage = e.message;
+      } else if (e.toString().contains('network')) {
+        errorMessage = 'ネットワークエラーが発生しました。接続を確認してください。';
+      } else if (e.toString().contains('configuration')) {
+        errorMessage = 'Google認証の設定に問題があります。';
+      } else if (e.toString().contains('DEVELOPER_ERROR') || 
+                 e.toString().contains('developer_error')) {
+        errorMessage = 'アプリの設定に問題があります。開発者にお問い合わせください。';
       } else {
-        state = AsyncValue.error(e, stackTrace);
+        errorMessage = 'Google認証に失敗しました。もう一度お試しください。';
       }
+      
+      state = AsyncValue.data(
+        currentState!.copyWith(errorMessage: errorMessage, isLoading: false),
+      );
     }
   }
 

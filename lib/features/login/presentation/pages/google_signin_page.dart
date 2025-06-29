@@ -70,16 +70,26 @@ class GoogleSigninPage extends ConsumerWidget {
                         ),
                         const SizedBox(height: SpaceTokens.lg),
                         loginState.when(
-                          data: (state) => PrimaryButton(
-                            onPressed: () => ref
-                                .read(loginFormNotifierProvider.notifier)
-                                .handleGoogleSignin(),
-                            text: 'Sign in with Google',
-                            isLoading: state.isLoading,
+                          data: (state) => Column(
+                            children: [
+                              Icon(
+                                Icons.school,
+                                size: 24,
+                                color: theme.colorScheme.primary,
+                              ),
+                              const SizedBox(height: SpaceTokens.sm),
+                              PrimaryButton(
+                                onPressed: () => ref
+                                    .read(loginFormNotifierProvider.notifier)
+                                    .handleGoogleSignin(),
+                                text: 'サインイン（学内Googleアカウント）',
+                                isLoading: state.isLoading,
+                              ),
+                            ],
                           ),
                           loading: () => const PrimaryButton(
                             onPressed: null,
-                            text: 'Sign in with Google',
+                            text: 'サインイン（学内Googleアカウント）',
                             isLoading: true,
                           ),
                           error: (e, s) => PrimaryButton(
