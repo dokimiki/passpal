@@ -158,6 +158,7 @@ Future<String?> _handleRedirect(
   Ref ref,
 ) async {
   final currentPath = state.matchedLocation;
+  debugPrint('Router: evaluating redirect for path: $currentPath');
 
   // 1. Force-Update Guard (highest priority)
   final remoteConfig = ref.read(remoteConfigProvider);
@@ -167,7 +168,12 @@ Future<String?> _handleRedirect(
     minimumVersion: await remoteConfig.minimumVersion,
     currentPath: currentPath,
   );
-  if (forceUpdateRedirect != null) return forceUpdateRedirect;
+  if (forceUpdateRedirect != null) {
+    debugPrint(
+      'Router: Force-Update Guard redirecting to: $forceUpdateRedirect',
+    );
+    return forceUpdateRedirect;
+  }
 
   // 2. Maintenance Guard
   final isMaintenanceMode = ref.read(maintenanceFlagProvider);
@@ -176,7 +182,12 @@ Future<String?> _handleRedirect(
     isMaintenanceMode: isMaintenanceMode,
     currentPath: currentPath,
   );
-  if (maintenanceRedirect != null) return maintenanceRedirect;
+  if (maintenanceRedirect != null) {
+    debugPrint(
+      'Router: Maintenance Guard redirecting to: $maintenanceRedirect',
+    );
+    return maintenanceRedirect;
+  }
 
   // 3. Auth Guard
   final authState = ref.read(authStateProvider);
@@ -185,7 +196,10 @@ Future<String?> _handleRedirect(
     authState: authState,
     currentPath: currentPath,
   );
-  if (authRedirect != null) return authRedirect;
+  if (authRedirect != null) {
+    debugPrint('Router: Auth Guard redirecting to: $authRedirect');
+    return authRedirect;
+  }
 
   // 4. Setup Guard (lowest priority)
   final isSetupCompleted = ref.read(setupCompletedProvider);
@@ -195,8 +209,12 @@ Future<String?> _handleRedirect(
     isSetupCompleted: isSetupCompleted,
     currentPath: currentPath,
   );
-  if (setupRedirect != null) return setupRedirect;
+  if (setupRedirect != null) {
+    debugPrint('Router: Setup Guard redirecting to: $setupRedirect');
+    return setupRedirect;
+  }
 
+  debugPrint('Router: no redirect needed');
   return null; // No redirect needed
 }
 

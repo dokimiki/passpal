@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:passpal/core/auth/providers/auth_providers.dart';
+import 'package:passpal/core/auth/providers/auth_state_notifier.dart';
 import 'package:passpal/core/auth/errors/auth_exception.dart' as core_auth;
 import 'package:passpal/core/auth/idp/idp_authenticator.dart';
 import 'package:passpal/core/routing/providers.dart';
@@ -55,7 +56,7 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
 
       // Navigate to Google sign-in page
       final router = ref.read(goRouterProvider);
-      router.pushNamed(AppRoute.loginGoogle.name);
+      router.goNamed(AppRoute.loginGoogle.name);
     } catch (e) {
       // 設定初期化エラーかその他のエラーかを判定
       String errorMessage;
@@ -156,7 +157,7 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
 
       // Navigate to CU-ID page
       final router = ref.read(goRouterProvider);
-      router.pushNamed(AppRoute.loginCuId.name);
+      router.goNamed(AppRoute.loginCuId.name);
     } catch (e) {
       // Handle different types of errors
       debugPrint('Google Sign-In error: $e');
@@ -212,16 +213,34 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
         currentState.copyWith(isLoading: true, errorMessage: null),
       );
 
-      final authFacade = ref.read(authFacadeProvider);
+      final authStateNotifier = ref.read(authStateProvider.notifier);
 
-      // Attempt login
-      await authFacade.login(
+      // Attempt login using AuthStateNotifier
+      await authStateNotifier.login(
         portal: Portal.albo, // Using ALBO portal
         username: currentState.studentId!.value,
         password: password,
       );
 
-      // Login successful - navigate to setup
+      // Check if login was successful
+      final authState = ref.read(authStateProvider);
+      if (!authState.isAuthenticated) {
+        // Login failed, handle error
+        if (authState is AuthStateError) {
+          throw core_auth.AuthenticationException.invalidCredential(
+            message: authState.message,
+          );
+        } else {
+          throw const core_auth.AuthenticationException.generic(
+            message: 'ログインに失敗しました',
+          );
+        }
+      }
+
+      // Login successful - update state first
+      state = AsyncValue.data(currentState.copyWith(isLoading: false));
+
+      // Navigate to setup - using go to clear navigation stack
       final router = ref.read(goRouterProvider);
       router.goNamed(AppRoute.setupCampus.name);
     } catch (e) {

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:passpal/core/auth/models/auth_session.dart';
 import 'package:passpal/core/auth/facade/auth_facade.dart';
@@ -83,13 +84,18 @@ class AuthStateNotifier extends Notifier<AuthState> {
 
   /// 初期化時の認証状態確認
   Future<void> _initializeAuth() async {
+    debugPrint('AuthStateNotifier: initializing auth state');
     try {
       final session = await _authFacade.restoreSession();
       if (session != null) {
+        debugPrint('AuthStateNotifier: session restored successfully');
         state = AuthStateAuthenticated(session: session);
+      } else {
+        debugPrint('AuthStateNotifier: no session to restore');
       }
     } catch (e) {
       // セッション復元に失敗した場合は未認証状態のまま
+      debugPrint('AuthStateNotifier: session restore failed: $e');
       state = const AuthStateUnauthenticated();
     }
   }
@@ -100,6 +106,7 @@ class AuthStateNotifier extends Notifier<AuthState> {
     required String username,
     required String password,
   }) async {
+    debugPrint('AuthStateNotifier: starting login for $username');
     state = const AuthStateAuthenticating();
 
     try {
@@ -108,12 +115,22 @@ class AuthStateNotifier extends Notifier<AuthState> {
         username: username,
         password: password,
       );
+      debugPrint(
+        'AuthStateNotifier: login successful, updating state to authenticated',
+      );
       state = AuthStateAuthenticated(session: session);
     } on AuthenticationException catch (e, stack) {
+      debugPrint(
+        'AuthStateNotifier: login failed with AuthenticationException: ${e.message}',
+      );
       state = AuthStateError(message: e.message, exception: e, stack: stack);
     } on AccountLinkException catch (e, stack) {
+      debugPrint(
+        'AuthStateNotifier: login failed with AccountLinkException: ${e.message}',
+      );
       state = AuthStateError(message: e.message, exception: e, stack: stack);
     } catch (e, stack) {
+      debugPrint('AuthStateNotifier: login failed with unknown error: $e');
       state = AuthStateError(
         message: 'ログイン処理中にエラーが発生しました: $e',
         exception: e,
