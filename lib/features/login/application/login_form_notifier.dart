@@ -96,34 +96,35 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
       final appConfig = await ref.read(appConfigProvider.future);
       final authConfig = appConfig.auth;
 
-      // Firebase Auth direct Google Sign-In for Android/iOS
+      // Sign out any existing users first
+      await firebaseAuth.signOut();
+
+      // Add debug logging
+      debugPrint('Starting Google Sign-In with Firebase Auth');
+      debugPrint('Expected email: ${currentState.studentId!.expectedEmail}');
+
+      // Firebase Auth direct Google Sign-In for iOS/Android
       final GoogleAuthProvider googleProvider = GoogleAuthProvider();
       googleProvider.addScope('email');
-      
+
       // Set hint for the expected email
       googleProvider.setCustomParameters({
         'login_hint': currentState.studentId!.expectedEmail,
       });
 
-      // Sign out any existing users first
-      await firebaseAuth.signOut();
+      // Use signInWithProvider for iOS/Android
+      final UserCredential userCredential = await firebaseAuth
+          .signInWithProvider(googleProvider);
 
-      // Add debug logging
-      debugPrint('Starting Google Sign-In with provider');
-      debugPrint('Expected email: ${currentState.studentId!.expectedEmail}');
-
-      // Use signInWithProvider for native platforms (Android/iOS)
-      final UserCredential userCredential = await firebaseAuth.signInWithProvider(googleProvider);
-      
       debugPrint('Google Sign-In completed, checking user data...');
       final User? user = userCredential.user;
-      
+
       if (user == null || user.email == null) {
         throw const core_auth.AuthenticationException.generic(
           message: 'Google認証からユーザー情報を取得できませんでした。',
         );
       }
-      
+
       debugPrint('User signed in successfully: ${user.email}');
 
       // Verify email matches expected student email
@@ -160,10 +161,10 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
       // Handle different types of errors
       debugPrint('Google Sign-In error: $e');
       debugPrint('Error type: ${e.runtimeType}');
-      
+
       String errorMessage;
-      
-      if (e.toString().contains('sign_in_canceled') || 
+
+      if (e.toString().contains('sign_in_canceled') ||
           e.toString().contains('ERROR_ABORTED_BY_USER') ||
           e.toString().contains('canceled') ||
           e.toString().contains('cancelled')) {
@@ -174,13 +175,13 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
         errorMessage = 'ネットワークエラーが発生しました。接続を確認してください。';
       } else if (e.toString().contains('configuration')) {
         errorMessage = 'Google認証の設定に問題があります。';
-      } else if (e.toString().contains('DEVELOPER_ERROR') || 
-                 e.toString().contains('developer_error')) {
+      } else if (e.toString().contains('DEVELOPER_ERROR') ||
+          e.toString().contains('developer_error')) {
         errorMessage = 'アプリの設定に問題があります。開発者にお問い合わせください。';
       } else {
         errorMessage = 'Google認証に失敗しました。もう一度お試しください。';
       }
-      
+
       state = AsyncValue.data(
         currentState!.copyWith(errorMessage: errorMessage, isLoading: false),
       );
