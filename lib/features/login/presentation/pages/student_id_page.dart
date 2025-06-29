@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:passpal/core/routing/routes.dart';
 import 'package:passpal/core/theme/tokens/spacing.dart';
 import 'package:passpal/features/login/application/login_form_notifier.dart';
 import 'package:passpal/features/login/application/validators.dart';
@@ -46,12 +44,12 @@ class _StudentIdPageState extends ConsumerState<StudentIdPage> {
     }
   }
 
-  void _onSubmit() {
+  void _onSubmit() async {
     if (_isButtonEnabled) {
-      ref
+      await ref
           .read(loginFormNotifierProvider.notifier)
           .setStudentId(_controller.text);
-      context.goNamed(AppRoute.loginGoogle.name);
+      // Navigation is handled within setStudentId method
     }
   }
 

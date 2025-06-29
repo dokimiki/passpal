@@ -17,6 +17,9 @@ import 'package:passpal/features/onboarding/presentation/pages/start_page.dart';
 import 'package:passpal/features/settings/presentation/pages/settings_page.dart';
 import 'package:passpal/features/assignments/presentation/pages/assignments_page.dart';
 import 'package:passpal/core/routing/widgets/main_shell.dart';
+import 'package:passpal/features/login/presentation/pages/student_id_page.dart';
+import 'package:passpal/features/login/presentation/pages/google_signin_page.dart';
+import 'package:passpal/features/login/presentation/pages/cu_id_page.dart';
 
 /// Create the app router with all guards and routes
 GoRouter createAppRouter(Ref ref) {
@@ -37,18 +40,17 @@ List<RouteBase> _buildRoutes() {
     GoRoute(
       path: AppRoute.loginStudentId.path,
       name: AppRoute.loginStudentId.name,
-      builder: (context, state) =>
-          const Placeholder(), // TODO: Implement LoginPage
+      builder: (context, state) => const StudentIdPage(),
     ),
     GoRoute(
       path: AppRoute.loginGoogle.path,
       name: AppRoute.loginGoogle.name,
-      builder: (context, state) => const Placeholder(),
+      builder: (context, state) => const GoogleSigninPage(),
     ),
     GoRoute(
       path: AppRoute.loginCuId.path,
       name: AppRoute.loginCuId.name,
-      builder: (context, state) => const Placeholder(),
+      builder: (context, state) => const CuIdPage(),
     ),
 
     // Setup routes

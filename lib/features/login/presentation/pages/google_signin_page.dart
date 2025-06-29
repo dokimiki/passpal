@@ -34,9 +34,10 @@ class GoogleSigninPage extends ConsumerWidget {
                     padding: const EdgeInsets.all(SpaceTokens.lg),
                     child: Column(
                       children: [
-                        Image.asset(
-                          'assets/images/google_logo.png', // Ensure you have this asset
-                          height: 60,
+                        Icon(
+                          Icons.account_circle,
+                          size: 60,
+                          color: theme.colorScheme.primary,
                         ),
                         const SizedBox(height: SpaceTokens.md),
                         Text(
