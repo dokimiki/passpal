@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../widgets/timetable_grid.dart';
-import '../../application/timetable_controller.dart';
+import 'package:passpal/core/theme/tokens/spacing.dart';
+import 'package:passpal/features/timetable/application/timetable_controller.dart';
+import 'package:passpal/features/timetable/presentation/widgets/timetable_grid.dart';
 
-/// 時間割ページ
 class TimetablePage extends ConsumerWidget {
   const TimetablePage({super.key});
 
@@ -13,104 +13,71 @@ class TimetablePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('時間割'),
+        title: const Text('Timetable'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_month),
-            onPressed: () {
-              _showTermSelector(context, ref);
-            },
+            icon: const Icon(Icons.today_outlined),
+            onPressed: () => _showTermSelector(context, ref),
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () {
-              ref
-                  .read(timetableControllerProvider.notifier)
-                  .refresh(forceRefresh: true);
-            },
+            onPressed: () => ref
+                .read(timetableControllerProvider.notifier)
+                .refresh(forceRefresh: true),
           ),
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {
-          await ref
-              .read(timetableControllerProvider.notifier)
-              .refresh(forceRefresh: true);
-        },
+        onRefresh: () => ref
+            .read(timetableControllerProvider.notifier)
+            .refresh(forceRefresh: true),
         child: timetableState.when(
           data: (slots) => TimetableGrid(slots: slots),
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(
-                  'エラーが発生しました',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '$error',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    ref.read(timetableControllerProvider.notifier).refresh();
-                  },
-                  child: const Text('再読み込み'),
-                ),
-              ],
+          error: (error, _) => _buildErrorWidget(context, ref, error),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget(BuildContext context, WidgetRef ref, Object error) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(SpaceTokens.lg),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+            const SizedBox(height: SpaceTokens.md),
+            Text(
+              'Failed to load timetable',
+              style: theme.textTheme.headlineSmall,
             ),
-          ),
+            const SizedBox(height: SpaceTokens.sm),
+            Text(
+              error.toString(),
+              style: theme.textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: SpaceTokens.lg),
+            ElevatedButton.icon(
+              onPressed: () =>
+                  ref.read(timetableControllerProvider.notifier).refresh(),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
+            ),
+          ],
         ),
       ),
     );
   }
 
   void _showTermSelector(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('学期選択', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text('前期'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: 前期の時間割を読み込み
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text('後期'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: 後期の時間割を読み込み
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text('集中講義'),
-              onTap: () {
-                Navigator.pop(context);
-                // TODO: 集中講義の時間割を読み込み
-              },
-            ),
-          ],
-        ),
-      ),
+    // This would be implemented with a proper term selection logic
+    // For now, it's a placeholder.
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Term selection coming soon!')),
     );
   }
 }

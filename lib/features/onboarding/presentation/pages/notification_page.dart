@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:passpal/core/routing/routes.dart';
+import 'package:passpal/core/theme/tokens/spacing.dart';
 import 'package:passpal/features/onboarding/application/onboarding_controller.dart';
+import 'package:passpal/features/onboarding/presentation/widgets/onboarding_scaffold.dart';
+import 'package:passpal/features/login/presentation/widgets/primary_button.dart';
 
 /// Notification permission page for onboarding
 class NotificationPage extends ConsumerWidget {
@@ -8,131 +13,114 @@ class NotificationPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final onboardingState = ref.watch(onboardingControllerProvider);
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('通知設定'), centerTitle: true),
-      body: onboardingState.when(
-        data: (status) => _buildContent(context, ref),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error, color: Colors.red, size: 64),
-              const SizedBox(height: 16),
-              Text('エラーが発生しました: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.refresh(onboardingControllerProvider),
-                child: const Text('再試行'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContent(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
+    return OnboardingScaffold(
+      title: 'Step 2: Notifications',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 32),
+          const Spacer(),
           Icon(
-            Icons.notifications_active,
+            Icons.notifications_active_outlined,
             size: 80,
             color: theme.colorScheme.primary,
           ),
-          const SizedBox(height: 32),
-          const Text(
-            '通知を許可しますか？',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          const SizedBox(height: SpaceTokens.md),
+          Text(
+            'Enable Notifications',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.info, color: theme.colorScheme.primary),
-                      const SizedBox(width: 12),
-                      const Text(
-                        '通知を許可すると',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildFeatureItem(
-                    icon: Icons.assignment,
-                    text: '課題の締切日をお知らせ',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildFeatureItem(icon: Icons.schedule, text: '授業開始時間をリマインド'),
-                  const SizedBox(height: 12),
-                  _buildFeatureItem(icon: Icons.campaign, text: '重要なお知らせを受信'),
-                ],
-              ),
-            ),
+          const SizedBox(height: SpaceTokens.md),
+          Text(
+            'Get timely reminders for assignments, class schedules, and important announcements.',
+            style: theme.textTheme.bodyLarge,
+            textAlign: TextAlign.center,
           ),
-          const Spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ElevatedButton(
-                onPressed: () => _requestPermission(ref),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Text('通知を許可', style: TextStyle(fontSize: 16)),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: () => _skipPermission(ref),
-                child: const Text('後で設定する'),
-              ),
-            ],
+          const SizedBox(height: SpaceTokens.lg),
+          _PermissionInfoCard(),
+          const Spacer(flex: 2),
+          PrimaryButton(
+            text: 'Allow Notifications',
+            onPressed: () async {
+              await ref
+                  .read(onboardingControllerProvider.notifier)
+                  .requestNotificationPermission();
+              if (context.mounted) {
+                context.goNamed(AppRoute.setupStart.name);
+              }
+            },
+          ),
+          const SizedBox(height: SpaceTokens.sm),
+          TextButton(
+            onPressed: () {
+              // No permission request, just navigate
+              context.goNamed(AppRoute.setupStart.name);
+            },
+            child: const Text('Maybe Later'),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildFeatureItem({required IconData icon, required String text}) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: Colors.green),
-        const SizedBox(width: 12),
-        Expanded(child: Text(text, style: const TextStyle(fontSize: 16))),
-      ],
+class _PermissionInfoCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 0,
+      color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.4),
+      child: Padding(
+        padding: const EdgeInsets.all(SpaceTokens.md),
+        child: Column(
+          children: [
+            _buildFeatureItem(
+              context,
+              icon: Icons.assignment_late_outlined,
+              text: 'Assignment due date reminders',
+            ),
+            const Divider(height: SpaceTokens.md),
+            _buildFeatureItem(
+              context,
+              icon: Icons.schedule_outlined,
+              text: 'Class start time alerts',
+            ),
+            const Divider(height: SpaceTokens.md),
+            _buildFeatureItem(
+              context,
+              icon: Icons.campaign_outlined,
+              text: 'Important school announcements',
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  void _requestPermission(WidgetRef ref) async {
-    await ref
-        .read(onboardingControllerProvider.notifier)
-        .requestNotificationPermission();
-    // Navigate to next page
-    // This will be handled by routing logic based on state changes
-  }
-
-  void _skipPermission(WidgetRef ref) async {
-    await ref
-        .read(onboardingControllerProvider.notifier)
-        .skipNotificationPermission();
-    // Navigate to next page
-    // This will be handled by routing logic based on state changes
+  Widget _buildFeatureItem(
+    BuildContext context, {
+    required IconData icon,
+    required String text,
+  }) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Icon(icon, color: theme.colorScheme.onSecondaryContainer),
+        const SizedBox(width: SpaceTokens.md),
+        Expanded(
+          child: Text(
+            text,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSecondaryContainer,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

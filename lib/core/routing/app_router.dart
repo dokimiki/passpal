@@ -16,6 +16,7 @@ import 'package:passpal/features/onboarding/presentation/pages/notification_page
 import 'package:passpal/features/onboarding/presentation/pages/start_page.dart';
 import 'package:passpal/features/settings/presentation/pages/settings_page.dart';
 import 'package:passpal/features/assignments/presentation/pages/assignments_page.dart';
+import 'package:passpal/core/routing/widgets/main_shell.dart';
 
 /// Create the app router with all guards and routes
 GoRouter createAppRouter(Ref ref) {
@@ -70,12 +71,7 @@ List<RouteBase> _buildRoutes() {
     // Main routes (ShellRoute for tabs)
     ShellRoute(
       builder: (context, state, child) {
-        // TODO: Implement main shell with bottom navigation
-        return Scaffold(
-          body: child,
-          bottomNavigationBar:
-              const Placeholder(), // TODO: Implement BottomNavBar
-        );
+        return MainShell(child: child);
       },
       routes: [
         GoRoute(

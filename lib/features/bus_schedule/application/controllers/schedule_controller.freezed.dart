@@ -15,114 +15,111 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TimetableState {
 
- List<DepartureDTO> get items; bool get loading; SimpleError? get error;
-/// Create a copy of TimetableState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$TimetableStateCopyWith<TimetableState> get copyWith => _$TimetableStateCopyWithImpl<TimetableState>(this as TimetableState, _$identity);
+
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimetableState&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.loading, loading) || other.loading == loading)&&(identical(other.error, error) || other.error == error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimetableState);
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),loading,error);
+int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'TimetableState(items: $items, loading: $loading, error: $error)';
+  return 'TimetableState()';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $TimetableStateCopyWith<$Res>  {
-  factory $TimetableStateCopyWith(TimetableState value, $Res Function(TimetableState) _then) = _$TimetableStateCopyWithImpl;
-@useResult
-$Res call({
- List<DepartureDTO> items, bool loading, SimpleError? error
-});
-
-
-
-
-}
-/// @nodoc
-class _$TimetableStateCopyWithImpl<$Res>
-    implements $TimetableStateCopyWith<$Res> {
-  _$TimetableStateCopyWithImpl(this._self, this._then);
-
-  final TimetableState _self;
-  final $Res Function(TimetableState) _then;
-
-/// Create a copy of TimetableState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? loading = null,Object? error = freezed,}) {
-  return _then(_self.copyWith(
-items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
-as List<DepartureDTO>,loading: null == loading ? _self.loading : loading // ignore: cast_nullable_to_non_nullable
-as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as SimpleError?,
-  ));
-}
-
+class $TimetableStateCopyWith<$Res>  {
+$TimetableStateCopyWith(TimetableState _, $Res Function(TimetableState) __);
 }
 
 
 /// @nodoc
 
 
-class _TimetableState implements TimetableState {
-  const _TimetableState({final  List<DepartureDTO> items = const [], this.loading = false, this.error}): _items = items;
+class TimetableLoading implements TimetableState {
+  const TimetableLoading();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimetableLoading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'TimetableState.loading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class TimetableLoaded implements TimetableState {
+  const TimetableLoaded(final  List<DepartureDTO> items): _items = items;
   
 
  final  List<DepartureDTO> _items;
-@override@JsonKey() List<DepartureDTO> get items {
+ List<DepartureDTO> get items {
   if (_items is EqualUnmodifiableListView) return _items;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_items);
 }
 
-@override@JsonKey() final  bool loading;
-@override final  SimpleError? error;
 
 /// Create a copy of TimetableState
 /// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
+@JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$TimetableStateCopyWith<_TimetableState> get copyWith => __$TimetableStateCopyWithImpl<_TimetableState>(this, _$identity);
+$TimetableLoadedCopyWith<TimetableLoaded> get copyWith => _$TimetableLoadedCopyWithImpl<TimetableLoaded>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TimetableState&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.loading, loading) || other.loading == loading)&&(identical(other.error, error) || other.error == error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimetableLoaded&&const DeepCollectionEquality().equals(other._items, _items));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),loading,error);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items));
 
 @override
 String toString() {
-  return 'TimetableState(items: $items, loading: $loading, error: $error)';
+  return 'TimetableState.loaded(items: $items)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$TimetableStateCopyWith<$Res> implements $TimetableStateCopyWith<$Res> {
-  factory _$TimetableStateCopyWith(_TimetableState value, $Res Function(_TimetableState) _then) = __$TimetableStateCopyWithImpl;
-@override @useResult
+abstract mixin class $TimetableLoadedCopyWith<$Res> implements $TimetableStateCopyWith<$Res> {
+  factory $TimetableLoadedCopyWith(TimetableLoaded value, $Res Function(TimetableLoaded) _then) = _$TimetableLoadedCopyWithImpl;
+@useResult
 $Res call({
- List<DepartureDTO> items, bool loading, SimpleError? error
+ List<DepartureDTO> items
 });
 
 
@@ -130,21 +127,85 @@ $Res call({
 
 }
 /// @nodoc
-class __$TimetableStateCopyWithImpl<$Res>
-    implements _$TimetableStateCopyWith<$Res> {
-  __$TimetableStateCopyWithImpl(this._self, this._then);
+class _$TimetableLoadedCopyWithImpl<$Res>
+    implements $TimetableLoadedCopyWith<$Res> {
+  _$TimetableLoadedCopyWithImpl(this._self, this._then);
 
-  final _TimetableState _self;
-  final $Res Function(_TimetableState) _then;
+  final TimetableLoaded _self;
+  final $Res Function(TimetableLoaded) _then;
 
 /// Create a copy of TimetableState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? items = null,Object? loading = null,Object? error = freezed,}) {
-  return _then(_TimetableState(
-items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
-as List<DepartureDTO>,loading: null == loading ? _self.loading : loading // ignore: cast_nullable_to_non_nullable
-as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as SimpleError?,
+@pragma('vm:prefer-inline') $Res call({Object? items = null,}) {
+  return _then(TimetableLoaded(
+null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
+as List<DepartureDTO>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class TimetableError implements TimetableState {
+  const TimetableError(this.message);
+  
+
+ final  String message;
+
+/// Create a copy of TimetableState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TimetableErrorCopyWith<TimetableError> get copyWith => _$TimetableErrorCopyWithImpl<TimetableError>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimetableError&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'TimetableState.error(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TimetableErrorCopyWith<$Res> implements $TimetableStateCopyWith<$Res> {
+  factory $TimetableErrorCopyWith(TimetableError value, $Res Function(TimetableError) _then) = _$TimetableErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$TimetableErrorCopyWithImpl<$Res>
+    implements $TimetableErrorCopyWith<$Res> {
+  _$TimetableErrorCopyWithImpl(this._self, this._then);
+
+  final TimetableError _self;
+  final $Res Function(TimetableError) _then;
+
+/// Create a copy of TimetableState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(TimetableError(
+null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:passpal/core/routing/routes.dart';
+import 'package:passpal/core/theme/tokens/spacing.dart';
 import 'package:passpal/features/login/application/login_form_notifier.dart';
 import 'package:passpal/features/login/application/validators.dart';
-import 'package:passpal/features/login/presentation/widgets/primary_button.dart';
 import 'package:passpal/features/login/presentation/widgets/error_banner.dart';
+import 'package:passpal/features/login/presentation/widgets/primary_button.dart';
 
 /// First step of login flow - Student ID input
 class StudentIdPage extends ConsumerStatefulWidget {
@@ -15,136 +18,157 @@ class StudentIdPage extends ConsumerStatefulWidget {
 
 class _StudentIdPageState extends ConsumerState<StudentIdPage> {
   final _controller = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
   String? _validationError;
+  bool _isButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_validateInput);
+  }
 
   @override
   void dispose() {
+    _controller.removeListener(_validateInput);
     _controller.dispose();
     super.dispose();
   }
 
-  void _onTextChanged(String value) {
-    final error = LoginValidators.validateStudentId(value);
-    if (error != _validationError) {
+  void _validateInput() {
+    final text = _controller.text;
+    final error = LoginValidators.validateStudentId(text);
+    final newIsEnabled = error == null && text.isNotEmpty;
+    if (error != _validationError || newIsEnabled != _isButtonEnabled) {
       setState(() {
         _validationError = error;
+        _isButtonEnabled = newIsEnabled;
       });
     }
   }
 
   void _onSubmit() {
-    if (_validationError == null && _controller.text.isNotEmpty) {
+    if (_isButtonEnabled) {
       ref
           .read(loginFormNotifierProvider.notifier)
           .setStudentId(_controller.text);
+      context.goNamed(AppRoute.loginGoogle.name);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final loginState = ref.watch(loginFormNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Student ID'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Spacer(),
-
-              // Title and description
-              Text(
-                'Enter your Student ID',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+      appBar: AppBar(title: const Text('Login Step 1/3')),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(SpaceTokens.md),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Welcome to PassPal',
+                  style: theme.textTheme.headlineLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-
-              Text(
-                'Please enter your student ID in the format: A123456',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                const SizedBox(height: SpaceTokens.sm),
+                Text(
+                  'Your new campus life assistant',
+                  style: theme.textTheme.titleMedium,
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-
-              // Student ID input field
-              TextField(
-                controller: _controller,
-                onChanged: _onTextChanged,
-                onSubmitted: (_) => _onSubmit(),
-                textCapitalization: TextCapitalization.characters,
-                decoration: InputDecoration(
-                  labelText: 'Student ID',
-                  hintText: 'e.g., A123456',
-                  errorText: _validationError,
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.person),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Error banner from state
-              loginState.when(
-                data: (state) {
-                  if (state.errorMessage != null) {
-                    return Column(
+                const SizedBox(height: SpaceTokens.xl),
+                Card(
+                  elevation: 0,
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.3,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(SpaceTokens.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ErrorBanner(
-                          message: state.errorMessage!,
-                          onDismiss: () {
-                            ref
-                                .read(loginFormNotifierProvider.notifier)
-                                .clearError();
-                          },
+                        Text(
+                          'Enter your Student ID',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: SpaceTokens.sm),
+                        Text(
+                          'Format: A123456',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: SpaceTokens.lg),
+                        TextField(
+                          controller: _controller,
+                          onSubmitted: (_) => _onSubmit(),
+                          textCapitalization: TextCapitalization.characters,
+                          decoration: InputDecoration(
+                            labelText: 'Student ID',
+                            hintText: 'e.g., A123456',
+                            errorText: _validationError,
+                            border: const OutlineInputBorder(),
+                            prefixIcon: const Icon(Icons.person_outline),
+                            filled: true,
+                            fillColor: theme.colorScheme.surface,
+                          ),
+                          keyboardType: TextInputType.text,
+                          autocorrect: false,
+                        ),
+                        const SizedBox(height: SpaceTokens.lg),
+                        loginState.when(
+                          data: (state) => PrimaryButton(
+                            onPressed: _onSubmit,
+                            text: 'Next',
+                            isLoading: state.isLoading,
+                            isEnabled: _isButtonEnabled,
+                          ),
+                          loading: () => const PrimaryButton(
+                            onPressed: null,
+                            text: 'Next',
+                            isLoading: true,
+                            isEnabled: false,
+                          ),
+                          error: (_, __) => PrimaryButton(
+                            onPressed: _onSubmit,
+                            text: 'Next',
+                            isEnabled: _isButtonEnabled,
+                          ),
+                        ),
                       ],
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-                loading: () => const SizedBox.shrink(),
-                error: (error, _) => Column(
-                  children: [
-                    ErrorBanner(message: error.toString()),
-                    const SizedBox(height: 16),
-                  ],
+                    ),
+                  ),
                 ),
-              ),
-
-              // Next button
-              loginState.when(
-                data: (state) => PrimaryButton(
-                  onPressed: _onSubmit,
-                  text: 'Next',
-                  isLoading: state.isLoading,
-                  isEnabled:
-                      _validationError == null && _controller.text.isNotEmpty,
+                const SizedBox(height: SpaceTokens.md),
+                loginState.when(
+                  data: (state) {
+                    if (state.errorMessage != null) {
+                      return ErrorBanner(
+                        message: state.errorMessage!,
+                        onDismiss: () => ref
+                            .read(loginFormNotifierProvider.notifier)
+                            .clearError(),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                  loading: () => const SizedBox.shrink(),
+                  error: (error, _) => ErrorBanner(message: error.toString()),
                 ),
-                loading: () => const PrimaryButton(
-                  onPressed: null,
-                  text: 'Next',
-                  isLoading: true,
-                  isEnabled: false,
-                ),
-                error: (_, __) => PrimaryButton(
-                  onPressed: _onSubmit,
-                  text: 'Next',
-                  isEnabled:
-                      _validationError == null && _controller.text.isNotEmpty,
-                ),
-              ),
-
-              const Spacer(flex: 2),
-            ],
+              ],
+            ),
           ),
         ),
       ),

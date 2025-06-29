@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/timetable_slot.dart';
+import 'package:passpal/core/theme/tokens/spacing.dart';
+import 'package:passpal/features/timetable/domain/entities/timetable_slot.dart';
+import 'package:passpal/features/timetable/presentation/pages/course_detail_page.dart';
 
-/// 時間割グリッドウィジェット
 class TimetableGrid extends StatelessWidget {
   const TimetableGrid({super.key, required this.slots});
 
@@ -9,182 +10,104 @@ class TimetableGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // 時間割ヘッダー
-          _buildTimeTableHeader(),
-          // 時間割ボディ
-          _buildTimeTableBody(context),
-        ],
+    return GridView.builder(
+      padding: const EdgeInsets.all(SpaceTokens.sm),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 5, // Monday to Friday
+        childAspectRatio: 0.75,
+        crossAxisSpacing: SpaceTokens.sm,
+        mainAxisSpacing: SpaceTokens.sm,
       ),
-    );
-  }
+      itemCount: 35, // 5 days * 7 periods
+      itemBuilder: (context, index) {
+        final day = index % 5;
+        final period = index ~/ 5 + 1;
+        final weekday = Weekday.values[day];
 
-  Widget _buildTimeTableHeader() {
-    const weekdays = ['', '月', '火', '水', '木', '金', '土', '日'];
+        final slot = _findSlot(weekday, period);
 
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Row(
-        children: weekdays
-            .map(
-              (day) => Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(color: Colors.grey.shade300),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      day,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-            )
-            .toList(),
-      ),
-    );
-  }
-
-  Widget _buildTimeTableBody(BuildContext context) {
-    return Column(
-      children: List.generate(7, (periodIndex) {
-        final period = periodIndex + 1;
-        return _buildTimeTableRow(context, period);
-      }),
-    );
-  }
-
-  Widget _buildTimeTableRow(BuildContext context, int period) {
-    const weekdays = [
-      null,
-      Weekday.monday,
-      Weekday.tuesday,
-      Weekday.wednesday,
-      Weekday.thursday,
-      Weekday.friday,
-      Weekday.saturday,
-      Weekday.sunday,
-    ];
-
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Row(
-        children: weekdays.map((weekday) {
-          if (weekday == null) {
-            // 時限表示
-            return Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  color: Colors.grey.shade100,
-                ),
-                child: Center(
-                  child: Text(
-                    '$period限',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          // 授業スロット
-          final slot = _findSlot(weekday, period);
-          return Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border(right: BorderSide(color: Colors.grey.shade300)),
-              ),
-              child: slot != null
-                  ? _buildCourseCard(context, slot)
-                  : const SizedBox(),
-            ),
-          );
-        }).toList(),
-      ),
+        return _CourseCard(slot: slot);
+      },
     );
   }
 
   TimetableSlot? _findSlot(Weekday weekday, int period) {
     try {
       return slots.firstWhere(
-        (slot) => slot.weekday == weekday && slot.period.number == period,
+        (s) => s.weekday == weekday && s.period.number == period,
       );
-    } catch (e) {
+    } catch (_) {
       return null;
     }
   }
+}
 
-  Widget _buildCourseCard(BuildContext context, TimetableSlot slot) {
+class _CourseCard extends StatelessWidget {
+  final TimetableSlot? slot;
+
+  const _CourseCard({this.slot});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hasCourse = slot != null && slot!.course != null;
+
     return InkWell(
-      onTap: slot.course != null
-          ? () {
-              // TODO: コース詳細ページへ遷移
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => CourseDetailPage(slot: slot)));
-            }
+      onTap: hasCourse
+          ? () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => CourseDetailPage(slot: slot!),
+              ),
+            )
           : null,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        margin: const EdgeInsets.all(2),
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: slot.course != null ? Colors.blue.shade50 : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: slot.course != null
-                ? Colors.blue.shade200
-                : Colors.transparent,
-            width: 1,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (slot.course?.title != null) ...[
-              Text(
-                slot.course!.title,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
+      borderRadius: BorderRadius.circular(12),
+      child: Card(
+        elevation: hasCourse ? 2 : 0,
+        color: hasCourse
+            ? theme.colorScheme.primaryContainer
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        child: Padding(
+          padding: const EdgeInsets.all(SpaceTokens.sm),
+          child: hasCourse
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${slot!.period.number} Period',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      slot!.course!.title,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onPrimaryContainer,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: SpaceTokens.xs),
+                    Text(
+                      slot!.room ?? 'N/A',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onPrimaryContainer.withValues(
+                          alpha: 0.8,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                  ],
+                )
+              : Center(
+                  child: Icon(
+                    Icons.add_circle_outline,
+                    color: theme.colorScheme.onSurfaceVariant.withValues(
+                      alpha: 0.5,
+                    ),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2),
-            ],
-            if (slot.course?.teacher != null) ...[
-              Text(
-                slot.course!.teacher,
-                style: TextStyle(fontSize: 9, color: Colors.grey.shade700),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-            if (slot.room != null) ...[
-              Text(
-                slot.room!,
-                style: TextStyle(fontSize: 9, color: Colors.grey.shade600),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ],
         ),
       ),
     );

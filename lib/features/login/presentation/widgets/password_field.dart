@@ -26,6 +26,7 @@ class _PasswordFieldState extends State<PasswordField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return TextField(
       controller: widget.controller,
       obscureText: _isObscured,
@@ -35,15 +36,23 @@ class _PasswordFieldState extends State<PasswordField> {
         labelText: widget.labelText,
         errorText: widget.errorText,
         border: const OutlineInputBorder(),
+        prefixIcon: const Icon(Icons.password_outlined),
+        filled: true,
+        fillColor: theme.colorScheme.surface,
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {
               _isObscured = !_isObscured;
             });
           },
-          icon: Icon(_isObscured ? Icons.visibility : Icons.visibility_off),
+          icon: Icon(
+            _isObscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
       ),
+      keyboardType: TextInputType.visiblePassword,
+      autocorrect: false,
     );
   }
 }

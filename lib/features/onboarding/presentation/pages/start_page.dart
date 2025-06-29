@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:passpal/core/routing/routes.dart';
+import 'package:passpal/core/theme/tokens/spacing.dart';
 import 'package:passpal/features/onboarding/application/onboarding_controller.dart';
+import 'package:passpal/features/onboarding/presentation/widgets/onboarding_scaffold.dart';
+import 'package:passpal/features/login/presentation/widgets/primary_button.dart';
 
 /// Start/completion page for onboarding
 class StartPage extends ConsumerWidget {
@@ -8,110 +13,91 @@ class StartPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final onboardingState = ref.watch(onboardingControllerProvider);
+    final theme = Theme.of(context);
 
-    return Scaffold(
-      body: onboardingState.when(
-        data: (status) => _buildContent(context, ref, status),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error, color: Colors.red, size: 64),
-              const SizedBox(height: 16),
-              Text('エラーが発生しました: $error'),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.refresh(onboardingControllerProvider),
-                child: const Text('再試行'),
-              ),
-            ],
+    return OnboardingScaffold(
+      title: 'Step 3: All Set!',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Spacer(),
+          Icon(
+            Icons.check_circle_outline,
+            size: 100,
+            color: theme.colorScheme.primary,
           ),
-        ),
+          const SizedBox(height: SpaceTokens.md),
+          Text(
+            'Setup Complete!',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: SpaceTokens.md),
+          Text(
+            'Welcome to PassPal. Your campus life, simplified.',
+            style: theme.textTheme.bodyLarge,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: SpaceTokens.lg),
+          _FeatureHighlightCard(),
+          const Spacer(flex: 2),
+          PrimaryButton(
+            text: 'Start Using PassPal',
+            onPressed: () async {
+              await ref
+                  .read(onboardingControllerProvider.notifier)
+                  .completeOnboarding();
+              if (context.mounted) {
+                context.goNamed(AppRoute.mainHome.name);
+              }
+            },
+          ),
+        ],
       ),
     );
   }
+}
 
-  Widget _buildContent(BuildContext context, WidgetRef ref, status) {
+class _FeatureHighlightCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    return SafeArea(
+    return Card(
+      elevation: 0,
+      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(SpaceTokens.md),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Spacer(),
-            Icon(
-              Icons.check_circle,
-              size: 100,
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'セットアップ完了！',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'PassPalへようこそ！\n学生生活をより便利にサポートします。',
-              style: TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 48),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.info, color: theme.colorScheme.primary),
-                        const SizedBox(width: 12),
-                        const Text(
-                          '主な機能',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildFeatureItem(
-                      icon: Icons.schedule,
-                      title: '時間割管理',
-                      description: '授業スケジュールを一目で確認',
-                    ),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem(
-                      icon: Icons.assignment,
-                      title: '課題管理',
-                      description: '課題の期限を忘れずに管理',
-                    ),
-                    const SizedBox(height: 12),
-                    _buildFeatureItem(
-                      icon: Icons.directions_bus,
-                      title: 'バス時刻表',
-                      description: 'キャンパス間のバス情報',
-                    ),
-                  ],
-                ),
+            Text(
+              'Key Features:',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () => _completeOnboarding(ref),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Text(
-                  'PassPalを開始',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
+            const SizedBox(height: SpaceTokens.md),
+            _buildFeatureItem(
+              context,
+              icon: Icons.calendar_today_outlined,
+              title: 'Timetable Management',
+              description: 'View your class schedule at a glance.',
+            ),
+            const SizedBox(height: SpaceTokens.sm),
+            _buildFeatureItem(
+              context,
+              icon: Icons.assignment_turned_in_outlined,
+              title: 'Assignment Tracking',
+              description: 'Never miss a deadline again.',
+            ),
+            const SizedBox(height: SpaceTokens.sm),
+            _buildFeatureItem(
+              context,
+              icon: Icons.directions_bus_outlined,
+              title: 'Bus Timetables',
+              description: 'Check bus schedules between campuses.',
             ),
           ],
         ),
@@ -119,41 +105,38 @@ class StartPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFeatureItem({
+  Widget _buildFeatureItem(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String description,
   }) {
+    final theme = Theme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 24, color: Colors.blue),
-        const SizedBox(width: 12),
+        Icon(icon, size: 24, color: theme.colorScheme.primary),
+        const SizedBox(width: SpaceTokens.md),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
               Text(
                 description,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
         ),
       ],
     );
-  }
-
-  void _completeOnboarding(WidgetRef ref) async {
-    await ref.read(onboardingControllerProvider.notifier).completeOnboarding();
-    // Navigation to main app will be handled by routing guard
   }
 }

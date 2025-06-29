@@ -21,15 +21,17 @@ class SettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: leading,
       title: Text(title),
       subtitle: subtitle != null ? Text(subtitle!) : null,
-      leading: leading,
       trailing: isLoading
-          ? const SizedBox.square(
-              dimension: 24,
+          ? const SizedBox(
+              width: 24,
+              height: 24,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : trailing,
+          : (trailing ??
+                (onTap != null ? const Icon(Icons.chevron_right) : null)),
       onTap: isLoading ? null : onTap,
     );
   }

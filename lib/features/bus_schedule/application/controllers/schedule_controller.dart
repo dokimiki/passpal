@@ -6,20 +6,13 @@ import '../../domain/value_objects.dart';
 part 'schedule_controller.freezed.dart';
 part 'schedule_controller.g.dart';
 
-/// Simple error class for now
-class SimpleError {
-  final String message;
-  const SimpleError(this.message);
-}
-
 /// State for timetable feature
 @freezed
-abstract class TimetableState with _$TimetableState {
-  const factory TimetableState({
-    @Default([]) List<DepartureDTO> items,
-    @Default(false) bool loading,
-    SimpleError? error,
-  }) = _TimetableState;
+class TimetableState with _$TimetableState {
+  const factory TimetableState.loading() = TimetableLoading;
+  const factory TimetableState.loaded(List<DepartureDTO> items) =
+      TimetableLoaded;
+  const factory TimetableState.error(String message) = TimetableError;
 }
 
 /// Controller for bus/train schedule functionality
@@ -27,12 +20,12 @@ abstract class TimetableState with _$TimetableState {
 class ScheduleController extends _$ScheduleController {
   @override
   TimetableState build(LineId lineId, RouteDirection direction) {
-    return const TimetableState(loading: true);
+    return const TimetableState.loading();
   }
 
   /// Load departures for the current line and direction
   Future<void> loadDepartures() async {
-    state = state.copyWith(loading: true, error: null);
+    state = const TimetableState.loading();
 
     try {
       // Create mock data for now since dependencies aren't fully set up
@@ -57,9 +50,9 @@ class ScheduleController extends _$ScheduleController {
         ),
       ];
 
-      state = state.copyWith(items: mockDepartures, loading: false);
+      state = TimetableState.loaded(mockDepartures);
     } catch (e) {
-      state = state.copyWith(loading: false, error: SimpleError(e.toString()));
+      state = TimetableState.error(e.toString());
     }
   }
 

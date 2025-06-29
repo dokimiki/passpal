@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:passpal/core/theme/tokens/spacing.dart';
 import 'package:passpal/features/login/application/login_form_notifier.dart';
 import 'package:passpal/features/login/application/validators.dart';
-import 'package:passpal/features/login/presentation/widgets/primary_button.dart';
-import 'package:passpal/features/login/presentation/widgets/password_field.dart';
 import 'package:passpal/features/login/presentation/widgets/error_banner.dart';
+import 'package:passpal/features/login/presentation/widgets/password_field.dart';
+import 'package:passpal/features/login/presentation/widgets/primary_button.dart';
 
 /// Third step of login flow - CU-ID password input and final login
 class CuIdPage extends ConsumerStatefulWidget {
@@ -16,26 +18,36 @@ class CuIdPage extends ConsumerStatefulWidget {
 
 class _CuIdPageState extends ConsumerState<CuIdPage> {
   final _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
   String? _validationError;
+  bool _isButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordController.addListener(_validateInput);
+  }
 
   @override
   void dispose() {
+    _passwordController.removeListener(_validateInput);
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _onPasswordChanged(String value) {
-    final error = LoginValidators.validatePassword(value);
-    if (error != _validationError) {
+  void _validateInput() {
+    final text = _passwordController.text;
+    final error = LoginValidators.validatePassword(text);
+    final newIsEnabled = error == null && text.isNotEmpty;
+    if (error != _validationError || newIsEnabled != _isButtonEnabled) {
       setState(() {
         _validationError = error;
+        _isButtonEnabled = newIsEnabled;
       });
     }
   }
 
   void _onSubmit() {
-    if (_validationError == null && _passwordController.text.isNotEmpty) {
+    if (_isButtonEnabled) {
       ref
           .read(loginFormNotifierProvider.notifier)
           .loginWithCuId(_passwordController.text);
@@ -44,140 +56,114 @@ class _CuIdPageState extends ConsumerState<CuIdPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final loginState = ref.watch(loginFormNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('CU-ID Login'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Spacer(),
-
-              // Lock icon
-              Container(
-                height: 80,
-                width: 80,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: const Icon(Icons.lock_outline, size: 48),
-              ),
-              const SizedBox(height: 32),
-
-              // Title and description
-              Text(
-                'Enter your CU-ID Password',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-
-              loginState.when(
-                data: (state) {
-                  final studentId = state.studentId?.value ?? '';
-
-                  return Text(
-                    'Please enter the password for your CU-ID: $studentId',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                    textAlign: TextAlign.center,
-                  );
-                },
-                loading: () => const CircularProgressIndicator(),
-                error: (error, _) => Text(
-                  'Error loading student information',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.error,
+      appBar: AppBar(title: const Text('Login Step 3/3')),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(SpaceTokens.md),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Card(
+                  elevation: 0,
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.3,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              // Password input field
-              PasswordField(
-                controller: _passwordController,
-                labelText: 'CU-ID Password',
-                errorText: _validationError,
-                onChanged: _onPasswordChanged,
-                onSubmitted: (_) => _onSubmit(),
-              ),
-              const SizedBox(height: 24),
-
-              // Error banner from state
-              loginState.when(
-                data: (state) {
-                  if (state.errorMessage != null) {
-                    return Column(
+                  child: Padding(
+                    padding: const EdgeInsets.all(SpaceTokens.lg),
+                    child: Column(
                       children: [
-                        ErrorBanner(
-                          message: state.errorMessage!,
-                          onDismiss: () {
-                            ref
-                                .read(loginFormNotifierProvider.notifier)
-                                .clearError();
-                          },
+                        Icon(
+                          Icons.lock_person_outlined,
+                          size: 60,
+                          color: theme.colorScheme.primary,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: SpaceTokens.md),
+                        Text(
+                          'Enter CU-ID Password',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: SpaceTokens.md),
+                        loginState.when(
+                          data: (state) {
+                            final studentId = state.studentId?.value ?? '';
+                            return Text(
+                              'Enter the password for your university account ($studentId).',
+                              style: theme.textTheme.bodyLarge,
+                              textAlign: TextAlign.center,
+                            );
+                          },
+                          loading: () =>
+                              const Center(child: CircularProgressIndicator()),
+                          error: (e, _) => Text(
+                            'Could not retrieve student information. Please go back and try again.',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.error,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        const SizedBox(height: SpaceTokens.lg),
+                        PasswordField(
+                          controller: _passwordController,
+                          labelText: 'Password',
+                          errorText: _validationError,
+                          onSubmitted: (_) => _onSubmit(),
+                        ),
+                        const SizedBox(height: SpaceTokens.lg),
+                        loginState.when(
+                          data: (state) => PrimaryButton(
+                            onPressed: _onSubmit,
+                            text: 'Login & Continue',
+                            isLoading: state.isLoading,
+                            isEnabled: _isButtonEnabled,
+                          ),
+                          loading: () => const PrimaryButton(
+                            onPressed: null,
+                            text: 'Login & Continue',
+                            isLoading: true,
+                          ),
+                          error: (e, s) => PrimaryButton(
+                            onPressed: _onSubmit,
+                            text: 'Retry Login',
+                            isEnabled: _isButtonEnabled,
+                          ),
+                        ),
                       ],
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-                loading: () => const SizedBox.shrink(),
-                error: (error, _) => Column(
-                  children: [
-                    ErrorBanner(message: error.toString()),
-                    const SizedBox(height: 16),
-                  ],
+                    ),
+                  ),
                 ),
-              ),
-
-              // Login button
-              loginState.when(
-                data: (state) => PrimaryButton(
-                  onPressed: _onSubmit,
-                  text: 'Login',
-                  isLoading: state.isLoading,
-                  isEnabled:
-                      _validationError == null &&
-                      _passwordController.text.isNotEmpty,
+                const SizedBox(height: SpaceTokens.md),
+                loginState.when(
+                  data: (state) {
+                    if (state.errorMessage != null) {
+                      return ErrorBanner(
+                        message: state.errorMessage!,
+                        onDismiss: () => ref
+                            .read(loginFormNotifierProvider.notifier)
+                            .clearError(),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                  loading: () => const SizedBox.shrink(),
+                  error: (error, _) => ErrorBanner(message: error.toString()),
                 ),
-                loading: () => const PrimaryButton(
-                  onPressed: null,
-                  text: 'Login',
-                  isLoading: true,
-                  isEnabled: false,
+                const SizedBox(height: SpaceTokens.sm),
+                TextButton(
+                  onPressed: () => context.pop(),
+                  child: const Text('Back to Google Sign-in'),
                 ),
-                error: (_, __) => PrimaryButton(
-                  onPressed: _onSubmit,
-                  text: 'Login',
-                  isEnabled:
-                      _validationError == null &&
-                      _passwordController.text.isNotEmpty,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Back button
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Back'),
-              ),
-
-              const Spacer(flex: 2),
-            ],
+              ],
+            ),
           ),
         ),
       ),

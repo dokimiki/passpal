@@ -6,7 +6,7 @@ part of 'providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$homeRepositoryHash() => r'a92e6f626f08f8efa8b9f15d4211d0ee311a831e';
+String _$homeRepositoryHash() => r'12307bf23d07113048077306d87fef7320324404';
 
 /// See also [homeRepository].
 @ProviderFor(homeRepository)
@@ -24,7 +24,7 @@ final homeRepositoryProvider = AutoDisposeProvider<HomeRepositoryImpl>.internal(
 // ignore: unused_element
 typedef HomeRepositoryRef = AutoDisposeProviderRef<HomeRepositoryImpl>;
 String _$getSystemNewsUseCaseHash() =>
-    r'671a593b1215b8b48863e0891b7ff9f9898c1b11';
+    r'0eab3b382c46d84c0c572deb0ab41e766c4292d9';
 
 /// See also [getSystemNewsUseCase].
 @ProviderFor(getSystemNewsUseCase)
@@ -43,7 +43,7 @@ final getSystemNewsUseCaseProvider =
 // ignore: unused_element
 typedef GetSystemNewsUseCaseRef = AutoDisposeProviderRef<GetSystemNewsUseCase>;
 String _$getReceivedMailUseCaseHash() =>
-    r'0fd3f7c191a5de4a7e23402a9ec5b6f94c453cd1';
+    r'047d2880a9553a116d1d2cb1ffe6f8949972923a';
 
 /// See also [getReceivedMailUseCase].
 @ProviderFor(getReceivedMailUseCase)
@@ -63,7 +63,7 @@ final getReceivedMailUseCaseProvider =
 typedef GetReceivedMailUseCaseRef =
     AutoDisposeProviderRef<GetReceivedMailUseCase>;
 String _$getMailBodyUseCaseHash() =>
-    r'7a1a53398587839885be5b78059e6804cbc76e01';
+    r'016b67654fadc886a1af8a7d0239aa0235c91acd';
 
 /// See also [getMailBodyUseCase].
 @ProviderFor(getMailBodyUseCase)
@@ -82,7 +82,7 @@ final getMailBodyUseCaseProvider =
 // ignore: unused_element
 typedef GetMailBodyUseCaseRef = AutoDisposeProviderRef<GetMailBodyUseCase>;
 String _$getAlboNewsUseCaseHash() =>
-    r'64c39d0791892fbecfd25a3bec7141fc34667a6f';
+    r'014a6ee0319de7437a356fe7f085187761669a4b';
 
 /// See also [getAlboNewsUseCase].
 @ProviderFor(getAlboNewsUseCase)

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:passpal/core/theme/tokens/spacing.dart';
+import 'package:passpal/features/home/domain/entities/albo_news_item.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../domain/entities/albo_news_item.dart';
 
 class AlboNewsSection extends StatelessWidget {
   final AsyncValue<List<AlboNewsItem>> newsState;
@@ -11,35 +13,39 @@ class AlboNewsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(SpaceTokens.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                const Icon(Icons.school_outlined),
-                const SizedBox(width: 8),
+                Icon(Icons.article_outlined, color: theme.colorScheme.primary),
+                const SizedBox(width: SpaceTokens.sm),
                 Text(
-                  'ALBO掲示板',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  'ALBO Bulletin Board',
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
-          ),
-          newsState.when(
-            data: (news) => _buildNewsList(context, news),
-            loading: () => const _AlboNewsShimmer(),
-            error: (error, stack) => _ErrorSection(
-              message: 'ALBO掲示板の取得に失敗しました',
-              onRetry: onRetry ?? () {},
+            const SizedBox(height: SpaceTokens.sm),
+            const Divider(),
+            const SizedBox(height: SpaceTokens.sm),
+            newsState.when(
+              data: (news) => _buildNewsList(context, news),
+              loading: () => const _AlboNewsShimmer(),
+              error: (error, stack) => _ErrorSection(
+                message: 'Failed to load ALBO news.',
+                onRetry: onRetry,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -47,14 +53,14 @@ class AlboNewsSection extends StatelessWidget {
   Widget _buildNewsList(BuildContext context, List<AlboNewsItem> news) {
     if (news.isEmpty) {
       return const Padding(
-        padding: EdgeInsets.all(16),
-        child: Center(child: Text('新しいお知らせはありません')),
+        padding: EdgeInsets.symmetric(vertical: SpaceTokens.md),
+        child: Center(child: Text('No new announcements.')),
       );
     }
 
     return Column(
       children: news
-          .take(5) // 最新5件のみ表示
+          .take(5)
           .map((item) => _AlboNewsListTile(newsItem: item))
           .toList(),
     );
@@ -69,179 +75,68 @@ class _AlboNewsListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return ListTile(
-      leading: _buildCategoryIcon(),
-      title: Row(
-        children: [
-          if (newsItem.isImportant) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                '重要',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-          ],
-          if (!newsItem.isRead) ...[
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 8),
-          ],
-          Expanded(
-            child: Text(
-              newsItem.title,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: newsItem.isRead
-                    ? FontWeight.normal
-                    : FontWeight.bold,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
+      contentPadding: EdgeInsets.zero,
+      leading: _buildCategoryIcon(theme),
+      title: Text(
+        newsItem.title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontWeight: !newsItem.isRead ? FontWeight.bold : FontWeight.normal,
+        ),
       ),
       subtitle: Row(
         children: [
-          _buildCategoryChip(),
+          _buildCategoryChip(theme),
           const Spacer(),
-          if (newsItem.hasAttachment == true) ...[
-            const Icon(Icons.attach_file, size: 14, color: Colors.grey),
-            const SizedBox(width: 4),
-          ],
-          Text(
-            _formatDateTime(newsItem.publishedAt),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: Colors.grey.shade600,
-            ),
-          ),
+          if (newsItem.hasAttachment == true)
+            const Icon(Icons.attach_file, size: 14),
+          const SizedBox(width: 4),
+          Text(_formatDateTime(newsItem.publishedAt)),
         ],
       ),
       onTap: () => _openNews(context),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
     );
   }
 
-  Widget _buildCategoryIcon() {
-    IconData icon;
-    Color color;
-
-    switch (newsItem.category) {
-      case AlboNewsCategory.kyoumu:
-        icon = Icons.school;
-        color = Colors.blue;
-        break;
-      case AlboNewsCategory.studentLife:
-        icon = Icons.people;
-        color = Colors.green;
-        break;
-      case AlboNewsCategory.kyoshoku:
-        icon = Icons.work;
-        color = Colors.orange;
-        break;
-      case AlboNewsCategory.career:
-        icon = Icons.business_center;
-        color = Colors.purple;
-        break;
-      case AlboNewsCategory.international:
-        icon = Icons.public;
-        color = Colors.teal;
-        break;
-    }
-
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
+  Widget _buildCategoryIcon(ThemeData theme) {
+    // Simplified icon for consistency
+    return CircleAvatar(
+      backgroundColor: theme.colorScheme.secondaryContainer,
+      child: Icon(
+        Icons.school_outlined,
+        color: theme.colorScheme.onSecondaryContainer,
       ),
-      child: Icon(icon, size: 16, color: color),
     );
   }
 
-  Widget _buildCategoryChip() {
-    String label;
-    Color color;
-
-    switch (newsItem.category) {
-      case AlboNewsCategory.kyoumu:
-        label = '教務';
-        color = Colors.blue;
-        break;
-      case AlboNewsCategory.studentLife:
-        label = '学生生活';
-        color = Colors.green;
-        break;
-      case AlboNewsCategory.kyoshoku:
-        label = '教職';
-        color = Colors.orange;
-        break;
-      case AlboNewsCategory.career:
-        label = 'キャリア';
-        color = Colors.purple;
-        break;
-      case AlboNewsCategory.international:
-        label = '国際';
-        color = Colors.teal;
-        break;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+  Widget _buildCategoryChip(ThemeData theme) {
+    return Chip(
+      label: Text(newsItem.category.name),
+      backgroundColor: theme.colorScheme.tertiaryContainer,
+      labelStyle: theme.textTheme.labelSmall?.copyWith(
+        color: theme.colorScheme.onTertiaryContainer,
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      padding: EdgeInsets.zero,
     );
   }
 
   String _formatDateTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-
     if (difference.inDays == 0) {
-      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays}日前';
-    } else {
-      return '${dateTime.month}/${dateTime.day}';
+      return '${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
     }
+    return '${dateTime.month}/${dateTime.day}';
   }
 
   Future<void> _openNews(BuildContext context) async {
-    try {
-      await launchUrl(newsItem.detailUrl, mode: LaunchMode.externalApplication);
-    } catch (e) {
+    if (!await launchUrl(newsItem.detailUrl)) {
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('リンクを開けませんでした')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open the link.')),
+        );
       }
     }
   }
@@ -252,49 +147,17 @@ class _AlboNewsShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        3,
-        (index) => ListTile(
-          leading: Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              shape: BoxShape.circle,
-            ),
-          ),
-          title: Container(
-            height: 16,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          subtitle: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              const Spacer(),
-              Container(
-                width: 60,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ],
-          ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 4,
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        children: List.generate(
+          3,
+          (index) => ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const CircleAvatar(backgroundColor: Colors.white),
+            title: Container(height: 16, color: Colors.white),
+            subtitle: Container(height: 12, width: 100, color: Colors.white),
           ),
         ),
       ),
@@ -304,25 +167,29 @@ class _AlboNewsShimmer extends StatelessWidget {
 
 class _ErrorSection extends StatelessWidget {
   final String message;
-  final VoidCallback onRetry;
+  final VoidCallback? onRetry;
 
-  const _ErrorSection({required this.message, required this.onRetry});
+  const _ErrorSection({required this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: SpaceTokens.md),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 32, color: Colors.red.shade400),
-          const SizedBox(height: 8),
+          Icon(Icons.error_outline, color: theme.colorScheme.error, size: 32),
+          const SizedBox(height: SpaceTokens.sm),
           Text(
             message,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: theme.textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
-          TextButton(onPressed: onRetry, child: const Text('再試行')),
+          if (onRetry != null) ...[
+            const SizedBox(height: SpaceTokens.sm),
+            TextButton(onPressed: onRetry, child: const Text('Retry')),
+          ],
         ],
       ),
     );
