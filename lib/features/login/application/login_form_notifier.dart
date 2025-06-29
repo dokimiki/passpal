@@ -224,24 +224,37 @@ class LoginFormNotifier extends AutoDisposeAsyncNotifier<LoginFormState> {
       // Login successful - navigate to setup
       final router = ref.read(goRouterProvider);
       router.goNamed(AppRoute.setupCampus.name);
-    } catch (e, stackTrace) {
+    } catch (e) {
+      String errorMessage = 'ログインに失敗しました。もう一度お試しください。';
+      // DioExceptionやRedirectExceptionも明示的にハンドリング
       if (e is core_auth.AuthenticationException) {
-        // Handle authentication-specific errors
-        String errorMessage;
-        if (e.message.contains('invalid') || e.message.contains('credential')) {
-          errorMessage = 'Invalid username or password. Please try again.';
-        } else if (e.message.contains('link')) {
-          errorMessage = 'Account not properly linked. Please start over.';
-        } else {
-          errorMessage = 'Login failed. Please try again.';
+        switch (e.kind) {
+          case core_auth.AuthenticationExceptionKind.invalidCredential:
+            errorMessage = '学籍番号またはパスワードが間違っています。';
+            break;
+          case core_auth.AuthenticationExceptionKind.sessionExpired:
+            errorMessage = 'セッションの有効期限が切れました。再度ログインしてください。';
+            break;
+          case core_auth.AuthenticationExceptionKind.accountNotLinked:
+            errorMessage = 'Googleアカウントが正しくリンクされていません。最初からやり直してください。';
+            break;
+          case core_auth.AuthenticationExceptionKind.generic:
+            errorMessage = e.message;
+            break;
         }
-
-        state = AsyncValue.data(
-          currentState.copyWith(errorMessage: errorMessage, isLoading: false),
-        );
+      } else if (e.runtimeType.toString().contains('DioException') ||
+          e.toString().contains('RedirectException')) {
+        // ログインループやネットワーク例外
+        errorMessage = '学籍番号またはパスワードが間違っているか、システム側の問題が発生しています。';
+        debugPrint('Dio/Redirect error: $e');
       } else {
-        state = AsyncValue.error(e, stackTrace);
+        // その他の予期しないエラー
+        errorMessage = 'ログインに失敗しました。もう一度お試しください。';
+        debugPrint('Unknown login error: $e');
       }
+      state = AsyncValue.data(
+        currentState.copyWith(errorMessage: errorMessage, isLoading: false),
+      );
     }
   }
 

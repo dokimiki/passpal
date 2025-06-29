@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:passpal/core/auth/errors/auth_exception.dart';
 import 'package:passpal/core/auth/models/auth_session.dart';
 import 'package:passpal/core/config/models/api_config.dart';
@@ -77,25 +78,46 @@ class IdpAuthenticator {
       // 既存のCookieを削除
       await cookieJar.deleteAll();
 
+      debugPrint('IdP認証開始: ${portal.displayName}');
+
       // 1. エントリポイントにアクセスしてSAMLRequestを取得
+      debugPrint('ステップ1: SAMLRequest取得中...');
       final authnRequestUrl = await _getAuthnRequestUrl(portal);
 
       // 2. AuthStateを取得
+      debugPrint('ステップ2: AuthState取得中...');
       final authState = await _getAuthState(authnRequestUrl);
 
       // 3. ログインフォームにPOSTして認証
+      debugPrint('ステップ3: ログイン認証中...');
       final samlData = await _performLogin(username, password, authState);
 
       // 4. SAMLResponseをPOSTしてセッション確立
+      debugPrint('ステップ4: セッション確立中...');
       await _postSamlResponse(portal, samlData);
 
       // 5. Cookieを取得してセッション情報を構築
+      debugPrint('ステップ5: セッション情報構築中...');
       final session = await _buildAuthSession(portal, username);
 
+      debugPrint('IdP認証完了: ${portal.displayName}');
       return session;
     } on AuthenticationException {
       rethrow;
+    } on DioException catch (e) {
+      debugPrint('DioException during login: ${e.type}, ${e.message}');
+      if (e.type == DioExceptionType.unknown &&
+          e.message?.contains('Redirect limit exceeded') == true) {
+        throw AuthenticationException.generic(
+          message: 'ログインシステムでリダイレクトエラーが発生しました。再度お試しください。',
+        );
+      }
+      throw AuthenticationException.generic(
+        message: 'ネットワークエラーが発生しました: ${e.message}',
+      );
     } catch (e, stack) {
+      debugPrint('IdP認証エラー: $e');
+      debugPrint('stack trace: $stack');
       throw AuthenticationException.generic(
         message: 'ログイン処理中にエラーが発生しました: $e',
         stack: stack,
@@ -105,45 +127,93 @@ class IdpAuthenticator {
 
   /// エントリポイントにアクセスしてSAMLRequestを取得
   Future<String> _getAuthnRequestUrl(Portal portal) async {
-    final response = await dio.get(portal.getEntryUrl(apiConfig));
-
-    if (response.statusCode == 503) {
-      throw AuthenticationException.generic(
-        message: '${portal.displayName}がメンテナンス中です。しばらくしてから再度お試しください。',
+    try {
+      final response = await dio.get(
+        portal.getEntryUrl(apiConfig),
+        options: Options(
+          followRedirects: false, // リダイレクトを手動で処理
+          validateStatus: (status) => status! < 400, // 3xxも成功として扱う
+        ),
       );
-    }
 
-    final authnRequestUrl = response.headers.value('location');
-    if (authnRequestUrl == null) {
+      if (response.statusCode == 503) {
+        throw AuthenticationException.generic(
+          message: '${portal.displayName}がメンテナンス中です。しばらくしてから再度お試しください。',
+        );
+      }
+
+      // リダイレクトレスポンスの場合
+      if (response.statusCode == 302 || response.statusCode == 301) {
+        final authnRequestUrl = response.headers.value('location');
+        if (authnRequestUrl == null) {
+          throw AuthenticationException.generic(
+            message: 'ログインシステムに問題が生じました。(SAMLRequestの取得に失敗)',
+          );
+        }
+        return authnRequestUrl;
+      }
+
+      // 直接レスポンスの場合（稀なケース）
       throw AuthenticationException.generic(
-        message: 'ログインシステムに問題が生じました。(SAMLRequestの取得に失敗)',
+        message: 'ログインシステムに問題が生じました。(予期しないレスポンス形式)',
       );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.unknown &&
+          e.message?.contains('Redirect limit exceeded') == true) {
+        throw AuthenticationException.generic(
+          message: 'ログインシステムでリダイレクトエラーが発生しました。しばらくしてから再度お試しください。',
+        );
+      }
+      rethrow;
     }
-
-    return authnRequestUrl;
   }
 
   /// AuthStateを取得
   Future<String> _getAuthState(String authnRequestUrl) async {
-    final response = await dio.get(authnRequestUrl);
-    final loginFormUrl = response.headers.value('location');
-
-    if (loginFormUrl == null) {
-      throw AuthenticationException.generic(
-        message: 'ログインシステムに問題が生じました。(ログインフォームURLの取得に失敗)',
+    try {
+      final response = await dio.get(
+        authnRequestUrl,
+        options: Options(
+          followRedirects: false, // リダイレクトを手動で処理
+          validateStatus: (status) => status! < 400, // 3xxも成功として扱う
+        ),
       );
-    }
 
-    final loginFormUri = Uri.parse(loginFormUrl);
-    final authState = loginFormUri.queryParameters['AuthState'];
+      // リダイレクトレスポンスの場合
+      if (response.statusCode == 302 || response.statusCode == 301) {
+        final loginFormUrl = response.headers.value('location');
 
-    if (authState == null) {
+        if (loginFormUrl == null) {
+          throw AuthenticationException.generic(
+            message: 'ログインシステムに問題が生じました。(ログインフォームURLの取得に失敗)',
+          );
+        }
+
+        final loginFormUri = Uri.parse(loginFormUrl);
+        final authState = loginFormUri.queryParameters['AuthState'];
+
+        if (authState == null) {
+          throw AuthenticationException.generic(
+            message: 'ログインシステムに問題が生じました。(AuthStateの取得に失敗)',
+          );
+        }
+
+        return authState;
+      }
+
+      // 直接レスポンスの場合（稀なケース）
       throw AuthenticationException.generic(
-        message: 'ログインシステムに問題が生じました。(AuthStateの取得に失敗)',
+        message: 'ログインシステムに問題が生じました。(予期しないレスポンス形式)',
       );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.unknown &&
+          e.message?.contains('Redirect limit exceeded') == true) {
+        throw AuthenticationException.generic(
+          message: 'ログインシステムでリダイレクトエラーが発生しました。しばらくしてから再度お試しください。',
+        );
+      }
+      rethrow;
     }
-
-    return authState;
   }
 
   /// ログインフォームに認証情報をPOST
@@ -197,8 +267,25 @@ class IdpAuthenticator {
 
   /// Cookieを取得してAuthSessionを構築
   Future<AuthSession> _buildAuthSession(Portal portal, String username) async {
-    // Cookieを更新するために再度アクセス
-    await dio.get(portal.getEntryUrl(apiConfig));
+    try {
+      // Cookieを更新するために再度アクセス
+      await dio.get(
+        portal.getEntryUrl(apiConfig),
+        options: Options(
+          followRedirects: true, // ここではリダイレクトを許可（Cookieセット目的）
+          maxRedirects: 10, // リダイレクト制限を緩和
+          validateStatus: (status) => status! < 400,
+        ),
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.unknown &&
+          e.message?.contains('Redirect limit exceeded') == true) {
+        // Cookieの取得でリダイレクトエラーが発生した場合でも処理を続行
+        debugPrint('Cookie取得時にリダイレクトエラーが発生しましたが、処理を続行します: $e');
+      } else {
+        rethrow;
+      }
+    }
 
     final allCookies = await cookieJar.loadForRequest(
       Uri.parse(portal.getBaseUrl(apiConfig)),
