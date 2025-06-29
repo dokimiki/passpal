@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:passpal/core/auth/providers/auth_providers.dart';
+import 'package:passpal/core/routing/routes.dart';
 import 'package:passpal/core/storage/storage_providers.dart';
 import 'package:passpal/core/theme/providers/theme_mode_provider.dart';
 import 'package:passpal/core/error/error_notifier.dart';
@@ -18,7 +19,7 @@ class SettingsController extends AsyncNotifier<void> {
   /// ログアウト処理
   Future<void> logout() => _runGuarded(() async {
     await ref.read(authFacadeProvider).logout();
-    ref.read(goRouterProvider).go('/login');
+    ref.read(goRouterProvider).go(AppRoute.loginStudentId.path);
   });
 
   /// キャッシュクリア処理（個別のキーを削除）
