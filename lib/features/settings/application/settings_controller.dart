@@ -8,6 +8,7 @@ import 'package:passpal/core/theme/providers/theme_mode_provider.dart';
 import 'package:passpal/core/error/error_notifier.dart';
 import 'package:passpal/core/error/app_exception.dart';
 import 'package:passpal/core/routing/providers.dart';
+import 'package:passpal/features/login/application/login_form_notifier.dart';
 
 final settingsControllerProvider =
     AsyncNotifierProvider<SettingsController, void>(SettingsController.new);
@@ -18,7 +19,16 @@ class SettingsController extends AsyncNotifier<void> {
 
   /// ログアウト処理
   Future<void> logout() => _runGuarded(() async {
-    await ref.read(authFacadeProvider).logout();
+    // 1. AuthStateNotifierでログアウト（これがAuthFacadeも呼び出す）
+    await ref.read(authStateProvider.notifier).logout();
+
+    // 2. LoginFormNotifierの状態をリセット
+    ref.invalidate(loginFormNotifierProvider);
+
+    // 3. 少し待ってから確実にルーティング
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    // 4. ログイン画面にリダイレクト（goで履歴をクリア）
     ref.read(goRouterProvider).go(AppRoute.loginStudentId.path);
   });
 
