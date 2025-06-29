@@ -1,3 +1,4 @@
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:passpal/core/auth/facade/auth_facade.dart';
@@ -33,6 +34,7 @@ final googleLinkVerifierProvider = Provider<GoogleLinkVerifier>((ref) {
 final idpAuthenticatorProvider = Provider<IdpAuthenticator>((ref) {
   final dio = ref.watch(networkClientProvider(NetworkTarget.sso));
   final cookieJar = ref.watch(cookieJarProvider);
+  dio.interceptors.add(CookieManager(cookieJar));
   final apiConfig = ref
       .watch(appConfigProvider)
       .when(

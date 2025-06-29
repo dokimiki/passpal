@@ -42,6 +42,21 @@ class NetworkClientFactory {
       maxRedirects: 3,
     );
 
+    // SSOの場合、特定の設定が必要
+    if (target == NetworkTarget.sso) {
+      dio.options.followRedirects = false;
+      dio.options.validateStatus = (status) {
+        if (status == null) return false;
+        if (status == 503) return true; // 503: サービス利用不可は特例として成功とみなす
+        if (status >= 100 && status <= 199) return true; // 1xx: 情報応答
+        if (status >= 200 && status <= 299) return true; // 2xx: 成功応答
+        if (status >= 300 && status <= 399) return true; // 3xx: リダイレクト
+        if (status >= 400 && status <= 499) return false; // 4xx: クライアントエラー
+        if (status >= 500 && status <= 599) return false; // 5xx: サーバーエラー
+        return false; // その他のステータスコードは失敗とみなす
+      };
+    }
+
     // Add interceptors in the correct order
     // Order: Connectivity → Auth → Retry → Maintenance → Logging
     _addConnectivityInterceptor(dio);
