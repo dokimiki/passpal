@@ -271,11 +271,6 @@ class IdpAuthenticator {
       // Cookieを更新するために再度アクセス
       await dio.get(
         portal.getEntryUrl(apiConfig),
-        options: Options(
-          followRedirects: true, // ここではリダイレクトを許可（Cookieセット目的）
-          maxRedirects: 10, // リダイレクト制限を緩和
-          validateStatus: (status) => status! < 400,
-        ),
       );
     } on DioException catch (e) {
       if (e.type == DioExceptionType.unknown &&
