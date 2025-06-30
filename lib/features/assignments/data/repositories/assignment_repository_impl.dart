@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
 import '../../domain/entities/assignment.dart';
 import '../../domain/usecases/get_assignments.dart';
 import '../../domain/value_objects/course_id.dart';
@@ -39,12 +41,23 @@ class AssignmentRepositoryImpl implements AssignmentRepository {
 
   @override
   Stream<List<Assignment>> watchAssignments(String term) {
-    // Check cache first
+    debugPrint('🔍 watchAssignments called for term: $term');
+
+    // Emit cached data immediately if available
     if (_isCacheValid(term)) {
+      debugPrint(
+        '✅ Found valid cache, emitting ${_cache[term]!.length} assignments',
+      );
       _assignmentsController.add(_cache[term]!);
     } else {
+      debugPrint('❌ No valid cache, emitting empty list and starting refresh');
+      // Emit empty list initially and then load data
+      _assignmentsController.add([]);
       // Load from remote if cache is stale
-      refreshAssignments(term);
+      refreshAssignments(term).catchError((error) {
+        debugPrint('💥 Refresh failed: $error');
+        _assignmentsController.addError(error);
+      });
     }
 
     return _assignmentsController.stream;
@@ -52,12 +65,17 @@ class AssignmentRepositoryImpl implements AssignmentRepository {
 
   @override
   Future<void> refreshAssignments(String term) async {
+    debugPrint('🔄 Starting refresh for term: $term');
+
     try {
       // Step 1: Fetch timetable to get class list
+      debugPrint('📅 Fetching timetable...');
       final timetableHtml = await _remoteDs.fetchTimetable(term);
       final classes = _timetableParser.parseTimetable(timetableHtml);
+      debugPrint('📚 Found ${classes.length} classes');
 
       if (classes.isEmpty) {
+        debugPrint('⚠️ No classes found, updating cache with empty list');
         _updateCache(term, []);
         return;
       }

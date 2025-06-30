@@ -1,5 +1,7 @@
 import 'package:test/test.dart';
-import 'package:passpal/features/assignments/data/parsers/v1_timetable_parser.dart';
+import 'dart:io';
+import '../../../../../lib/features/assignments/data/parsers/v1_timetable_parser.dart';
+import '../../../../../lib/features/assignments/data/dtos/class_dto.dart';
 
 void main() {
   group('V1TimetableParser', () {
@@ -9,7 +11,27 @@ void main() {
       parser = V1TimetableParser();
     });
 
-    test('should parse timetable HTML correctly', () {
+    test('should parse test fixture HTML correctly', () async {
+      // Read the test fixture
+      final file = File('test/fixtures/data/manabo_timetable.html');
+      final htmlContent = await file.readAsString();
+
+      print('Test fixture HTML length: ${htmlContent.length}');
+
+      // Parse the HTML
+      final classes = parser.parseTimetable(htmlContent);
+
+      // The test fixture should contain several classes
+      expect(classes.length, greaterThan(0));
+
+      // Print results for debugging
+      print('Test fixture parsing results:');
+      for (final cls in classes) {
+        print('- ${cls.name} (ID: ${cls.classId})');
+      }
+    });
+
+    test('should parse simple HTML correctly', () {
       const htmlContent = '''
         <div class="timetable-icon">
           <a href="/class/85146/">

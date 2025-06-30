@@ -84,23 +84,6 @@ class NetworkClientFactory {
       'Connection': 'keep-alive',
     };
 
-    // Target-specific headers
-    switch (target) {
-      case NetworkTarget.albo:
-      case NetworkTarget.manabo:
-      case NetworkTarget.cubics:
-        headers['Referer'] = target.getBaseUrl(apiConfig);
-        break;
-      case NetworkTarget.palapi:
-        headers['Content-Type'] = 'application/json';
-        break;
-      case NetworkTarget.sso:
-        // SSO might have specific requirements
-        break;
-      case NetworkTarget.chukyolink:
-        break;
-    }
-
     return headers;
   }
 
