@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "flutter-docs": {
+      "type": "stdio",
+      "command": "flutter-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}

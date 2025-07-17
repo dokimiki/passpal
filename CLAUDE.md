@@ -169,6 +169,7 @@ Test fixtures include data from Japanese educational systems (Manabo, CUBICS). W
 - Expose all `core` modules via Riverpod DI so features can use them.
 - For OS-dependent (iOS/Android) features, first check for existing wrapper packages. Only write native code if no package exists.
 - Follow **KISS**: prioritize maintainability and simplicity.
+- Always use the flutter-docs MCP to write code based on the latest information.
 - Always Think in English, but respond in Japanese.
 
 ## Development Notes
