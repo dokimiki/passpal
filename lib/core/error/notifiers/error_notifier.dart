@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/app_error.dart';
 import '../logging/app_logger.dart';
 import '../services/error_reporter.dart';
+import '../recovery/recovery_manager.dart';
 import 'error_state.dart';
 
 part 'error_notifier.g.dart';
@@ -10,6 +11,7 @@ part 'error_notifier.g.dart';
 class ErrorNotifier extends _$ErrorNotifier {
   late final AppLogger _logger;
   late final ErrorReporter _errorReporter;
+  late final RecoveryManager _recoveryManager;
   static const int _maxErrorHistory = 50;
   static const Duration _deduplicationWindow = Duration(seconds: 5);
 
@@ -17,6 +19,7 @@ class ErrorNotifier extends _$ErrorNotifier {
   ErrorState build() {
     _errorReporter = ErrorReporter();
     _logger = AppLogger(tag: 'ErrorNotifier', errorReporter: _errorReporter);
+    _recoveryManager = ref.read(recoveryManagerProvider);
     return const ErrorState();
   }
 
@@ -130,32 +133,163 @@ class ErrorNotifier extends _$ErrorNotifier {
 
   Future<void> _handleAuthenticationError(AppError error) async {
     _logger.info('Processing authentication error: ${error.errorCode}');
-    // TODO: Implement authentication error recovery in Issue #6
+
+    if (_recoveryManager.canRecover(error)) {
+      try {
+        final result = await _recoveryManager.attemptRecovery(error);
+
+        // Handle recovery result using runtime type checking
+        if (result.runtimeType.toString().contains('Success')) {
+          _logger.info('Authentication error recovered successfully');
+          // Clear the error from state as it's been resolved
+          clearErrorsOfType(error.runtimeType);
+        } else if (result.runtimeType.toString().contains('Failure')) {
+          _logger.warning('Authentication recovery failed');
+          // Recovery failed - error remains in state
+        } else if (result.runtimeType.toString().contains('Retry')) {
+          _logger.info('Authentication recovery scheduled retry');
+          // Note: Actual retry scheduling is handled by RecoveryManager
+        }
+      } catch (e) {
+        _logger.error('Authentication recovery attempt failed: $e');
+      }
+    } else {
+      _logger.warning(
+        'No recovery strategy available for authentication error',
+      );
+    }
   }
 
   Future<void> _handleNetworkError(AppError error) async {
     _logger.info('Processing network error: ${error.errorCode}');
-    // TODO: Implement network error recovery in Issue #6
+
+    if (_recoveryManager.canRecover(error)) {
+      try {
+        final result = await _recoveryManager.attemptRecovery(error);
+
+        // Handle recovery result
+        if (result.runtimeType.toString().contains('Success')) {
+          _logger.info('Network error recovered successfully');
+          clearErrorsOfType(error.runtimeType);
+        } else if (result.runtimeType.toString().contains('Failure')) {
+          _logger.warning('Network recovery failed');
+          // Error remains in state for user awareness
+        } else if (result.runtimeType.toString().contains('Retry')) {
+          _logger.info(
+            'Network recovery scheduled retry with exponential backoff',
+          );
+          // RecoveryManager handles the retry logic automatically
+        }
+      } catch (e) {
+        _logger.error('Network recovery attempt failed: $e');
+      }
+    } else {
+      _logger.warning('No recovery strategy available for network error');
+    }
   }
 
   Future<void> _handleStorageError(AppError error) async {
     _logger.info('Processing storage error: ${error.errorCode}');
-    // TODO: Implement storage error recovery in Issue #6
+
+    if (_recoveryManager.canRecover(error)) {
+      try {
+        final result = await _recoveryManager.attemptRecovery(error);
+
+        // Handle recovery result
+        if (result.runtimeType.toString().contains('Success')) {
+          _logger.info('Storage error recovered successfully');
+          clearErrorsOfType(error.runtimeType);
+        } else if (result.runtimeType.toString().contains('Failure')) {
+          _logger.warning('Storage recovery failed');
+          // May need to show user a more persistent error state
+        } else if (result.runtimeType.toString().contains('Retry')) {
+          _logger.info(
+            'Storage recovery scheduled retry (cache clear + retry)',
+          );
+          // RecoveryManager handles cache clearing and retry logic
+        }
+      } catch (e) {
+        _logger.error('Storage recovery attempt failed: $e');
+      }
+    } else {
+      _logger.warning('No recovery strategy available for storage error');
+    }
   }
 
   Future<void> _handleMaintenanceError(AppError error) async {
     _logger.info('Processing maintenance error: ${error.errorCode}');
-    // TODO: Implement maintenance error recovery in Issue #6
+
+    // For maintenance errors, we typically don't use automatic recovery
+    // but we should log the error and potentially show maintenance screen
+    _logger.warning('System is under maintenance: ${error.message}');
+
+    // Maintenance errors are usually handled at the UI level
+    // by showing a maintenance screen, so we keep the error in state
+    // for the UI to detect and respond appropriately
+
+    // Future enhancement: Could implement recovery that:
+    // 1. Shows maintenance screen to user
+    // 2. Periodically checks if maintenance is over
+    // 3. Automatically retries when system is back online
   }
 
   Future<void> _handleUpdateRequiredError(AppError error) async {
     _logger.info('Processing update required error: ${error.errorCode}');
-    // TODO: Implement update required error recovery in Issue #6
+
+    // Update required errors typically need user action (go to app store)
+    // but we can implement some automatic handling
+    _logger.warning('App update required: ${error.message}');
+
+    // For UpdateRequiredException, the typical recovery would be:
+    // 1. Show update dialog to user
+    // 2. Redirect to app store if user accepts
+    // 3. Potentially block app usage until updated (for force updates)
+
+    // Since this requires UI interaction and app store redirection,
+    // we'll keep the error in state for the UI layer to handle
+    // The UI can detect this error type and show appropriate update dialog
+
+    // Future enhancement: Could implement recovery that:
+    // 1. Determines if it's a force update vs optional update
+    // 2. Shows appropriate UI (blocking vs non-blocking)
+    // 3. Handles app store redirection
   }
 
   Future<void> _handleParseError(AppError error) async {
     _logger.info('Processing parse error: ${error.errorCode}');
-    // TODO: Implement parse error recovery in Issue #6
+
+    if (_recoveryManager.canRecover(error)) {
+      try {
+        final result = await _recoveryManager.attemptRecovery(error);
+
+        // Handle recovery result
+        if (result.runtimeType.toString().contains('Success')) {
+          _logger.info('Parse error recovered successfully');
+          clearErrorsOfType(error.runtimeType);
+        } else if (result.runtimeType.toString().contains('Failure')) {
+          _logger.warning('Parse recovery failed');
+          // Parse errors might indicate API changes or data format issues
+          // These should be kept in state to alert developers/users
+        } else if (result.runtimeType.toString().contains('Retry')) {
+          _logger.info(
+            'Parse recovery scheduled retry (possibly refetch data)',
+          );
+          // RecoveryManager might retry data fetching with different parameters
+        }
+      } catch (e) {
+        _logger.error('Parse recovery attempt failed: $e');
+      }
+    } else {
+      // Parse errors are often unrecoverable without manual intervention
+      // Log detailed information for debugging
+      _logger.error(
+        'Parse error - potential API schema change: ${error.message}',
+      );
+      _logger.error('Parse error context: ${error.errorCode}');
+
+      // Keep error in state so UI can show appropriate error message
+      // and possibly suggest user actions (refresh, contact support)
+    }
   }
 
   // Convenience methods for common error scenarios
@@ -165,7 +299,8 @@ class ErrorNotifier extends _$ErrorNotifier {
     StackTrace? stackTrace,
     bool canRetry = true,
   }) async {
-    // TODO: Create specific NetworkFailure when implementing Issue #6
+    // TODO: Create specific NetworkFailure when specific error types are needed
+    // For now, using generic AppError with network-specific error code
     final error = AppError.now(
       message: message,
       errorCode: errorCode ?? 'NETWORK_ERROR',
@@ -182,7 +317,8 @@ class ErrorNotifier extends _$ErrorNotifier {
     String? errorCode,
     StackTrace? stackTrace,
   }) async {
-    // TODO: Create specific AuthenticationException when implementing Issue #6
+    // TODO: Create specific AuthenticationException when specific error types are needed
+    // For now, using generic AppError with auth-specific error code
     final error = AppError.now(
       message: message,
       errorCode: errorCode ?? 'AUTH_ERROR',
@@ -199,7 +335,8 @@ class ErrorNotifier extends _$ErrorNotifier {
     StackTrace? stackTrace,
     bool canRetry = true,
   }) async {
-    // TODO: Create specific StorageException when implementing Issue #6
+    // TODO: Create specific StorageException when specific error types are needed
+    // For now, using generic AppError with storage-specific error code
     final error = AppError.now(
       message: message,
       errorCode: errorCode ?? 'STORAGE_ERROR',
