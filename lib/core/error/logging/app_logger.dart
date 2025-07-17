@@ -3,18 +3,24 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/app_error.dart';
+import '../services/error_reporter.dart';
 import 'log_level.dart';
 import 'log_formatter.dart';
 
 class AppLogger {
   final String _tag;
   final LogLevel _minimumLevel;
+  final ErrorReporter _errorReporter;
   static bool _devMenuLoggingEnabled = false;
   static String? _logFilePath;
 
-  AppLogger({required String tag, LogLevel minimumLevel = LogLevel.info})
-    : _tag = tag,
-      _minimumLevel = minimumLevel;
+  AppLogger({
+    required String tag,
+    LogLevel minimumLevel = LogLevel.info,
+    ErrorReporter? errorReporter,
+  }) : _tag = tag,
+       _minimumLevel = minimumLevel,
+       _errorReporter = errorReporter ?? ErrorReporter();
 
   static Future<void> enableDevMenuLogging() async {
     _devMenuLoggingEnabled = true;
@@ -168,14 +174,13 @@ class AppLogger {
     Map<String, dynamic>? attributes,
     StackTrace? stackTrace,
   ) {
-    if (kReleaseMode && level >= LogLevel.warning) {
-      // TODO: Implement Crashlytics logging in Issue #5
-      // FirebaseCrashlytics.instance.log(message);
-      // if (attributes != null) {
-      //   for (final entry in attributes.entries) {
-      //     FirebaseCrashlytics.instance.setCustomKey(entry.key, entry.value);
-      //   }
-      // }
+    if (level >= LogLevel.warning) {
+      _errorReporter.reportLog(
+        level,
+        message,
+        attributes: attributes,
+        stackTrace: stackTrace,
+      );
     }
   }
 

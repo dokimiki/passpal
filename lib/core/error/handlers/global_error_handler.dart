@@ -5,17 +5,20 @@ import 'package:riverpod/riverpod.dart';
 import '../models/app_error.dart';
 import '../notifiers/error_notifier.dart';
 import '../logging/app_logger.dart';
+import '../services/error_reporter.dart';
 
 /// Global error handler that captures uncaught errors from various sources
 /// and routes them to the ErrorNotifier for unified handling.
 class GlobalErrorHandler {
   final ProviderContainer _container;
   final AppLogger _logger;
+  final ErrorReporter _errorReporter;
 
   late final ErrorNotifier _errorNotifier;
 
   GlobalErrorHandler({required ProviderContainer container})
     : _container = container,
+      _errorReporter = ErrorReporter(),
       _logger = AppLogger(tag: 'GlobalErrorHandler') {
     _errorNotifier = _container.read(errorNotifierProvider.notifier);
   }
@@ -143,6 +146,9 @@ class GlobalErrorHandler {
   /// Handle error through the error notifier
   void _handleError(AppError error, {Map<String, dynamic>? context}) {
     try {
+      // Report to Crashlytics directly for global errors
+      _errorReporter.reportError(error, additionalAttributes: context);
+
       _errorNotifier.handleError(error, context: context);
     } catch (e, stackTrace) {
       // If error handling fails, log it but don't create an infinite loop
@@ -150,6 +156,20 @@ class GlobalErrorHandler {
         'Failed to handle error through ErrorNotifier: $e',
         stackTrace: stackTrace,
       );
+
+      // Try to report the error handling failure to Crashlytics
+      try {
+        _errorReporter.reportException(
+          e,
+          stackTrace,
+          attributes: {
+            'original_error': error.toString(),
+            'handler_failure': true,
+          },
+        );
+      } catch (_) {
+        // If even that fails, just continue
+      }
     }
   }
 

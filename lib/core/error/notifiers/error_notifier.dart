@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/app_error.dart';
 import '../logging/app_logger.dart';
+import '../services/error_reporter.dart';
 import 'error_state.dart';
 
 part 'error_notifier.g.dart';
@@ -8,12 +9,14 @@ part 'error_notifier.g.dart';
 @riverpod
 class ErrorNotifier extends _$ErrorNotifier {
   late final AppLogger _logger;
+  late final ErrorReporter _errorReporter;
   static const int _maxErrorHistory = 50;
   static const Duration _deduplicationWindow = Duration(seconds: 5);
 
   @override
   ErrorState build() {
-    _logger = AppLogger(tag: 'ErrorNotifier');
+    _errorReporter = ErrorReporter();
+    _logger = AppLogger(tag: 'ErrorNotifier', errorReporter: _errorReporter);
     return const ErrorState();
   }
 
@@ -28,6 +31,9 @@ class ErrorNotifier extends _$ErrorNotifier {
     }
 
     _logger.logError(error, additionalAttributes: context);
+
+    // Report error to Crashlytics
+    await _errorReporter.reportError(error, additionalAttributes: context);
 
     state = state.copyWith(
       errors: _addErrorToHistory(error),

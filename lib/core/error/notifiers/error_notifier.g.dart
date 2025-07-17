@@ -6,7 +6,7 @@ part of 'error_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$errorNotifierHash() => r'f675f82609e617c38c3fb04d22518d75caee9384';
+String _$errorNotifierHash() => r'df45210b2ab5deced7d337e15543e7125db1c4b5';
 
 /// See also [ErrorNotifier].
 @ProviderFor(ErrorNotifier)
