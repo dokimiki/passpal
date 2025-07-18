@@ -74,19 +74,21 @@ Implementation of the unified configuration facade for PassPal, integrating .env
   - **Completed**: 2025-07-18 - Implemented comprehensive real-time update monitoring system with Firebase Remote Config integration, automatic configuration refresh on updates, error handling and recovery with exponential backoff, broadcast stream for multiple listeners, Riverpod provider integration with automatic lifecycle management, and comprehensive test coverage including provider lifecycle tests
 
 ### Phase 5: Extensions & Utilities
-- **Issue #9: API Config Extensions** `[PENDING]`
+- **Issue #9: API Config Extensions** `[COMPLETED]`
   - **Scope**: Helper methods for API base URLs and service types
   - **Files**: `lib/core/config/extensions/api_config_extensions.dart`
   - **Dependencies**: Issue #1 (models)
-  - **Reviewable**: ~100 lines, utility methods
+  - **Reviewable**: ~137 lines, utility methods
   - **Test Coverage**: URL resolution and service mapping
+  - **Completed**: 2025-07-18 - Implemented comprehensive API config extensions with ServiceType enum, URL resolution methods, service type identification, timeout configuration, security checks, testing mode detection, and URL update utilities. Includes 20 comprehensive unit tests covering all functionality.
 
-- **Issue #10: Debug Config Extensions** `[PENDING]`
+- **Issue #10: Debug Config Extensions** `[COMPLETED]`
   - **Scope**: Log level parsing and Crashlytics condition helpers
   - **Files**: `lib/core/config/extensions/debug_config_extensions.dart`
   - **Dependencies**: Issue #1 (models)
-  - **Reviewable**: ~80 lines, debug utilities
+  - **Reviewable**: ~139 lines, debug utilities
   - **Test Coverage**: Log level parsing and condition checks
+  - **Completed**: 2025-07-18 - Implemented comprehensive debug config extensions with LogLevel enum, log level parsing and permission checks, development/production mode detection, service enablement conditions, display helpers with ANSI colors, and configuration builders for different environments. Includes 24 comprehensive unit tests covering all functionality.
 
 - **Issue #11: Admin Config Extensions** `[PENDING]`
   - **Scope**: Version comparison and forced update logic
@@ -135,11 +137,11 @@ Implementation of the unified configuration facade for PassPal, integrating .env
 
 ## Current Status
 - **Phase**: Extensions & Utilities (Phase 5)
-- **Next Issue**: #9 - API Config Extensions
+- **Next Issue**: #11 - Admin Config Extensions
 - **Total Issues**: 16
-- **Completed**: 8/16 (50.0%)
+- **Completed**: 10/16 (62.5%)
 - **In Progress**: 0/16 (0%)
-- **Remaining**: 8/16 (50.0%)
+- **Remaining**: 6/16 (37.5%)
 
 ## Dependencies Map
 ```
