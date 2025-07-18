@@ -1,5 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'admin_config.dart';
+import 'api_config.dart';
+import 'auth_config.dart';
+import 'debug_config.dart';
+import 'feature_flags.dart';
+
 part 'app_config.freezed.dart';
 part 'app_config.g.dart';
 
@@ -10,6 +16,11 @@ abstract class AppConfig with _$AppConfig {
     @Default(true) bool enableAnalytics,
     @Default(true) bool enableCrashReporting,
     @Default(false) bool enableDebugMode,
+    required ApiConfig apiConfig,
+    required AuthConfig authConfig,
+    required DebugConfig debugConfig,
+    required FeatureFlags featureFlags,
+    required AdminConfig adminConfig,
   }) = _AppConfig;
 
   factory AppConfig.fromJson(Map<String, Object?> json) =>
