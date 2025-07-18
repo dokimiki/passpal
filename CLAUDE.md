@@ -112,6 +112,7 @@ flutter test
 - Local Storage: SQLite (sqflite) + secure storage
 - Authentication: Firebase Auth with Google Sign-In
 - Background Processing: WorkManager and background fetch
+- Before starting the implementation, read the `pubspec.yaml` and understand which packages are available.
 
 ### Architecture Patterns
 - Clean Architecture with core/features separation
