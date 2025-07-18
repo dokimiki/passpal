@@ -90,14 +90,15 @@ extension AppExceptionPatterns on AppException {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AuthenticationException value)?  authentication,TResult Function( MaintenanceException value)?  maintenance,TResult Function( UpdateRequiredException value)?  updateRequired,TResult Function( StorageException value)?  storage,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AuthenticationException value)?  authentication,TResult Function( MaintenanceException value)?  maintenance,TResult Function( UpdateRequiredException value)?  updateRequired,TResult Function( StorageException value)?  storage,TResult Function( ConfigException value)?  config,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case AuthenticationException() when authentication != null:
 return authentication(_that);case MaintenanceException() when maintenance != null:
 return maintenance(_that);case UpdateRequiredException() when updateRequired != null:
 return updateRequired(_that);case StorageException() when storage != null:
-return storage(_that);case _:
+return storage(_that);case ConfigException() when config != null:
+return config(_that);case _:
   return orElse();
 
 }
@@ -115,14 +116,15 @@ return storage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AuthenticationException value)  authentication,required TResult Function( MaintenanceException value)  maintenance,required TResult Function( UpdateRequiredException value)  updateRequired,required TResult Function( StorageException value)  storage,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AuthenticationException value)  authentication,required TResult Function( MaintenanceException value)  maintenance,required TResult Function( UpdateRequiredException value)  updateRequired,required TResult Function( StorageException value)  storage,required TResult Function( ConfigException value)  config,}){
 final _that = this;
 switch (_that) {
 case AuthenticationException():
 return authentication(_that);case MaintenanceException():
 return maintenance(_that);case UpdateRequiredException():
 return updateRequired(_that);case StorageException():
-return storage(_that);}
+return storage(_that);case ConfigException():
+return config(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -136,14 +138,15 @@ return storage(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AuthenticationException value)?  authentication,TResult? Function( MaintenanceException value)?  maintenance,TResult? Function( UpdateRequiredException value)?  updateRequired,TResult? Function( StorageException value)?  storage,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AuthenticationException value)?  authentication,TResult? Function( MaintenanceException value)?  maintenance,TResult? Function( UpdateRequiredException value)?  updateRequired,TResult? Function( StorageException value)?  storage,TResult? Function( ConfigException value)?  config,}){
 final _that = this;
 switch (_that) {
 case AuthenticationException() when authentication != null:
 return authentication(_that);case MaintenanceException() when maintenance != null:
 return maintenance(_that);case UpdateRequiredException() when updateRequired != null:
 return updateRequired(_that);case StorageException() when storage != null:
-return storage(_that);case _:
+return storage(_that);case ConfigException() when config != null:
+return config(_that);case _:
   return null;
 
 }
@@ -160,13 +163,14 @@ return storage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  authentication,TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  maintenance,TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  updateRequired,TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  storage,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  authentication,TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  maintenance,TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  updateRequired,TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  storage,TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  config,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AuthenticationException() when authentication != null:
 return authentication(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case MaintenanceException() when maintenance != null:
 return maintenance(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case UpdateRequiredException() when updateRequired != null:
 return updateRequired(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case StorageException() when storage != null:
-return storage(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case _:
+return storage(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case ConfigException() when config != null:
+return config(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case _:
   return orElse();
 
 }
@@ -184,13 +188,14 @@ return storage(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  authentication,required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  maintenance,required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  updateRequired,required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  storage,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  authentication,required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  maintenance,required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  updateRequired,required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  storage,required TResult Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)  config,}) {final _that = this;
 switch (_that) {
 case AuthenticationException():
 return authentication(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case MaintenanceException():
 return maintenance(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case UpdateRequiredException():
 return updateRequired(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case StorageException():
-return storage(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);}
+return storage(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case ConfigException():
+return config(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -204,13 +209,14 @@ return storage(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  authentication,TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  maintenance,TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  updateRequired,TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  storage,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  authentication,TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  maintenance,TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  updateRequired,TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  storage,TResult? Function( String message,  String errorCode,  StackTrace? stackTrace,  DateTime timestamp,  Map<String, dynamic>? context)?  config,}) {final _that = this;
 switch (_that) {
 case AuthenticationException() when authentication != null:
 return authentication(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case MaintenanceException() when maintenance != null:
 return maintenance(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case UpdateRequiredException() when updateRequired != null:
 return updateRequired(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case StorageException() when storage != null:
-return storage(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case _:
+return storage(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case ConfigException() when config != null:
+return config(_that.message,_that.errorCode,_that.stackTrace,_that.timestamp,_that.context);case _:
   return null;
 
 }
@@ -534,6 +540,88 @@ class _$StorageExceptionCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? errorCode = null,Object? stackTrace = freezed,Object? timestamp = null,Object? context = freezed,}) {
   return _then(StorageException(
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,errorCode: null == errorCode ? _self.errorCode : errorCode // ignore: cast_nullable_to_non_nullable
+as String,stackTrace: freezed == stackTrace ? _self.stackTrace : stackTrace // ignore: cast_nullable_to_non_nullable
+as StackTrace?,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
+as DateTime,context: freezed == context ? _self._context : context // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class ConfigException extends AppException {
+  const ConfigException({required this.message, required this.errorCode, this.stackTrace, required this.timestamp, final  Map<String, dynamic>? context}): _context = context,super._();
+  
+
+@override final  String message;
+@override final  String errorCode;
+@override final  StackTrace? stackTrace;
+@override final  DateTime timestamp;
+ final  Map<String, dynamic>? _context;
+@override Map<String, dynamic>? get context {
+  final value = _context;
+  if (value == null) return null;
+  if (_context is EqualUnmodifiableMapView) return _context;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(value);
+}
+
+
+/// Create a copy of AppException
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ConfigExceptionCopyWith<ConfigException> get copyWith => _$ConfigExceptionCopyWithImpl<ConfigException>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ConfigException&&(identical(other.message, message) || other.message == message)&&(identical(other.errorCode, errorCode) || other.errorCode == errorCode)&&(identical(other.stackTrace, stackTrace) || other.stackTrace == stackTrace)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&const DeepCollectionEquality().equals(other._context, _context));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message,errorCode,stackTrace,timestamp,const DeepCollectionEquality().hash(_context));
+
+@override
+String toString() {
+  return 'AppException.config(message: $message, errorCode: $errorCode, stackTrace: $stackTrace, timestamp: $timestamp, context: $context)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ConfigExceptionCopyWith<$Res> implements $AppExceptionCopyWith<$Res> {
+  factory $ConfigExceptionCopyWith(ConfigException value, $Res Function(ConfigException) _then) = _$ConfigExceptionCopyWithImpl;
+@override @useResult
+$Res call({
+ String message, String errorCode, StackTrace? stackTrace, DateTime timestamp, Map<String, dynamic>? context
+});
+
+
+
+
+}
+/// @nodoc
+class _$ConfigExceptionCopyWithImpl<$Res>
+    implements $ConfigExceptionCopyWith<$Res> {
+  _$ConfigExceptionCopyWithImpl(this._self, this._then);
+
+  final ConfigException _self;
+  final $Res Function(ConfigException) _then;
+
+/// Create a copy of AppException
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? errorCode = null,Object? stackTrace = freezed,Object? timestamp = null,Object? context = freezed,}) {
+  return _then(ConfigException(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,errorCode: null == errorCode ? _self.errorCode : errorCode // ignore: cast_nullable_to_non_nullable
 as String,stackTrace: freezed == stackTrace ? _self.stackTrace : stackTrace // ignore: cast_nullable_to_non_nullable

@@ -23,6 +23,24 @@ sealed class Failure with _$Failure {
     Map<String, dynamic>? context,
   }) = ParseFailure;
 
+  const factory Failure.configSource({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    required DateTime timestamp,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) = ConfigSourceFailure;
+
+  const factory Failure.configParse({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    required DateTime timestamp,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) = ConfigParseFailure;
+
   const Failure._();
 
   factory Failure.networkNow({
@@ -55,6 +73,36 @@ sealed class Failure with _$Failure {
     context: context,
   );
 
+  factory Failure.configSourceNow({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.configSource(
+    message: message,
+    errorCode: errorCode,
+    stackTrace: stackTrace,
+    timestamp: DateTime.now(),
+    retryDelay: retryDelay,
+    context: context,
+  );
+
+  factory Failure.configParseNow({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.configParse(
+    message: message,
+    errorCode: errorCode,
+    stackTrace: stackTrace,
+    timestamp: DateTime.now(),
+    retryDelay: retryDelay,
+    context: context,
+  );
+
   AppError get asAppError => when(
     network: (message, errorCode, stackTrace, timestamp, retryDelay, context) =>
         AppError(
@@ -76,6 +124,28 @@ sealed class Failure with _$Failure {
           retryDelay: retryDelay,
           context: context,
         ),
+    configSource:
+        (message, errorCode, stackTrace, timestamp, retryDelay, context) =>
+            AppError(
+              message: message,
+              errorCode: errorCode,
+              stackTrace: stackTrace,
+              timestamp: timestamp,
+              isRecoverable: true,
+              retryDelay: retryDelay,
+              context: context,
+            ),
+    configParse:
+        (message, errorCode, stackTrace, timestamp, retryDelay, context) =>
+            AppError(
+              message: message,
+              errorCode: errorCode,
+              stackTrace: stackTrace,
+              timestamp: timestamp,
+              isRecoverable: true,
+              retryDelay: retryDelay,
+              context: context,
+            ),
   );
 
   bool get canRetry => retryDelay != null;

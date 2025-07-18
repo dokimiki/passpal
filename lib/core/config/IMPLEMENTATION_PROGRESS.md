@@ -14,12 +14,13 @@ Implementation of the unified configuration facade for PassPal, integrating .env
   - **Test Coverage**: Model serialization/deserialization tests
   - **Completed**: 2025-07-18 - All 6 core data models implemented with Freezed, including JSON serialization and helper methods
 
-- **Issue #2: Exception Types** `[PENDING]`
+- **Issue #2: Exception Types** `[COMPLETED]`
   - **Scope**: Define ConfigSourceException, ConfigParseException, ConfigNotFoundException, ConfigFetchTimeoutException
   - **Files**: `lib/core/config/exceptions/`
   - **Dependencies**: Issue #1 (models)
   - **Reviewable**: ~100 lines, exception definitions
   - **Test Coverage**: Exception creation and message tests
+  - **Completed**: 2025-07-18 - Integrated with core/error system by extending AppException and Failure with config variants, added ErrorNotifier handling, created utility classes
 
 ### Phase 2: Config Sources
 - **Issue #3: Environment File Reader** `[PENDING]`
@@ -127,12 +128,12 @@ Implementation of the unified configuration facade for PassPal, integrating .env
   - **Test Coverage**: Provider availability tests
 
 ## Current Status
-- **Phase**: Foundation (Phase 1)
-- **Next Issue**: #2 - Exception Types
+- **Phase**: Config Sources (Phase 2)
+- **Next Issue**: #3 - Environment File Reader
 - **Total Issues**: 16
-- **Completed**: 1/16 (6.25%)
+- **Completed**: 2/16 (12.5%)
 - **In Progress**: 0/16 (0%)
-- **Remaining**: 15/16 (93.75%)
+- **Remaining**: 14/16 (87.5%)
 
 ## Dependencies Map
 ```

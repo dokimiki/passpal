@@ -37,6 +37,14 @@ sealed class AppException with _$AppException {
     Map<String, dynamic>? context,
   }) = StorageException;
 
+  const factory AppException.config({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    required DateTime timestamp,
+    Map<String, dynamic>? context,
+  }) = ConfigException;
+
   const AppException._();
 
   factory AppException.authenticationNow({
@@ -91,6 +99,19 @@ sealed class AppException with _$AppException {
     context: context,
   );
 
+  factory AppException.configNow({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    Map<String, dynamic>? context,
+  }) => AppException.config(
+    message: message,
+    errorCode: errorCode,
+    stackTrace: stackTrace,
+    timestamp: DateTime.now(),
+    context: context,
+  );
+
   AppError get asAppError => when(
     authentication: (message, errorCode, stackTrace, timestamp, context) =>
         AppError(
@@ -120,6 +141,14 @@ sealed class AppException with _$AppException {
           context: context,
         ),
     storage: (message, errorCode, stackTrace, timestamp, context) => AppError(
+      message: message,
+      errorCode: errorCode,
+      stackTrace: stackTrace,
+      timestamp: timestamp,
+      isRecoverable: false,
+      context: context,
+    ),
+    config: (message, errorCode, stackTrace, timestamp, context) => AppError(
       message: message,
       errorCode: errorCode,
       stackTrace: stackTrace,
