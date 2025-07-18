@@ -79,7 +79,7 @@ lib/
 ### Core Flutter Commands
 ```bash
 # Clean build cache
-flutter clean
+dart run build_runner clean && flutter clean
 
 # Get dependencies
 flutter pub get
