@@ -28,7 +28,7 @@ class RemoteConfigSource {
   Map<String, dynamic>? _cachedConfig;
 
   RemoteConfigSource({FirebaseRemoteConfig? remoteConfig})
-      : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance;
+    : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance;
 
   /// Initialize Remote Config with default values and settings
   Future<void> initialize() async {
@@ -126,7 +126,7 @@ class RemoteConfigSource {
   T? getValue<T>(String key) {
     try {
       final value = _remoteConfig.getValue(key);
-      
+
       if (T == String) {
         return value.asString() as T?;
       } else if (T == int) {
@@ -136,7 +136,7 @@ class RemoteConfigSource {
       } else if (T == bool) {
         return value.asBool() as T?;
       }
-      
+
       return null;
     } catch (e) {
       return null;
@@ -148,7 +148,7 @@ class RemoteConfigSource {
     try {
       final jsonString = _remoteConfig.getString(key);
       if (jsonString.isEmpty) return null;
-      
+
       return json.decode(jsonString) as Map<String, dynamic>;
     } catch (e) {
       return null;
@@ -163,10 +163,10 @@ class RemoteConfigSource {
   /// Check if we should fetch new configuration
   bool _shouldFetchNewConfig() {
     if (_lastFetchTime == null) return true;
-    
+
     final now = DateTime.now();
     final timeSinceLastFetch = now.difference(_lastFetchTime!);
-    
+
     return timeSinceLastFetch >= _defaultMinimumFetchInterval;
   }
 
@@ -214,7 +214,7 @@ class RemoteConfigSource {
 
       // Cache the parsed config
       _cachedConfig = config.toJson();
-      
+
       return config;
     } catch (e, stackTrace) {
       throw Failure.configParse(
@@ -262,17 +262,21 @@ class RemoteConfigSource {
     }
 
     return ApiConfig(
-      manaboBaseUrl: getValue<String>('manabo_base_url') ?? 
-                     'https://manabo.cnc.chukyo-u.ac.jp',
-      alboBaseUrl: getValue<String>('albo_base_url') ?? 
-                   'https://cubics-pt-out.mng.chukyo-u.ac.jp',
-      cubicsBaseUrl: getValue<String>('cubics_base_url') ?? 
-                     'https://cubics-as-out.mng.chukyo-u.ac.jp',
-      ssoUrl: getValue<String>('sso_url') ?? 
-              'https://shib.chukyo-u.ac.jp',
-      palApiBaseUrl: getValue<String>('pal_api_base_url') ?? 
-                     'https://api.chukyo-passpal.app/v1',
-      connectionTimeoutSeconds: getValue<int>('connection_timeout_seconds') ?? 30,
+      manaboBaseUrl:
+          getValue<String>('manabo_base_url') ??
+          'https://manabo.cnc.chukyo-u.ac.jp',
+      alboBaseUrl:
+          getValue<String>('albo_base_url') ??
+          'https://cubics-pt-out.mng.chukyo-u.ac.jp',
+      cubicsBaseUrl:
+          getValue<String>('cubics_base_url') ??
+          'https://cubics-as-out.mng.chukyo-u.ac.jp',
+      ssoUrl: getValue<String>('sso_url') ?? 'https://shib.chukyo-u.ac.jp',
+      palApiBaseUrl:
+          getValue<String>('pal_api_base_url') ??
+          'https://api.chukyo-passpal.app/v1',
+      connectionTimeoutSeconds:
+          getValue<int>('connection_timeout_seconds') ?? 30,
       receiveTimeoutSeconds: getValue<int>('receive_timeout_seconds') ?? 60,
       maxRetries: getValue<int>('max_retries') ?? 3,
     );
@@ -290,8 +294,8 @@ class RemoteConfigSource {
     }
 
     return AuthConfig(
-      allowedEmailDomain: getValue<String>('allowed_email_domain') ?? 
-                          '@m.chukyo-u.ac.jp',
+      allowedEmailDomain:
+          getValue<String>('allowed_email_domain') ?? '@m.chukyo-u.ac.jp',
     );
   }
 
@@ -328,8 +332,10 @@ class RemoteConfigSource {
 
     return FeatureFlags(
       enableOfflineMode: getValue<bool>('feature_offline_mode') ?? true,
-      enablePushNotifications: getValue<bool>('feature_push_notifications') ?? true,
-      enableMaintenanceMode: getValue<bool>('feature_maintenance_mode') ?? false,
+      enablePushNotifications:
+          getValue<bool>('feature_push_notifications') ?? true,
+      enableMaintenanceMode:
+          getValue<bool>('feature_maintenance_mode') ?? false,
     );
   }
 
@@ -423,10 +429,7 @@ Future<AppConfig> remoteConfig(Ref ref) async {
 
 /// Riverpod provider for remote configuration with custom timeout
 @riverpod
-Future<AppConfig> remoteConfigWithTimeout(
-  Ref ref,
-  Duration timeout,
-) async {
+Future<AppConfig> remoteConfigWithTimeout(Ref ref, Duration timeout) async {
   final source = ref.watch(remoteConfigSourceProvider);
   await source.initialize();
   return await source.loadConfig(fetchTimeout: timeout);

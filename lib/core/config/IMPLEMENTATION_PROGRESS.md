@@ -40,19 +40,21 @@ Implementation of the unified configuration facade for PassPal, integrating .env
   - **Completed**: 2025-07-18 - Implemented comprehensive Firebase Remote Config wrapper with fetch/cache/timeout handling, type-safe value retrieval, JSON configuration parsing, real-time update streaming, error handling with AppException/Failure, and extensive unit tests covering all major functionality
 
 ### Phase 3: Core Provider Logic
-- **Issue #5: Config Merger** `[PENDING]`
+- **Issue #5: Config Merger** `[COMPLETED]`
   - **Scope**: Priority-based config merging (.env > Remote Config > defaults)
   - **Files**: `lib/core/config/services/config_merger.dart`
   - **Dependencies**: Issue #1 (models), Issue #3 (env), Issue #4 (remote)
-  - **Reviewable**: ~150 lines, merging logic
+  - **Reviewable**: ~218 lines, merging logic
   - **Test Coverage**: Priority merging scenarios
+  - **Completed**: 2025-07-18 - Implemented priority-based configuration merging system with support for .env files (highest priority), Firebase Remote Config (medium priority), and default values (lowest priority). Includes proper error handling for source failures and comprehensive merging logic for all configuration models with Riverpod integration.
 
-- **Issue #6: Memory Cache Manager** `[PENDING]`
+- **Issue #6: Memory Cache Manager** `[COMPLETED]`
   - **Scope**: 15-minute in-memory cache with invalidation
   - **Files**: `lib/core/config/services/config_cache.dart`
   - **Dependencies**: Issue #1 (models)
   - **Reviewable**: ~100 lines, cache management
   - **Test Coverage**: Cache expiration and invalidation
+  - **Completed**: 2025-07-18 - Implemented memory cache with 15-minute expiration, automatic invalidation, cache update streams, and comprehensive test coverage including edge cases
 
 - **Issue #7: Main Config Provider** `[PENDING]`
   - **Scope**: Riverpod provider with initialization, caching, and update monitoring
@@ -131,11 +133,11 @@ Implementation of the unified configuration facade for PassPal, integrating .env
 
 ## Current Status
 - **Phase**: Core Provider Logic (Phase 3)
-- **Next Issue**: #5 - Config Merger
+- **Next Issue**: #7 - Main Config Provider
 - **Total Issues**: 16
-- **Completed**: 4/16 (25%)
+- **Completed**: 6/16 (37.5%)
 - **In Progress**: 0/16 (0%)
-- **Remaining**: 12/16 (75%)
+- **Remaining**: 10/16 (62.5%)
 
 ## Dependencies Map
 ```

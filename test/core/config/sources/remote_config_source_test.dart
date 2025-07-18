@@ -27,16 +27,11 @@ void main() {
     group('initialize', () {
       test('設定の初期化が成功する', () async {
         // Arrange
-        when(mockRemoteConfig.setConfigSettings(any))
-            .thenAnswer((_) async {});
-        when(mockRemoteConfig.setDefaults(any))
-            .thenAnswer((_) async {});
+        when(mockRemoteConfig.setConfigSettings(any)).thenAnswer((_) async {});
+        when(mockRemoteConfig.setDefaults(any)).thenAnswer((_) async {});
 
         // Act & Assert
-        await expectLater(
-          source.initialize(),
-          completes,
-        );
+        await expectLater(source.initialize(), completes);
 
         verify(mockRemoteConfig.setConfigSettings(any)).called(1);
         verify(mockRemoteConfig.setDefaults(any)).called(1);
@@ -44,14 +39,12 @@ void main() {
 
       test('初期化失敗時にAppExceptionをスローする', () async {
         // Arrange
-        when(mockRemoteConfig.setConfigSettings(any))
-            .thenThrow(Exception('Init failed'));
+        when(
+          mockRemoteConfig.setConfigSettings(any),
+        ).thenThrow(Exception('Init failed'));
 
         // Act & Assert
-        await expectLater(
-          source.initialize(),
-          throwsA(isA<AppException>()),
-        );
+        await expectLater(source.initialize(), throwsA(isA<AppException>()));
       });
     });
 
@@ -59,27 +52,25 @@ void main() {
       test('設定の読み込みが成功する', () async {
         // Arrange
         _setupMockRemoteConfigValues(mockRemoteConfig);
-        when(mockRemoteConfig.fetchAndActivate())
-            .thenAnswer((_) async => true);
+        when(mockRemoteConfig.fetchAndActivate()).thenAnswer((_) async => true);
 
         // Act
         final config = await source.loadConfig();
 
         // Assert
         expect(config, isA<AppConfig>());
-        expect(config.apiConfig.manaboBaseUrl, 
-               'https://manabo.cnc.chukyo-u.ac.jp');
-        expect(config.authConfig.allowedEmailDomain, 
-               '@m.chukyo-u.ac.jp');
+        expect(
+          config.apiConfig.manaboBaseUrl,
+          'https://manabo.cnc.chukyo-u.ac.jp',
+        );
+        expect(config.authConfig.allowedEmailDomain, '@m.chukyo-u.ac.jp');
       });
 
       test('タイムアウト時にFailureをスローする', () async {
         // Arrange
-        when(mockRemoteConfig.fetchAndActivate())
-            .thenAnswer((_) => Future.delayed(
-                  const Duration(seconds: 20),
-                  () => true,
-                ));
+        when(mockRemoteConfig.fetchAndActivate()).thenAnswer(
+          (_) => Future.delayed(const Duration(seconds: 20), () => true),
+        );
 
         // Act & Assert
         await expectLater(
@@ -90,24 +81,18 @@ void main() {
 
       test('Firebase例外時にFailureをスローする', () async {
         // Arrange
-        when(mockRemoteConfig.fetchAndActivate())
-            .thenThrow(FirebaseException(
-              plugin: 'remote_config',
-              code: 'fetch-failed',
-            ));
+        when(mockRemoteConfig.fetchAndActivate()).thenThrow(
+          FirebaseException(plugin: 'remote_config', code: 'fetch-failed'),
+        );
 
         // Act & Assert
-        await expectLater(
-          source.loadConfig(),
-          throwsA(isA<Failure>()),
-        );
+        await expectLater(source.loadConfig(), throwsA(isA<Failure>()));
       });
 
       test('デフォルト値での設定読み込みが成功する', () async {
         // Arrange
         _setupMockRemoteConfigValues(mockRemoteConfig);
-        when(mockRemoteConfig.fetchAndActivate())
-            .thenAnswer((_) async => true);
+        when(mockRemoteConfig.fetchAndActivate()).thenAnswer((_) async => true);
 
         // Act & Assert
         // This test validates the behavior with default configuration values
@@ -120,10 +105,8 @@ void main() {
     group('hasConfig', () {
       test('Remote Configが利用可能な場合trueを返す', () async {
         // Arrange
-        when(mockRemoteConfig.setConfigSettings(any))
-            .thenAnswer((_) async {});
-        when(mockRemoteConfig.setDefaults(any))
-            .thenAnswer((_) async {});
+        when(mockRemoteConfig.setConfigSettings(any)).thenAnswer((_) async {});
+        when(mockRemoteConfig.setDefaults(any)).thenAnswer((_) async {});
 
         // Act
         final result = await source.hasConfig();
@@ -134,8 +117,9 @@ void main() {
 
       test('初期化に失敗した場合falseを返す', () async {
         // Arrange
-        when(mockRemoteConfig.setConfigSettings(any))
-            .thenThrow(Exception('Init failed'));
+        when(
+          mockRemoteConfig.setConfigSettings(any),
+        ).thenThrow(Exception('Init failed'));
 
         // Act
         final result = await source.hasConfig();
@@ -187,8 +171,9 @@ void main() {
 
       test('例外発生時にnullを返す', () {
         // Arrange
-        when(mockRemoteConfig.getValue('test_key'))
-            .thenThrow(Exception('Value not found'));
+        when(
+          mockRemoteConfig.getValue('test_key'),
+        ).thenThrow(Exception('Value not found'));
 
         // Act
         final result = source.getValue<String>('test_key');
@@ -240,7 +225,9 @@ void main() {
       test('更新ストリームを正しく取得する', () {
         // Arrange
         final controller = StreamController<RemoteConfigUpdate>();
-        when(mockRemoteConfig.onConfigUpdated).thenAnswer((_) => controller.stream);
+        when(
+          mockRemoteConfig.onConfigUpdated,
+        ).thenAnswer((_) => controller.stream);
 
         // Act
         final stream = source.onConfigUpdated;
