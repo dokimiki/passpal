@@ -18,6 +18,14 @@ abstract class DebugConfig with _$DebugConfig {
 
   const DebugConfig._();
 
+  factory DebugConfig.forTesting() => const DebugConfig(
+    logLevel: 'debug',
+    enableConsoleLogging: true,
+    enableFileLogging: false,
+    enableNetworkLogging: true,
+    enableCrashlytics: false,
+  );
+
   bool get isDebugLevel => logLevel == 'debug';
   bool get isInfoLevel => logLevel == 'info';
   bool get isWarningLevel => logLevel == 'warning';

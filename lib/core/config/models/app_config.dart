@@ -26,5 +26,18 @@ abstract class AppConfig with _$AppConfig {
   factory AppConfig.fromJson(Map<String, Object?> json) =>
       _$AppConfigFromJson(json);
 
+  /// Factory method for testing purposes
+  factory AppConfig.forTesting() => AppConfig(
+    version: '1.0.0',
+    enableAnalytics: true,
+    enableCrashReporting: true,
+    enableDebugMode: false,
+    apiConfig: ApiConfig.forTesting(),
+    authConfig: AuthConfig.forTesting(),
+    debugConfig: DebugConfig.forTesting(),
+    featureFlags: FeatureFlags.forTesting(),
+    adminConfig: AdminConfig.forTesting(),
+  );
+
   const AppConfig._();
 }

@@ -15,4 +15,10 @@ abstract class FeatureFlags with _$FeatureFlags {
       _$FeatureFlagsFromJson(json);
 
   const FeatureFlags._();
+
+  factory FeatureFlags.forTesting() => const FeatureFlags(
+    enableOfflineMode: true,
+    enablePushNotifications: true,
+    enableMaintenanceMode: false,
+  );
 }

@@ -17,6 +17,13 @@ abstract class AdminConfig with _$AdminConfig {
 
   const AdminConfig._();
 
+  factory AdminConfig.forTesting() => const AdminConfig(
+    appVersion: '1.0.0',
+    minSupportedVersion: '1.0.0',
+    isMaintenanceMode: false,
+    maintenanceMessage: '',
+  );
+
   bool get isAppBlocked => isMaintenanceMode;
   bool get shouldShowMaintenanceMessage =>
       isMaintenanceMode && maintenanceMessage.isNotEmpty;

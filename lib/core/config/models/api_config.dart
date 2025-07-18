@@ -21,6 +21,14 @@ abstract class ApiConfig with _$ApiConfig {
 
   const ApiConfig._();
 
+  factory ApiConfig.forTesting() => const ApiConfig(
+    manaboBaseUrl: 'https://test.manabo.jp',
+    alboBaseUrl: 'https://test.albo.jp',
+    cubicsBaseUrl: 'https://test.cubics.jp',
+    connectionTimeoutSeconds: 30,
+    receiveTimeoutSeconds: 30,
+  );
+
   Duration get connectionTimeout => Duration(seconds: connectionTimeoutSeconds);
   Duration get receiveTimeout => Duration(seconds: receiveTimeoutSeconds);
 }

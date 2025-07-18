@@ -13,4 +13,7 @@ abstract class AuthConfig with _$AuthConfig {
       _$AuthConfigFromJson(json);
 
   const AuthConfig._();
+
+  factory AuthConfig.forTesting() =>
+      const AuthConfig(allowedEmailDomain: '@test.chukyo-u.ac.jp');
 }
