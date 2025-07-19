@@ -1,12 +1,12 @@
 /// Config Core Module Providers
-/// 
+///
 /// This file exports all configuration-related providers for easy access
 /// from other parts of the application.
-/// 
+///
 /// Usage:
 /// ```dart
 /// import 'package:passpal/core/config/providers.dart';
-/// 
+///
 /// // Use any config provider
 /// final config = ref.watch(appConfigProvider);
 /// final apiConfig = ref.watch(apiConfigProvider);
