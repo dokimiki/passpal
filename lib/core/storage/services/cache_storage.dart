@@ -609,8 +609,14 @@ class CacheStorage implements CacheStorageInterface {
 
       // If adding this would exceed capacity, try LRU cleanup first
       if (newSize > maxCapacity) {
+        // Calculate target size to accommodate the new entry
+        // Leave some buffer (20%) and account for the new entry size
+        final targetSize =
+            maxCapacity - additionalBytes - (maxCapacity * 0.2).round();
         final cleanupResult = await _cacheManager.performLruCleanup(
-          targetBytes: (maxCapacity * 0.7).round(), // Clean to 70% capacity
+          targetBytes: targetSize > 0
+              ? targetSize
+              : (maxCapacity * 0.3).round(),
         );
 
         if (cleanupResult.isLeft()) {
