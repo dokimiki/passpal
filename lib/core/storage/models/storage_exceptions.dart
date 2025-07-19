@@ -9,9 +9,12 @@ abstract class StorageErrorCodes {
   static const String accessDenied = 'STORAGE_ACCESS_DENIED';
   static const String corruptionDetected = 'STORAGE_CORRUPTION_DETECTED';
   static const String keyNotFound = 'STORAGE_KEY_NOT_FOUND';
+  static const String encryptionFailed = 'STORAGE_ENCRYPTION_FAILED';
+  static const String decryptionFailed = 'STORAGE_DECRYPTION_FAILED';
+  static const String migrationFailed = 'STORAGE_MIGRATION_FAILED';
 }
 
-/// Factory for creating storage-specific failures
+/// Factory for creating storage-specific failures with proper typing
 abstract class StorageFailureFactory {
   /// Create a storage read failure
   static Failure readFailure({
@@ -19,7 +22,7 @@ abstract class StorageFailureFactory {
     StackTrace? stackTrace,
     Duration? retryDelay,
     Map<String, dynamic>? context,
-  }) => Failure.networkNow(
+  }) => Failure.storageReadNow(
     message: message,
     errorCode: StorageErrorCodes.readFailed,
     stackTrace: stackTrace,
@@ -33,7 +36,7 @@ abstract class StorageFailureFactory {
     StackTrace? stackTrace,
     Duration? retryDelay,
     Map<String, dynamic>? context,
-  }) => Failure.networkNow(
+  }) => Failure.storageWriteNow(
     message: message,
     errorCode: StorageErrorCodes.writeFailed,
     stackTrace: stackTrace,
@@ -47,7 +50,7 @@ abstract class StorageFailureFactory {
     StackTrace? stackTrace,
     Duration? retryDelay,
     Map<String, dynamic>? context,
-  }) => Failure.parseNow(
+  }) => Failure.storageSerializationNow(
     message: message,
     errorCode: StorageErrorCodes.serializationFailed,
     stackTrace: stackTrace,
@@ -61,7 +64,7 @@ abstract class StorageFailureFactory {
     StackTrace? stackTrace,
     Duration? retryDelay,
     Map<String, dynamic>? context,
-  }) => Failure.networkNow(
+  }) => Failure.storageCapacityNow(
     message: message,
     errorCode: StorageErrorCodes.capacityExceeded,
     stackTrace: stackTrace,
@@ -75,7 +78,7 @@ abstract class StorageFailureFactory {
     StackTrace? stackTrace,
     Duration? retryDelay,
     Map<String, dynamic>? context,
-  }) => Failure.networkNow(
+  }) => Failure.storageReadNow(
     message: message,
     errorCode: StorageErrorCodes.accessDenied,
     stackTrace: stackTrace,
@@ -89,7 +92,7 @@ abstract class StorageFailureFactory {
     StackTrace? stackTrace,
     Duration? retryDelay,
     Map<String, dynamic>? context,
-  }) => Failure.networkNow(
+  }) => Failure.storageReadNow(
     message: message,
     errorCode: StorageErrorCodes.corruptionDetected,
     stackTrace: stackTrace,
@@ -103,9 +106,51 @@ abstract class StorageFailureFactory {
     StackTrace? stackTrace,
     Duration? retryDelay,
     Map<String, dynamic>? context,
-  }) => Failure.networkNow(
+  }) => Failure.storageReadNow(
     message: message,
     errorCode: StorageErrorCodes.keyNotFound,
+    stackTrace: stackTrace,
+    retryDelay: retryDelay,
+    context: context,
+  );
+
+  /// Create an encryption failure
+  static Failure encryptionFailure({
+    required String message,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.storageSerializationNow(
+    message: message,
+    errorCode: StorageErrorCodes.encryptionFailed,
+    stackTrace: stackTrace,
+    retryDelay: retryDelay,
+    context: context,
+  );
+
+  /// Create a decryption failure
+  static Failure decryptionFailure({
+    required String message,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.storageSerializationNow(
+    message: message,
+    errorCode: StorageErrorCodes.decryptionFailed,
+    stackTrace: stackTrace,
+    retryDelay: retryDelay,
+    context: context,
+  );
+
+  /// Create a migration failure
+  static Failure migrationFailure({
+    required String message,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.storageWriteNow(
+    message: message,
+    errorCode: StorageErrorCodes.migrationFailed,
     stackTrace: stackTrace,
     retryDelay: retryDelay,
     context: context,

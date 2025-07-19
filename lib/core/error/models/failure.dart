@@ -41,6 +41,42 @@ sealed class Failure with _$Failure {
     Map<String, dynamic>? context,
   }) = ConfigParseFailure;
 
+  const factory Failure.storageRead({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    required DateTime timestamp,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) = StorageReadFailure;
+
+  const factory Failure.storageWrite({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    required DateTime timestamp,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) = StorageWriteFailure;
+
+  const factory Failure.storageSerialization({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    required DateTime timestamp,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) = StorageSerializationFailure;
+
+  const factory Failure.storageCapacity({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    required DateTime timestamp,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) = StorageCapacityFailure;
+
   const Failure._();
 
   factory Failure.networkNow({
@@ -103,6 +139,66 @@ sealed class Failure with _$Failure {
     context: context,
   );
 
+  factory Failure.storageReadNow({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.storageRead(
+    message: message,
+    errorCode: errorCode,
+    stackTrace: stackTrace,
+    timestamp: DateTime.now(),
+    retryDelay: retryDelay,
+    context: context,
+  );
+
+  factory Failure.storageWriteNow({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.storageWrite(
+    message: message,
+    errorCode: errorCode,
+    stackTrace: stackTrace,
+    timestamp: DateTime.now(),
+    retryDelay: retryDelay,
+    context: context,
+  );
+
+  factory Failure.storageSerializationNow({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.storageSerialization(
+    message: message,
+    errorCode: errorCode,
+    stackTrace: stackTrace,
+    timestamp: DateTime.now(),
+    retryDelay: retryDelay,
+    context: context,
+  );
+
+  factory Failure.storageCapacityNow({
+    required String message,
+    required String errorCode,
+    StackTrace? stackTrace,
+    Duration? retryDelay,
+    Map<String, dynamic>? context,
+  }) => Failure.storageCapacity(
+    message: message,
+    errorCode: errorCode,
+    stackTrace: stackTrace,
+    timestamp: DateTime.now(),
+    retryDelay: retryDelay,
+    context: context,
+  );
+
   AppError get asAppError => when(
     network: (message, errorCode, stackTrace, timestamp, retryDelay, context) =>
         AppError(
@@ -143,6 +239,50 @@ sealed class Failure with _$Failure {
               stackTrace: stackTrace,
               timestamp: timestamp,
               isRecoverable: true,
+              retryDelay: retryDelay,
+              context: context,
+            ),
+    storageRead:
+        (message, errorCode, stackTrace, timestamp, retryDelay, context) =>
+            AppError(
+              message: message,
+              errorCode: errorCode,
+              stackTrace: stackTrace,
+              timestamp: timestamp,
+              isRecoverable: true,
+              retryDelay: retryDelay,
+              context: context,
+            ),
+    storageWrite:
+        (message, errorCode, stackTrace, timestamp, retryDelay, context) =>
+            AppError(
+              message: message,
+              errorCode: errorCode,
+              stackTrace: stackTrace,
+              timestamp: timestamp,
+              isRecoverable: true,
+              retryDelay: retryDelay,
+              context: context,
+            ),
+    storageSerialization:
+        (message, errorCode, stackTrace, timestamp, retryDelay, context) =>
+            AppError(
+              message: message,
+              errorCode: errorCode,
+              stackTrace: stackTrace,
+              timestamp: timestamp,
+              isRecoverable: false,
+              retryDelay: retryDelay,
+              context: context,
+            ),
+    storageCapacity:
+        (message, errorCode, stackTrace, timestamp, retryDelay, context) =>
+            AppError(
+              message: message,
+              errorCode: errorCode,
+              stackTrace: stackTrace,
+              timestamp: timestamp,
+              isRecoverable: false,
               retryDelay: retryDelay,
               context: context,
             ),
