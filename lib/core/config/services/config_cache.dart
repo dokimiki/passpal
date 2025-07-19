@@ -8,9 +8,10 @@ import '../models/app_config.dart';
 
 part 'config_cache.g.dart';
 
-/// Memory cache for configuration data with automatic expiration
+/// Memory cache for configuration data with configurable expiration
 class ConfigCache {
-  static const Duration _cacheExpiration = Duration(minutes: 15);
+  // Increased cache duration to 24 hours to prevent frequent reloads
+  static const Duration _cacheExpiration = Duration(hours: 24);
 
   AppConfig? _cachedConfig;
   DateTime? _cacheTime;
@@ -87,8 +88,8 @@ class ConfigCache {
   }
 }
 
-/// Riverpod provider for the config cache
-@riverpod
+/// Riverpod provider for the config cache with keepAlive
+@Riverpod(keepAlive: true)
 ConfigCache configCache(Ref ref) {
   final cache = ConfigCache();
 

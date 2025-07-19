@@ -413,8 +413,8 @@ class RemoteConfigSource {
   }
 }
 
-/// Riverpod provider for RemoteConfigSource
-@riverpod
+/// Riverpod provider for RemoteConfigSource with keepAlive
+@Riverpod(keepAlive: true)
 RemoteConfigSource remoteConfigSource(Ref ref) {
   return RemoteConfigSource();
 }

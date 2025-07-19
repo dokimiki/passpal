@@ -237,8 +237,8 @@ class EnvConfigSource {
   Map<String, String> get allEnvVars => Map.unmodifiable(_dotEnv.env);
 }
 
-/// Riverpod provider for EnvConfigSource
-@riverpod
+/// Riverpod provider for EnvConfigSource with keepAlive
+@Riverpod(keepAlive: true)
 EnvConfigSource envConfigSource(Ref ref) {
   return EnvConfigSource();
 }

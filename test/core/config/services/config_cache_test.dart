@@ -78,11 +78,11 @@ void main() {
     });
 
     test('should invalidate cache after expiration', () async {
-      // Use a shorter expiration for testing
+      // Cache with 24-hour expiration now
       cache.cacheConfig(testConfig);
 
-      // Manually set cache time to past expiration
-      cache.setCacheTime(DateTime.now().subtract(const Duration(minutes: 16)));
+      // Manually set cache time to past expiration (25 hours ago)
+      cache.setCacheTime(DateTime.now().subtract(const Duration(hours: 25)));
 
       expect(cache.cachedConfig, isNull);
       expect(cache.isCacheValid, isFalse);
@@ -104,8 +104,8 @@ void main() {
 
       final timeUntilExpiration = cache.timeUntilExpiration;
       expect(timeUntilExpiration, isNotNull);
-      expect(timeUntilExpiration!.inMinutes, lessThanOrEqualTo(15));
-      expect(timeUntilExpiration.inMinutes, greaterThanOrEqualTo(14));
+      expect(timeUntilExpiration!.inHours, lessThanOrEqualTo(24));
+      expect(timeUntilExpiration.inHours, greaterThanOrEqualTo(23));
     });
 
     test('should emit cache updates through stream', () async {

@@ -6,13 +6,13 @@ part of 'env_config_source.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$envConfigSourceHash() => r'239f4d99a5f598622a1ab21c0a43e6d473c3817e';
+String _$envConfigSourceHash() => r'094b505678f5d2a549078d2cd15c6b6aad94423e';
 
-/// Riverpod provider for EnvConfigSource
+/// Riverpod provider for EnvConfigSource with keepAlive
 ///
 /// Copied from [envConfigSource].
 @ProviderFor(envConfigSource)
-final envConfigSourceProvider = AutoDisposeProvider<EnvConfigSource>.internal(
+final envConfigSourceProvider = Provider<EnvConfigSource>.internal(
   envConfigSource,
   name: r'envConfigSourceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -24,7 +24,7 @@ final envConfigSourceProvider = AutoDisposeProvider<EnvConfigSource>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef EnvConfigSourceRef = AutoDisposeProviderRef<EnvConfigSource>;
+typedef EnvConfigSourceRef = ProviderRef<EnvConfigSource>;
 String _$envConfigHash() => r'946ec739aa2705a785c3d67563c9313c47443b84';
 
 /// Riverpod provider for loading environment configuration

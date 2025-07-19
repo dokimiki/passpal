@@ -6,13 +6,13 @@ part of 'config_merger.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$configMergerHash() => r'd0d8db2170bf5a48944056fdeb17cce60306dd23';
+String _$configMergerHash() => r'95f0a6261475c2f0bdfeddc50ed2e237f4a3d904';
 
-/// Riverpod provider for ConfigMerger
+/// Riverpod provider for ConfigMerger with keepAlive
 ///
 /// Copied from [configMerger].
 @ProviderFor(configMerger)
-final configMergerProvider = AutoDisposeProvider<ConfigMerger>.internal(
+final configMergerProvider = Provider<ConfigMerger>.internal(
   configMerger,
   name: r'configMergerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -24,6 +24,6 @@ final configMergerProvider = AutoDisposeProvider<ConfigMerger>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ConfigMergerRef = AutoDisposeProviderRef<ConfigMerger>;
+typedef ConfigMergerRef = ProviderRef<ConfigMerger>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

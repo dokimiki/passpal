@@ -3,7 +3,7 @@ import '../logging/log_level.dart';
 import '../services/crashlytics_service.dart';
 
 /// Mock implementation of CrashlyticsService for testing
-class MockCrashlyticsService extends CrashlyticsService {
+class MockCrashlyticsService implements CrashlyticsService {
   final List<MockErrorRecord> _errorRecords = [];
   final List<MockLogRecord> _logRecords = [];
   final List<MockExceptionRecord> _exceptionRecords = [];
@@ -11,7 +11,7 @@ class MockCrashlyticsService extends CrashlyticsService {
   String? _userId;
   bool _isEnabled = true;
 
-  MockCrashlyticsService() : super(crashlytics: null);
+  MockCrashlyticsService();
 
   /// Get recorded errors for testing
   List<MockErrorRecord> get errorRecords => List.unmodifiable(_errorRecords);
@@ -146,6 +146,9 @@ class MockCrashlyticsService extends CrashlyticsService {
   T? getCustomKey<T>(String key) {
     return _customKeys[key] as T?;
   }
+
+  /// Mock implementation of isEnabled static getter
+  static bool get isEnabled => true;
 }
 
 /// Record of an error sent to Crashlytics

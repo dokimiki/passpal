@@ -146,7 +146,7 @@ class MockAppLogger extends AppLogger {
 }
 
 /// Mock implementation of ErrorReporter for testing
-class MockErrorReporter extends ErrorReporter {
+class MockErrorReporter implements ErrorReporter {
   final List<MockErrorReportEntry> _errorReports = [];
   final List<MockLogReportEntry> _logReports = [];
   final List<MockExceptionReportEntry> _exceptionReports = [];
@@ -244,6 +244,24 @@ class MockErrorReporter extends ErrorReporter {
   /// Test helper: Check if exception was reported
   bool hasExceptionReport<T>() {
     return _exceptionReports.any((report) => report.exception is T);
+  }
+
+  @override
+  Future<void> setUserId(String userId) async {
+    if (!_enabled) return;
+    // Mock implementation - could store userId for testing if needed
+  }
+
+  @override
+  Future<void> setCustomKey(String key, dynamic value) async {
+    if (!_enabled) return;
+    // Mock implementation - could store custom keys for testing if needed
+  }
+
+  @override
+  Future<void> clearCustomKeys() async {
+    if (!_enabled) return;
+    // Mock implementation - could clear stored keys for testing if needed
   }
 }
 

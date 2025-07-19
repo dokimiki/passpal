@@ -15,21 +15,6 @@ import '../services/config_merger.dart';
 
 part 'config_provider.g.dart';
 
-/// Configuration provider state
-enum ConfigProviderState {
-  /// Initial state, not loaded yet
-  initial,
-
-  /// Loading configuration
-  loading,
-
-  /// Configuration loaded successfully
-  loaded,
-
-  /// Error occurred during loading
-  error,
-}
-
 /// Main configuration provider that manages app configuration
 ///
 /// This provider handles:
@@ -40,18 +25,24 @@ enum ConfigProviderState {
 /// - Reactive configuration state management
 @riverpod
 AppConfig appConfig(Ref ref) {
-  // Return default configuration initially
-  return _getDefaultConfig();
+  // Watch the loaded configuration and return it if available, otherwise defaults
+  final loadedConfigAsync = ref.watch(loadedConfigProvider);
+  return loadedConfigAsync.when(
+    data: (config) => config,
+    loading: () => _getDefaultConfig(),
+    error: (_, _) => _getDefaultConfig(),
+  );
 }
 
-/// Load configuration from all sources
+/// Load configuration from all sources with keepAlive to prevent unnecessary reloads
 ///
 /// This method:
 /// 1. Checks cache first for valid configuration
 /// 2. If cache is invalid, loads from merged sources
 /// 3. Updates cache with new configuration
 /// 4. Handles errors gracefully
-@riverpod
+/// 5. Uses keepAlive to prevent automatic disposal and re-loading
+@Riverpod(keepAlive: true)
 Future<AppConfig> loadedConfig(Ref ref) async {
   final cache = ref.read(configCacheProvider);
   final merger = ref.read(configMergerProvider);
@@ -103,7 +94,7 @@ Future<AppConfig> loadedConfig(Ref ref) async {
 }
 
 /// Refresh configuration by clearing cache and reloading
-@riverpod
+@Riverpod(keepAlive: true)
 Future<AppConfig> refreshedConfig(Ref ref) async {
   final cache = ref.read(configCacheProvider);
   final logger = ref.read(scopedLoggerProvider('ConfigProvider'));
@@ -113,8 +104,9 @@ Future<AppConfig> refreshedConfig(Ref ref) async {
   // Clear cache
   cache.invalidateCache();
 
-  // Reload configuration
-  return await ref.refresh(loadedConfigProvider.future);
+  // Invalidate and reload configuration
+  ref.invalidate(loadedConfigProvider);
+  return await ref.read(loadedConfigProvider.future);
 }
 
 /// Get default configuration
@@ -217,39 +209,39 @@ bool hasConfigErrors(Ref ref) {
   return loadedConfig.hasError;
 }
 
-/// Provider for getting specific configuration sections
-@riverpod
+/// Provider for getting specific configuration sections with direct access to appConfig
+@Riverpod(keepAlive: true)
 ApiConfig apiConfig(Ref ref) {
   final config = ref.watch(appConfigProvider);
   return config.apiConfig;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 AuthConfig authConfig(Ref ref) {
   final config = ref.watch(appConfigProvider);
   return config.authConfig;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 DebugConfig debugConfig(Ref ref) {
   final config = ref.watch(appConfigProvider);
   return config.debugConfig;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 FeatureFlags featureFlags(Ref ref) {
   final config = ref.watch(appConfigProvider);
   return config.featureFlags;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 AdminConfig adminConfig(Ref ref) {
   final config = ref.watch(appConfigProvider);
   return config.adminConfig;
 }
 
 /// Provider for configuration version
-@riverpod
+@Riverpod(keepAlive: true)
 String configVersion(Ref ref) {
   final config = ref.watch(appConfigProvider);
   return config.version;

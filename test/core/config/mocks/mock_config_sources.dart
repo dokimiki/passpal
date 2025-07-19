@@ -180,6 +180,12 @@ class MockRemoteConfigSource extends RemoteConfigSource {
     return _updateController.stream;
   }
 
+  /// Stream of remote config updates (for RemoteConfigUpdateMonitor)
+  @override
+  Stream<RemoteConfigUpdate> get onConfigUpdated {
+    return _updateController.stream.map((data) => MockRemoteConfigUpdate());
+  }
+
   /// Set mock remote data
   void setMockRemoteData(Map<String, dynamic> data) {
     _mockRemoteData.clear();
@@ -197,6 +203,17 @@ class MockRemoteConfigSource extends RemoteConfigSource {
     _mockRemoteData.clear();
     _mockRemoteData.addAll(updatedData);
     _updateController.add(updatedData);
+  }
+
+  /// Simulate remote config update (for integration tests)
+  void simulateRemoteUpdate() {
+    if (_shouldThrowError) {
+      _updateController.addError(
+        Exception(_errorMessage ?? 'Mock remote update error'),
+      );
+    } else {
+      _updateController.add(_mockRemoteData);
+    }
   }
 
   /// Clear remote config data
@@ -271,6 +288,9 @@ class MockRemoteConfigSource extends RemoteConfigSource {
 
 /// Mock Firebase Remote Config for testing
 class MockFirebaseRemoteConfig extends Mock implements FirebaseRemoteConfig {}
+
+/// Mock Remote Config Update for testing
+class MockRemoteConfigUpdate extends Mock implements RemoteConfigUpdate {}
 
 /// Riverpod providers for mock configuration sources
 @riverpod

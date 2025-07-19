@@ -225,8 +225,8 @@ class ConfigMerger {
   }
 }
 
-/// Riverpod provider for ConfigMerger
-@riverpod
+/// Riverpod provider for ConfigMerger with keepAlive
+@Riverpod(keepAlive: true)
 ConfigMerger configMerger(Ref ref) {
   return ConfigMerger(
     envConfigSource: ref.watch(envConfigSourceProvider),

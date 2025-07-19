@@ -7,26 +7,25 @@ part of 'remote_config_source.dart';
 // **************************************************************************
 
 String _$remoteConfigSourceHash() =>
-    r'b6d37a7a367d71ecdbfd13d80e719c34bec96a80';
+    r'b11c66959b4116e313cc9bb1e52c50fc69edec45';
 
-/// Riverpod provider for RemoteConfigSource
+/// Riverpod provider for RemoteConfigSource with keepAlive
 ///
 /// Copied from [remoteConfigSource].
 @ProviderFor(remoteConfigSource)
-final remoteConfigSourceProvider =
-    AutoDisposeProvider<RemoteConfigSource>.internal(
-      remoteConfigSource,
-      name: r'remoteConfigSourceProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$remoteConfigSourceHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final remoteConfigSourceProvider = Provider<RemoteConfigSource>.internal(
+  remoteConfigSource,
+  name: r'remoteConfigSourceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$remoteConfigSourceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef RemoteConfigSourceRef = AutoDisposeProviderRef<RemoteConfigSource>;
+typedef RemoteConfigSourceRef = ProviderRef<RemoteConfigSource>;
 String _$remoteConfigHash() => r'1fa508900dd4d4d5533f43f604f27af998aa5982';
 
 /// Riverpod provider for loading remote configuration

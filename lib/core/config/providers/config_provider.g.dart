@@ -6,7 +6,7 @@ part of 'config_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appConfigHash() => r'e88a92e1540cb4393410e5c7fb5d25c40b1227f6';
+String _$appConfigHash() => r'2ceab4a55938b1e7937e46e73fa9a7cce01b85fd';
 
 /// Main configuration provider that manages app configuration
 ///
@@ -32,19 +32,20 @@ final appConfigProvider = AutoDisposeProvider<AppConfig>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AppConfigRef = AutoDisposeProviderRef<AppConfig>;
-String _$loadedConfigHash() => r'49e12d94e7aa425c9ca9b39e61a0fbbdabe0abe2';
+String _$loadedConfigHash() => r'fd18d0522f29e332955219dd113f8d6187a01649';
 
-/// Load configuration from all sources
+/// Load configuration from all sources with keepAlive to prevent unnecessary reloads
 ///
 /// This method:
 /// 1. Checks cache first for valid configuration
 /// 2. If cache is invalid, loads from merged sources
 /// 3. Updates cache with new configuration
 /// 4. Handles errors gracefully
+/// 5. Uses keepAlive to prevent automatic disposal and re-loading
 ///
 /// Copied from [loadedConfig].
 @ProviderFor(loadedConfig)
-final loadedConfigProvider = AutoDisposeFutureProvider<AppConfig>.internal(
+final loadedConfigProvider = FutureProvider<AppConfig>.internal(
   loadedConfig,
   name: r'loadedConfigProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -56,14 +57,14 @@ final loadedConfigProvider = AutoDisposeFutureProvider<AppConfig>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef LoadedConfigRef = AutoDisposeFutureProviderRef<AppConfig>;
-String _$refreshedConfigHash() => r'88122bd02327200e08a57e3f8b25508a59ecc4fa';
+typedef LoadedConfigRef = FutureProviderRef<AppConfig>;
+String _$refreshedConfigHash() => r'fdb157db831cab0c05d551bd34962b1acd001e23';
 
 /// Refresh configuration by clearing cache and reloading
 ///
 /// Copied from [refreshedConfig].
 @ProviderFor(refreshedConfig)
-final refreshedConfigProvider = AutoDisposeFutureProvider<AppConfig>.internal(
+final refreshedConfigProvider = FutureProvider<AppConfig>.internal(
   refreshedConfig,
   name: r'refreshedConfigProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -75,7 +76,7 @@ final refreshedConfigProvider = AutoDisposeFutureProvider<AppConfig>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef RefreshedConfigRef = AutoDisposeFutureProviderRef<AppConfig>;
+typedef RefreshedConfigRef = FutureProviderRef<AppConfig>;
 String _$initializeConfigHash() => r'bf76137203ba49616c521a91724b022380b7b7f3';
 
 /// Provider for configuration initialization
@@ -136,13 +137,13 @@ final hasConfigErrorsProvider = AutoDisposeProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef HasConfigErrorsRef = AutoDisposeProviderRef<bool>;
-String _$apiConfigHash() => r'0367e4bc8abd8419555cf71e4d0434224162e18a';
+String _$apiConfigHash() => r'9df71bfc9d317f28101af6bec199a892e03d6663';
 
-/// Provider for getting specific configuration sections
+/// Provider for getting specific configuration sections with direct access to appConfig
 ///
 /// Copied from [apiConfig].
 @ProviderFor(apiConfig)
-final apiConfigProvider = AutoDisposeProvider<ApiConfig>.internal(
+final apiConfigProvider = Provider<ApiConfig>.internal(
   apiConfig,
   name: r'apiConfigProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -154,12 +155,12 @@ final apiConfigProvider = AutoDisposeProvider<ApiConfig>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ApiConfigRef = AutoDisposeProviderRef<ApiConfig>;
-String _$authConfigHash() => r'334d3e2a5bb2a29b39a284104951b89497e5329e';
+typedef ApiConfigRef = ProviderRef<ApiConfig>;
+String _$authConfigHash() => r'e740194af821cdd4342653797c70db60ca67602d';
 
 /// See also [authConfig].
 @ProviderFor(authConfig)
-final authConfigProvider = AutoDisposeProvider<AuthConfig>.internal(
+final authConfigProvider = Provider<AuthConfig>.internal(
   authConfig,
   name: r'authConfigProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -171,12 +172,12 @@ final authConfigProvider = AutoDisposeProvider<AuthConfig>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AuthConfigRef = AutoDisposeProviderRef<AuthConfig>;
-String _$debugConfigHash() => r'b1f7ff1ad1831d41c08613ff1e98b6f8e2cc56a8';
+typedef AuthConfigRef = ProviderRef<AuthConfig>;
+String _$debugConfigHash() => r'7c92c8f9d4d5e0c1758c2c48e4854c2b251a619d';
 
 /// See also [debugConfig].
 @ProviderFor(debugConfig)
-final debugConfigProvider = AutoDisposeProvider<DebugConfig>.internal(
+final debugConfigProvider = Provider<DebugConfig>.internal(
   debugConfig,
   name: r'debugConfigProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -188,12 +189,12 @@ final debugConfigProvider = AutoDisposeProvider<DebugConfig>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef DebugConfigRef = AutoDisposeProviderRef<DebugConfig>;
-String _$featureFlagsHash() => r'685197c2f58edc3039add53244d78a96ef9bb489';
+typedef DebugConfigRef = ProviderRef<DebugConfig>;
+String _$featureFlagsHash() => r'd18a281244dec106e135a39f99c32a6bafa38eba';
 
 /// See also [featureFlags].
 @ProviderFor(featureFlags)
-final featureFlagsProvider = AutoDisposeProvider<FeatureFlags>.internal(
+final featureFlagsProvider = Provider<FeatureFlags>.internal(
   featureFlags,
   name: r'featureFlagsProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -205,12 +206,12 @@ final featureFlagsProvider = AutoDisposeProvider<FeatureFlags>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef FeatureFlagsRef = AutoDisposeProviderRef<FeatureFlags>;
-String _$adminConfigHash() => r'8ba82a93f2f4fd77bea066ca4be5c5de331551ed';
+typedef FeatureFlagsRef = ProviderRef<FeatureFlags>;
+String _$adminConfigHash() => r'f3644860633dd4c5621a5a16b72893cf8420ee5a';
 
 /// See also [adminConfig].
 @ProviderFor(adminConfig)
-final adminConfigProvider = AutoDisposeProvider<AdminConfig>.internal(
+final adminConfigProvider = Provider<AdminConfig>.internal(
   adminConfig,
   name: r'adminConfigProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -222,14 +223,14 @@ final adminConfigProvider = AutoDisposeProvider<AdminConfig>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AdminConfigRef = AutoDisposeProviderRef<AdminConfig>;
-String _$configVersionHash() => r'42bdd11c1c0602a92d2b152a4b0519c4f77f9d29';
+typedef AdminConfigRef = ProviderRef<AdminConfig>;
+String _$configVersionHash() => r'7af8568ed547fbf0c4f0b5fae1831e87c904bafd';
 
 /// Provider for configuration version
 ///
 /// Copied from [configVersion].
 @ProviderFor(configVersion)
-final configVersionProvider = AutoDisposeProvider<String>.internal(
+final configVersionProvider = Provider<String>.internal(
   configVersion,
   name: r'configVersionProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -241,7 +242,7 @@ final configVersionProvider = AutoDisposeProvider<String>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ConfigVersionRef = AutoDisposeProviderRef<String>;
+typedef ConfigVersionRef = ProviderRef<String>;
 String _$isFeatureEnabledHash() => r'360b7fe2472ae0f1cd2ce42f69a2da7b5aac6660';
 
 /// Copied from Dart SDK
