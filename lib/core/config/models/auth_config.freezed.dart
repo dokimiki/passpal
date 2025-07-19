@@ -209,7 +209,7 @@ return $default(_that.allowedEmailDomain);case _:
 @JsonSerializable()
 
 class _AuthConfig extends AuthConfig {
-  const _AuthConfig({this.allowedEmailDomain = '@m.chukyo-u.ac.jp'}): super._();
+  const _AuthConfig({this.allowedEmailDomain = AuthConfigDefaults.allowedEmailDomain}): super._();
   factory _AuthConfig.fromJson(Map<String, dynamic> json) => _$AuthConfigFromJson(json);
 
 @override@JsonKey() final  String allowedEmailDomain;

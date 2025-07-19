@@ -7,11 +7,19 @@ part of 'debug_config.dart';
 // **************************************************************************
 
 _DebugConfig _$DebugConfigFromJson(Map<String, dynamic> json) => _DebugConfig(
-  logLevel: json['logLevel'] as String? ?? 'info',
-  enableConsoleLogging: json['enableConsoleLogging'] as bool? ?? false,
-  enableFileLogging: json['enableFileLogging'] as bool? ?? false,
-  enableNetworkLogging: json['enableNetworkLogging'] as bool? ?? true,
-  enableCrashlytics: json['enableCrashlytics'] as bool? ?? true,
+  logLevel: json['logLevel'] as String? ?? DebugConfigDefaults.logLevel,
+  enableConsoleLogging:
+      json['enableConsoleLogging'] as bool? ??
+      DebugConfigDefaults.enableConsoleLogging,
+  enableFileLogging:
+      json['enableFileLogging'] as bool? ??
+      DebugConfigDefaults.enableFileLogging,
+  enableNetworkLogging:
+      json['enableNetworkLogging'] as bool? ??
+      DebugConfigDefaults.enableNetworkLogging,
+  enableCrashlytics:
+      json['enableCrashlytics'] as bool? ??
+      DebugConfigDefaults.enableCrashlytics,
 );
 
 Map<String, dynamic> _$DebugConfigToJson(_DebugConfig instance) =>

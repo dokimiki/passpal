@@ -212,7 +212,7 @@ return $default(_that.appVersion,_that.minSupportedVersion,_that.isMaintenanceMo
 @JsonSerializable()
 
 class _AdminConfig extends AdminConfig {
-  const _AdminConfig({this.appVersion = '1.0.0', this.minSupportedVersion = '1.0.0', this.isMaintenanceMode = false, this.maintenanceMessage = ''}): super._();
+  const _AdminConfig({this.appVersion = AdminConfigDefaults.appVersion, this.minSupportedVersion = AdminConfigDefaults.minSupportedVersion, this.isMaintenanceMode = AdminConfigDefaults.isMaintenanceMode, this.maintenanceMessage = AdminConfigDefaults.maintenanceMessage}): super._();
   factory _AdminConfig.fromJson(Map<String, dynamic> json) => _$AdminConfigFromJson(json);
 
 @override@JsonKey() final  String appVersion;

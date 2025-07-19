@@ -9,13 +9,21 @@ import 'feature_flags.dart';
 part 'app_config.freezed.dart';
 part 'app_config.g.dart';
 
+/// Default values for main application configuration
+class AppConfigDefaults {
+  static const String version = '1.0.0';
+  static const bool enableAnalytics = true;
+  static const bool enableCrashReporting = true;
+  static const bool enableDebugMode = false;
+}
+
 @freezed
 abstract class AppConfig with _$AppConfig {
   const factory AppConfig({
-    @Default('1.0.0') String version,
-    @Default(true) bool enableAnalytics,
-    @Default(true) bool enableCrashReporting,
-    @Default(false) bool enableDebugMode,
+    @Default(AppConfigDefaults.version) String version,
+    @Default(AppConfigDefaults.enableAnalytics) bool enableAnalytics,
+    @Default(AppConfigDefaults.enableCrashReporting) bool enableCrashReporting,
+    @Default(AppConfigDefaults.enableDebugMode) bool enableDebugMode,
     required ApiConfig apiConfig,
     required AuthConfig authConfig,
     required DebugConfig debugConfig,
@@ -28,15 +36,28 @@ abstract class AppConfig with _$AppConfig {
 
   /// Factory method for testing purposes
   factory AppConfig.forTesting() => AppConfig(
-    version: '1.0.0',
-    enableAnalytics: true,
-    enableCrashReporting: true,
-    enableDebugMode: false,
+    version: AppConfigDefaults.version,
+    enableAnalytics: AppConfigDefaults.enableAnalytics,
+    enableCrashReporting: AppConfigDefaults.enableCrashReporting,
+    enableDebugMode: AppConfigDefaults.enableDebugMode,
     apiConfig: ApiConfig.forTesting(),
     authConfig: AuthConfig.forTesting(),
     debugConfig: DebugConfig.forTesting(),
     featureFlags: FeatureFlags.forTesting(),
     adminConfig: AdminConfig.forTesting(),
+  );
+
+  /// Factory method that creates AppConfig with all default values
+  factory AppConfig.withDefaults() => AppConfig(
+    version: AppConfigDefaults.version,
+    enableAnalytics: AppConfigDefaults.enableAnalytics,
+    enableCrashReporting: AppConfigDefaults.enableCrashReporting,
+    enableDebugMode: AppConfigDefaults.enableDebugMode,
+    apiConfig: ApiConfig.withDefaults(),
+    authConfig: AuthConfig.withDefaults(),
+    debugConfig: DebugConfig.withDefaults(),
+    featureFlags: FeatureFlags.withDefaults(),
+    adminConfig: AdminConfig.withDefaults(),
   );
 
   const AppConfig._();

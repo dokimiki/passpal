@@ -8,9 +8,15 @@ part of 'feature_flags.dart';
 
 _FeatureFlags _$FeatureFlagsFromJson(Map<String, dynamic> json) =>
     _FeatureFlags(
-      enableOfflineMode: json['enableOfflineMode'] as bool? ?? true,
-      enablePushNotifications: json['enablePushNotifications'] as bool? ?? true,
-      enableMaintenanceMode: json['enableMaintenanceMode'] as bool? ?? false,
+      enableOfflineMode:
+          json['enableOfflineMode'] as bool? ??
+          FeatureFlagsDefaults.enableOfflineMode,
+      enablePushNotifications:
+          json['enablePushNotifications'] as bool? ??
+          FeatureFlagsDefaults.enablePushNotifications,
+      enableMaintenanceMode:
+          json['enableMaintenanceMode'] as bool? ??
+          FeatureFlagsDefaults.enableMaintenanceMode,
     );
 
 Map<String, dynamic> _$FeatureFlagsToJson(_FeatureFlags instance) =>

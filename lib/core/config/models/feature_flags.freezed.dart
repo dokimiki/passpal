@@ -211,7 +211,7 @@ return $default(_that.enableOfflineMode,_that.enablePushNotifications,_that.enab
 @JsonSerializable()
 
 class _FeatureFlags extends FeatureFlags {
-  const _FeatureFlags({this.enableOfflineMode = true, this.enablePushNotifications = true, this.enableMaintenanceMode = false}): super._();
+  const _FeatureFlags({this.enableOfflineMode = FeatureFlagsDefaults.enableOfflineMode, this.enablePushNotifications = FeatureFlagsDefaults.enablePushNotifications, this.enableMaintenanceMode = FeatureFlagsDefaults.enableMaintenanceMode}): super._();
   factory _FeatureFlags.fromJson(Map<String, dynamic> json) => _$FeatureFlagsFromJson(json);
 
 @override@JsonKey() final  bool enableOfflineMode;

@@ -7,10 +7,14 @@ part of 'app_config.dart';
 // **************************************************************************
 
 _AppConfig _$AppConfigFromJson(Map<String, dynamic> json) => _AppConfig(
-  version: json['version'] as String? ?? '1.0.0',
-  enableAnalytics: json['enableAnalytics'] as bool? ?? true,
-  enableCrashReporting: json['enableCrashReporting'] as bool? ?? true,
-  enableDebugMode: json['enableDebugMode'] as bool? ?? false,
+  version: json['version'] as String? ?? AppConfigDefaults.version,
+  enableAnalytics:
+      json['enableAnalytics'] as bool? ?? AppConfigDefaults.enableAnalytics,
+  enableCrashReporting:
+      json['enableCrashReporting'] as bool? ??
+      AppConfigDefaults.enableCrashReporting,
+  enableDebugMode:
+      json['enableDebugMode'] as bool? ?? AppConfigDefaults.enableDebugMode,
   apiConfig: ApiConfig.fromJson(json['apiConfig'] as Map<String, dynamic>),
   authConfig: AuthConfig.fromJson(json['authConfig'] as Map<String, dynamic>),
   debugConfig: DebugConfig.fromJson(

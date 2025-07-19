@@ -75,41 +75,7 @@ class ConfigMerger {
 
   /// Get default configuration values
   AppConfig _getDefaultConfig() {
-    return AppConfig(
-      version: '1.0.0',
-      enableAnalytics: true,
-      enableCrashReporting: true,
-      enableDebugMode: false,
-      apiConfig: ApiConfig(
-        manaboBaseUrl: 'https://manabo.cnc.chukyo-u.ac.jp',
-        alboBaseUrl: 'https://cubics-pt-out.mng.chukyo-u.ac.jp',
-        cubicsBaseUrl: 'https://cubics-as-out.mng.chukyo-u.ac.jp',
-        ssoUrl: 'https://shib.chukyo-u.ac.jp',
-        palApiBaseUrl: 'https://api.chukyo-passpal.app/v1',
-        connectionTimeoutSeconds: 30,
-        receiveTimeoutSeconds: 60,
-        maxRetries: 3,
-      ),
-      authConfig: AuthConfig(allowedEmailDomain: '@m.chukyo-u.ac.jp'),
-      debugConfig: DebugConfig(
-        logLevel: 'info',
-        enableConsoleLogging: false,
-        enableFileLogging: false,
-        enableNetworkLogging: true,
-        enableCrashlytics: true,
-      ),
-      featureFlags: FeatureFlags(
-        enableOfflineMode: true,
-        enablePushNotifications: true,
-        enableMaintenanceMode: false,
-      ),
-      adminConfig: AdminConfig(
-        appVersion: '1.0.0',
-        minSupportedVersion: '1.0.0',
-        isMaintenanceMode: false,
-        maintenanceMessage: '',
-      ),
-    );
+    return AppConfig.withDefaults();
   }
 
   /// Merge multiple AppConfig instances based on priority

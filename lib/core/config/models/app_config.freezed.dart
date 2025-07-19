@@ -262,7 +262,7 @@ return $default(_that.version,_that.enableAnalytics,_that.enableCrashReporting,_
 @JsonSerializable()
 
 class _AppConfig extends AppConfig {
-  const _AppConfig({this.version = '1.0.0', this.enableAnalytics = true, this.enableCrashReporting = true, this.enableDebugMode = false, required this.apiConfig, required this.authConfig, required this.debugConfig, required this.featureFlags, required this.adminConfig}): super._();
+  const _AppConfig({this.version = AppConfigDefaults.version, this.enableAnalytics = AppConfigDefaults.enableAnalytics, this.enableCrashReporting = AppConfigDefaults.enableCrashReporting, this.enableDebugMode = AppConfigDefaults.enableDebugMode, required this.apiConfig, required this.authConfig, required this.debugConfig, required this.featureFlags, required this.adminConfig}): super._();
   factory _AppConfig.fromJson(Map<String, dynamic> json) => _$AppConfigFromJson(json);
 
 @override@JsonKey() final  String version;

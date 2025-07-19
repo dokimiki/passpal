@@ -216,7 +216,7 @@ return $default(_that.manaboBaseUrl,_that.alboBaseUrl,_that.cubicsBaseUrl,_that.
 @JsonSerializable()
 
 class _ApiConfig extends ApiConfig {
-  const _ApiConfig({this.manaboBaseUrl = 'https://manabo.cnc.chukyo-u.ac.jp', this.alboBaseUrl = 'https://cubics-pt-out.mng.chukyo-u.ac.jp', this.cubicsBaseUrl = 'https://cubics-as-out.mng.chukyo-u.ac.jp', this.ssoUrl = 'https://shib.chukyo-u.ac.jp', this.palApiBaseUrl = 'https://api.chukyo-passpal.app/v1', this.connectionTimeoutSeconds = 30, this.receiveTimeoutSeconds = 60, this.maxRetries = 3}): super._();
+  const _ApiConfig({this.manaboBaseUrl = ApiConfigDefaults.manaboBaseUrl, this.alboBaseUrl = ApiConfigDefaults.alboBaseUrl, this.cubicsBaseUrl = ApiConfigDefaults.cubicsBaseUrl, this.ssoUrl = ApiConfigDefaults.ssoUrl, this.palApiBaseUrl = ApiConfigDefaults.palApiBaseUrl, this.connectionTimeoutSeconds = ApiConfigDefaults.connectionTimeoutSeconds, this.receiveTimeoutSeconds = ApiConfigDefaults.receiveTimeoutSeconds, this.maxRetries = ApiConfigDefaults.maxRetries}): super._();
   factory _ApiConfig.fromJson(Map<String, dynamic> json) => _$ApiConfigFromJson(json);
 
 @override@JsonKey() final  String manaboBaseUrl;

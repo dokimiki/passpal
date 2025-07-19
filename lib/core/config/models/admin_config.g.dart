@@ -7,10 +7,16 @@ part of 'admin_config.dart';
 // **************************************************************************
 
 _AdminConfig _$AdminConfigFromJson(Map<String, dynamic> json) => _AdminConfig(
-  appVersion: json['appVersion'] as String? ?? '1.0.0',
-  minSupportedVersion: json['minSupportedVersion'] as String? ?? '1.0.0',
-  isMaintenanceMode: json['isMaintenanceMode'] as bool? ?? false,
-  maintenanceMessage: json['maintenanceMessage'] as String? ?? '',
+  appVersion: json['appVersion'] as String? ?? AdminConfigDefaults.appVersion,
+  minSupportedVersion:
+      json['minSupportedVersion'] as String? ??
+      AdminConfigDefaults.minSupportedVersion,
+  isMaintenanceMode:
+      json['isMaintenanceMode'] as bool? ??
+      AdminConfigDefaults.isMaintenanceMode,
+  maintenanceMessage:
+      json['maintenanceMessage'] as String? ??
+      AdminConfigDefaults.maintenanceMessage,
 );
 
 Map<String, dynamic> _$AdminConfigToJson(_AdminConfig instance) =>

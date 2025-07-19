@@ -122,19 +122,20 @@ class EnvConfigSource {
   ApiConfig _parseApiConfig() {
     return ApiConfig(
       manaboBaseUrl:
-          _getString('MANABO_BASE_URL') ?? 'https://manabo.cnc.chukyo-u.ac.jp',
-      alboBaseUrl:
-          _getString('ALBO_BASE_URL') ??
-          'https://cubics-pt-out.mng.chukyo-u.ac.jp',
+          _getString('MANABO_BASE_URL') ?? ApiConfigDefaults.manaboBaseUrl,
+      alboBaseUrl: _getString('ALBO_BASE_URL') ?? ApiConfigDefaults.alboBaseUrl,
       cubicsBaseUrl:
-          _getString('CUBICS_BASE_URL') ??
-          'https://cubics-as-out.mng.chukyo-u.ac.jp',
-      ssoUrl: _getString('SSO_URL') ?? 'https://shib.chukyo-u.ac.jp',
+          _getString('CUBICS_BASE_URL') ?? ApiConfigDefaults.cubicsBaseUrl,
+      ssoUrl: _getString('SSO_URL') ?? ApiConfigDefaults.ssoUrl,
       palApiBaseUrl:
-          _getString('PAL_API_BASE_URL') ?? 'https://api.chukyo-passpal.app/v1',
-      connectionTimeoutSeconds: _getInt('CONNECTION_TIMEOUT_SECONDS') ?? 30,
-      receiveTimeoutSeconds: _getInt('RECEIVE_TIMEOUT_SECONDS') ?? 60,
-      maxRetries: _getInt('MAX_RETRIES') ?? 3,
+          _getString('PAL_API_BASE_URL') ?? ApiConfigDefaults.palApiBaseUrl,
+      connectionTimeoutSeconds:
+          _getInt('CONNECTION_TIMEOUT_SECONDS') ??
+          ApiConfigDefaults.connectionTimeoutSeconds,
+      receiveTimeoutSeconds:
+          _getInt('RECEIVE_TIMEOUT_SECONDS') ??
+          ApiConfigDefaults.receiveTimeoutSeconds,
+      maxRetries: _getInt('MAX_RETRIES') ?? ApiConfigDefaults.maxRetries,
     );
   }
 
@@ -142,37 +143,58 @@ class EnvConfigSource {
   AuthConfig _parseAuthConfig() {
     return AuthConfig(
       allowedEmailDomain:
-          _getString('ALLOWED_EMAIL_DOMAIN') ?? '@m.chukyo-u.ac.jp',
+          _getString('ALLOWED_EMAIL_DOMAIN') ??
+          AuthConfigDefaults.allowedEmailDomain,
     );
   }
 
   /// Parse debug configuration from environment variables
   DebugConfig _parseDebugConfig() {
     return DebugConfig(
-      logLevel: _getString('LOG_LEVEL') ?? 'info',
-      enableConsoleLogging: _getBool('ENABLE_CONSOLE_LOGGING') ?? false,
-      enableFileLogging: _getBool('ENABLE_FILE_LOGGING') ?? false,
-      enableNetworkLogging: _getBool('ENABLE_NETWORK_LOGGING') ?? true,
-      enableCrashlytics: _getBool('ENABLE_CRASHLYTICS') ?? true,
+      logLevel: _getString('LOG_LEVEL') ?? DebugConfigDefaults.logLevel,
+      enableConsoleLogging:
+          _getBool('ENABLE_CONSOLE_LOGGING') ??
+          DebugConfigDefaults.enableConsoleLogging,
+      enableFileLogging:
+          _getBool('ENABLE_FILE_LOGGING') ??
+          DebugConfigDefaults.enableFileLogging,
+      enableNetworkLogging:
+          _getBool('ENABLE_NETWORK_LOGGING') ??
+          DebugConfigDefaults.enableNetworkLogging,
+      enableCrashlytics:
+          _getBool('ENABLE_CRASHLYTICS') ??
+          DebugConfigDefaults.enableCrashlytics,
     );
   }
 
   /// Parse feature flags from environment variables
   FeatureFlags _parseFeatureFlags() {
     return FeatureFlags(
-      enableOfflineMode: _getBool('FEATURE_OFFLINE_MODE') ?? true,
-      enablePushNotifications: _getBool('FEATURE_PUSH_NOTIFICATIONS') ?? true,
-      enableMaintenanceMode: _getBool('FEATURE_MAINTENANCE_MODE') ?? false,
+      enableOfflineMode:
+          _getBool('FEATURE_OFFLINE_MODE') ??
+          FeatureFlagsDefaults.enableOfflineMode,
+      enablePushNotifications:
+          _getBool('FEATURE_PUSH_NOTIFICATIONS') ??
+          FeatureFlagsDefaults.enablePushNotifications,
+      enableMaintenanceMode:
+          _getBool('FEATURE_MAINTENANCE_MODE') ??
+          FeatureFlagsDefaults.enableMaintenanceMode,
     );
   }
 
   /// Parse admin configuration from environment variables
   AdminConfig _parseAdminConfig() {
     return AdminConfig(
-      appVersion: _getString('APP_VERSION') ?? '1.0.0',
-      minSupportedVersion: _getString('MIN_SUPPORTED_VERSION') ?? '1.0.0',
-      isMaintenanceMode: _getBool('IS_MAINTENANCE_MODE') ?? false,
-      maintenanceMessage: _getString('MAINTENANCE_MESSAGE') ?? '',
+      appVersion: _getString('APP_VERSION') ?? AdminConfigDefaults.appVersion,
+      minSupportedVersion:
+          _getString('MIN_SUPPORTED_VERSION') ??
+          AdminConfigDefaults.minSupportedVersion,
+      isMaintenanceMode:
+          _getBool('IS_MAINTENANCE_MODE') ??
+          AdminConfigDefaults.isMaintenanceMode,
+      maintenanceMessage:
+          _getString('MAINTENANCE_MESSAGE') ??
+          AdminConfigDefaults.maintenanceMessage,
     );
   }
 

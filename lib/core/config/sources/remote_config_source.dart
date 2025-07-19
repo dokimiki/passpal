@@ -264,21 +264,23 @@ class RemoteConfigSource {
     return ApiConfig(
       manaboBaseUrl:
           getValue<String>('manabo_base_url') ??
-          'https://manabo.cnc.chukyo-u.ac.jp',
+          ApiConfigDefaults.manaboBaseUrl,
       alboBaseUrl:
-          getValue<String>('albo_base_url') ??
-          'https://cubics-pt-out.mng.chukyo-u.ac.jp',
+          getValue<String>('albo_base_url') ?? ApiConfigDefaults.alboBaseUrl,
       cubicsBaseUrl:
           getValue<String>('cubics_base_url') ??
-          'https://cubics-as-out.mng.chukyo-u.ac.jp',
-      ssoUrl: getValue<String>('sso_url') ?? 'https://shib.chukyo-u.ac.jp',
+          ApiConfigDefaults.cubicsBaseUrl,
+      ssoUrl: getValue<String>('sso_url') ?? ApiConfigDefaults.ssoUrl,
       palApiBaseUrl:
           getValue<String>('pal_api_base_url') ??
-          'https://api.chukyo-passpal.app/v1',
+          ApiConfigDefaults.palApiBaseUrl,
       connectionTimeoutSeconds:
-          getValue<int>('connection_timeout_seconds') ?? 30,
-      receiveTimeoutSeconds: getValue<int>('receive_timeout_seconds') ?? 60,
-      maxRetries: getValue<int>('max_retries') ?? 3,
+          getValue<int>('connection_timeout_seconds') ??
+          ApiConfigDefaults.connectionTimeoutSeconds,
+      receiveTimeoutSeconds:
+          getValue<int>('receive_timeout_seconds') ??
+          ApiConfigDefaults.receiveTimeoutSeconds,
+      maxRetries: getValue<int>('max_retries') ?? ApiConfigDefaults.maxRetries,
     );
   }
 
@@ -295,7 +297,8 @@ class RemoteConfigSource {
 
     return AuthConfig(
       allowedEmailDomain:
-          getValue<String>('allowed_email_domain') ?? '@m.chukyo-u.ac.jp',
+          getValue<String>('allowed_email_domain') ??
+          AuthConfigDefaults.allowedEmailDomain,
     );
   }
 
@@ -311,11 +314,19 @@ class RemoteConfigSource {
     }
 
     return DebugConfig(
-      logLevel: getValue<String>('log_level') ?? 'info',
-      enableConsoleLogging: getValue<bool>('enable_console_logging') ?? false,
-      enableFileLogging: getValue<bool>('enable_file_logging') ?? false,
-      enableNetworkLogging: getValue<bool>('enable_network_logging') ?? true,
-      enableCrashlytics: getValue<bool>('enable_crashlytics') ?? true,
+      logLevel: getValue<String>('log_level') ?? DebugConfigDefaults.logLevel,
+      enableConsoleLogging:
+          getValue<bool>('enable_console_logging') ??
+          DebugConfigDefaults.enableConsoleLogging,
+      enableFileLogging:
+          getValue<bool>('enable_file_logging') ??
+          DebugConfigDefaults.enableFileLogging,
+      enableNetworkLogging:
+          getValue<bool>('enable_network_logging') ??
+          DebugConfigDefaults.enableNetworkLogging,
+      enableCrashlytics:
+          getValue<bool>('enable_crashlytics') ??
+          DebugConfigDefaults.enableCrashlytics,
     );
   }
 
@@ -331,11 +342,15 @@ class RemoteConfigSource {
     }
 
     return FeatureFlags(
-      enableOfflineMode: getValue<bool>('feature_offline_mode') ?? true,
+      enableOfflineMode:
+          getValue<bool>('feature_offline_mode') ??
+          FeatureFlagsDefaults.enableOfflineMode,
       enablePushNotifications:
-          getValue<bool>('feature_push_notifications') ?? true,
+          getValue<bool>('feature_push_notifications') ??
+          FeatureFlagsDefaults.enablePushNotifications,
       enableMaintenanceMode:
-          getValue<bool>('feature_maintenance_mode') ?? false,
+          getValue<bool>('feature_maintenance_mode') ??
+          FeatureFlagsDefaults.enableMaintenanceMode,
     );
   }
 
@@ -351,10 +366,17 @@ class RemoteConfigSource {
     }
 
     return AdminConfig(
-      appVersion: getValue<String>('app_version') ?? '1.0.0',
-      minSupportedVersion: getValue<String>('min_supported_version') ?? '1.0.0',
-      isMaintenanceMode: getValue<bool>('is_maintenance_mode') ?? false,
-      maintenanceMessage: getValue<String>('maintenance_message') ?? '',
+      appVersion:
+          getValue<String>('app_version') ?? AdminConfigDefaults.appVersion,
+      minSupportedVersion:
+          getValue<String>('min_supported_version') ??
+          AdminConfigDefaults.minSupportedVersion,
+      isMaintenanceMode:
+          getValue<bool>('is_maintenance_mode') ??
+          AdminConfigDefaults.isMaintenanceMode,
+      maintenanceMessage:
+          getValue<String>('maintenance_message') ??
+          AdminConfigDefaults.maintenanceMessage,
     );
   }
 
@@ -362,35 +384,36 @@ class RemoteConfigSource {
   Map<String, dynamic> _getDefaultValues() {
     return {
       // API Configuration defaults
-      'manabo_base_url': 'https://manabo.cnc.chukyo-u.ac.jp',
-      'albo_base_url': 'https://cubics-pt-out.mng.chukyo-u.ac.jp',
-      'cubics_base_url': 'https://cubics-as-out.mng.chukyo-u.ac.jp',
-      'sso_url': 'https://shib.chukyo-u.ac.jp',
-      'pal_api_base_url': 'https://api.chukyo-passpal.app/v1',
-      'connection_timeout_seconds': 30,
-      'receive_timeout_seconds': 60,
-      'max_retries': 3,
+      'manabo_base_url': ApiConfigDefaults.manaboBaseUrl,
+      'albo_base_url': ApiConfigDefaults.alboBaseUrl,
+      'cubics_base_url': ApiConfigDefaults.cubicsBaseUrl,
+      'sso_url': ApiConfigDefaults.ssoUrl,
+      'pal_api_base_url': ApiConfigDefaults.palApiBaseUrl,
+      'connection_timeout_seconds': ApiConfigDefaults.connectionTimeoutSeconds,
+      'receive_timeout_seconds': ApiConfigDefaults.receiveTimeoutSeconds,
+      'max_retries': ApiConfigDefaults.maxRetries,
 
       // Auth Configuration defaults
-      'allowed_email_domain': '@m.chukyo-u.ac.jp',
+      'allowed_email_domain': AuthConfigDefaults.allowedEmailDomain,
 
       // Debug Configuration defaults
-      'log_level': 'info',
-      'enable_console_logging': false,
-      'enable_file_logging': false,
-      'enable_network_logging': true,
-      'enable_crashlytics': true,
+      'log_level': DebugConfigDefaults.logLevel,
+      'enable_console_logging': DebugConfigDefaults.enableConsoleLogging,
+      'enable_file_logging': DebugConfigDefaults.enableFileLogging,
+      'enable_network_logging': DebugConfigDefaults.enableNetworkLogging,
+      'enable_crashlytics': DebugConfigDefaults.enableCrashlytics,
 
       // Feature Flags defaults
-      'feature_offline_mode': true,
-      'feature_push_notifications': true,
-      'feature_maintenance_mode': false,
+      'feature_offline_mode': FeatureFlagsDefaults.enableOfflineMode,
+      'feature_push_notifications':
+          FeatureFlagsDefaults.enablePushNotifications,
+      'feature_maintenance_mode': FeatureFlagsDefaults.enableMaintenanceMode,
 
       // Admin Configuration defaults
-      'app_version': '1.0.0',
-      'min_supported_version': '1.0.0',
-      'is_maintenance_mode': false,
-      'maintenance_message': '',
+      'app_version': AdminConfigDefaults.appVersion,
+      'min_supported_version': AdminConfigDefaults.minSupportedVersion,
+      'is_maintenance_mode': AdminConfigDefaults.isMaintenanceMode,
+      'maintenance_message': AdminConfigDefaults.maintenanceMessage,
 
       // JSON configurations (empty by default)
       'api_config': '{}',

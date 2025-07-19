@@ -8,20 +8,21 @@ part of 'api_config.dart';
 
 _ApiConfig _$ApiConfigFromJson(Map<String, dynamic> json) => _ApiConfig(
   manaboBaseUrl:
-      json['manaboBaseUrl'] as String? ?? 'https://manabo.cnc.chukyo-u.ac.jp',
-  alboBaseUrl:
-      json['alboBaseUrl'] as String? ??
-      'https://cubics-pt-out.mng.chukyo-u.ac.jp',
+      json['manaboBaseUrl'] as String? ?? ApiConfigDefaults.manaboBaseUrl,
+  alboBaseUrl: json['alboBaseUrl'] as String? ?? ApiConfigDefaults.alboBaseUrl,
   cubicsBaseUrl:
-      json['cubicsBaseUrl'] as String? ??
-      'https://cubics-as-out.mng.chukyo-u.ac.jp',
-  ssoUrl: json['ssoUrl'] as String? ?? 'https://shib.chukyo-u.ac.jp',
+      json['cubicsBaseUrl'] as String? ?? ApiConfigDefaults.cubicsBaseUrl,
+  ssoUrl: json['ssoUrl'] as String? ?? ApiConfigDefaults.ssoUrl,
   palApiBaseUrl:
-      json['palApiBaseUrl'] as String? ?? 'https://api.chukyo-passpal.app/v1',
+      json['palApiBaseUrl'] as String? ?? ApiConfigDefaults.palApiBaseUrl,
   connectionTimeoutSeconds:
-      (json['connectionTimeoutSeconds'] as num?)?.toInt() ?? 30,
-  receiveTimeoutSeconds: (json['receiveTimeoutSeconds'] as num?)?.toInt() ?? 60,
-  maxRetries: (json['maxRetries'] as num?)?.toInt() ?? 3,
+      (json['connectionTimeoutSeconds'] as num?)?.toInt() ??
+      ApiConfigDefaults.connectionTimeoutSeconds,
+  receiveTimeoutSeconds:
+      (json['receiveTimeoutSeconds'] as num?)?.toInt() ??
+      ApiConfigDefaults.receiveTimeoutSeconds,
+  maxRetries:
+      (json['maxRetries'] as num?)?.toInt() ?? ApiConfigDefaults.maxRetries,
 );
 
 Map<String, dynamic> _$ApiConfigToJson(_ApiConfig instance) =>

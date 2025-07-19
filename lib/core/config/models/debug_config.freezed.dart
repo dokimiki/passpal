@@ -213,7 +213,7 @@ return $default(_that.logLevel,_that.enableConsoleLogging,_that.enableFileLoggin
 @JsonSerializable()
 
 class _DebugConfig extends DebugConfig {
-  const _DebugConfig({this.logLevel = 'info', this.enableConsoleLogging = false, this.enableFileLogging = false, this.enableNetworkLogging = true, this.enableCrashlytics = true}): super._();
+  const _DebugConfig({this.logLevel = DebugConfigDefaults.logLevel, this.enableConsoleLogging = DebugConfigDefaults.enableConsoleLogging, this.enableFileLogging = DebugConfigDefaults.enableFileLogging, this.enableNetworkLogging = DebugConfigDefaults.enableNetworkLogging, this.enableCrashlytics = DebugConfigDefaults.enableCrashlytics}): super._();
   factory _DebugConfig.fromJson(Map<String, dynamic> json) => _$DebugConfigFromJson(json);
 
 @override@JsonKey() final  String logLevel;

@@ -8,7 +8,8 @@ part of 'auth_config.dart';
 
 _AuthConfig _$AuthConfigFromJson(Map<String, dynamic> json) => _AuthConfig(
   allowedEmailDomain:
-      json['allowedEmailDomain'] as String? ?? '@m.chukyo-u.ac.jp',
+      json['allowedEmailDomain'] as String? ??
+      AuthConfigDefaults.allowedEmailDomain,
 );
 
 Map<String, dynamic> _$AuthConfigToJson(_AuthConfig instance) =>
