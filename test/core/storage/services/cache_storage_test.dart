@@ -153,6 +153,70 @@ void main() {
       });
     });
 
+    group('Advanced LRU Capacity Management', () {
+      test('should perform LRU cleanup when capacity is exceeded', () async {
+        // Fill cache to about 80% capacity first
+        await cacheStorage.set('key1', 'x' * 200);
+        await Future.delayed(Duration(milliseconds: 10));
+        await cacheStorage.set('key2', 'x' * 200);
+        await Future.delayed(Duration(milliseconds: 10));
+        await cacheStorage.set('key3', 'x' * 200);
+
+        // Access key1 to make it most recently used
+        await cacheStorage.get<String>('key1');
+
+        // Try to add an entry that should trigger cleanup but fit after cleanup
+        final additionalValue =
+            'x' * 300; // Should trigger cleanup but then fit
+        final result = await cacheStorage.set(
+          'additional_key',
+          additionalValue,
+        );
+        expect(result.isRight(), true);
+
+        // Verify that cleanup happened by checking total size is reasonable
+        final stats = await cacheStorage.getStats();
+        expect(stats.isRight(), true);
+        final statsData = stats.getOrElse(() => throw Exception());
+        expect(statsData.totalSize, lessThan(1024)); // Should be under capacity
+        expect(
+          statsData.totalEntries,
+          greaterThan(0),
+        ); // Should have some entries left
+      });
+
+      test('should track access times for LRU', () async {
+        await cacheStorage.set('accessed_key', 'value');
+        await cacheStorage.set('not_accessed_key', 'value');
+
+        // Access one key multiple times
+        await cacheStorage.get<String>('accessed_key');
+        await cacheStorage.get<String>('accessed_key');
+
+        final cacheInfo = await cacheStorage.getCacheInfo();
+        expect(cacheInfo.isRight(), true);
+
+        final info = cacheInfo.getOrElse(() => []);
+        final accessedInfo = info.firstWhere((i) => i.key == 'accessed_key');
+        final notAccessedInfo = info.firstWhere(
+          (i) => i.key == 'not_accessed_key',
+        );
+
+        expect(accessedInfo.hasBeenAccessed, true);
+        expect(notAccessedInfo.hasBeenAccessed, false);
+      });
+
+      test('should perform auto cleanup when threshold is reached', () async {
+        // Fill cache to trigger auto cleanup
+        await cacheStorage.set('fill1', 'x' * 200);
+        await cacheStorage.set('fill2', 'x' * 200);
+        await cacheStorage.set('fill3', 'x' * 200);
+
+        final cleanupResult = await cacheStorage.performAutoCleanup();
+        expect(cleanupResult.isRight(), true);
+      });
+    });
+
     group('Capacity Management', () {
       test('should report cache statistics', () async {
         await cacheStorage.set('stats_key1', 'value1');
@@ -221,6 +285,224 @@ void main() {
 
         await subscription.cancel();
       });
+
+      test('should emit value change events', () async {
+        final valueEvents = <CacheValueEvent>[];
+        final subscription = cacheStorage.valueChanges.listen(valueEvents.add);
+
+        const key = 'value_event_test';
+        const value1 = 'initial_value';
+        const value2 = 'updated_value';
+
+        await cacheStorage.set(key, value1);
+        await cacheStorage.set(key, value2);
+        await cacheStorage.delete(key);
+
+        // Give stream time to emit events
+        await Future.delayed(Duration(milliseconds: 10));
+
+        expect(valueEvents.length, greaterThanOrEqualTo(2));
+        expect(valueEvents.any((e) => e is CacheValueChanged), true);
+        expect(valueEvents.any((e) => e is CacheValueDeleted), true);
+
+        await subscription.cancel();
+      });
+
+      test('should watch specific key changes', () async {
+        const key = 'watch_key';
+        final keyChanges = <String?>[];
+
+        final subscription = cacheStorage.watchKey<String>(key).listen((entry) {
+          keyChanges.add(entry?.value);
+        });
+
+        // Should emit null initially since key doesn't exist
+        await Future.delayed(Duration(milliseconds: 10));
+        expect(keyChanges.first, null);
+
+        await cacheStorage.set(key, 'value1');
+        await Future.delayed(Duration(milliseconds: 10));
+
+        await cacheStorage.set(key, 'value2');
+        await Future.delayed(Duration(milliseconds: 10));
+
+        await cacheStorage.delete(key);
+        await Future.delayed(Duration(milliseconds: 10));
+
+        expect(keyChanges.length, greaterThanOrEqualTo(3));
+        expect(keyChanges.contains('value1'), true);
+        expect(keyChanges.contains('value2'), true);
+
+        await subscription.cancel();
+      });
+
+      test('should watch multiple keys', () async {
+        final keys = ['key1', 'key2', 'key3'];
+        final mapChanges = <Map<String, dynamic>>[];
+
+        final subscription = cacheStorage.watchKeys(keys).listen((entryMap) {
+          final valueMap = entryMap.map((k, v) => MapEntry(k, v?.value));
+          mapChanges.add(valueMap);
+        });
+
+        // Initial state should have all null values
+        await Future.delayed(Duration(milliseconds: 10));
+
+        await cacheStorage.set('key1', 'value1');
+        await Future.delayed(Duration(milliseconds: 10));
+
+        await cacheStorage.set('key2', 'value2');
+        await Future.delayed(Duration(milliseconds: 10));
+
+        expect(mapChanges.length, greaterThanOrEqualTo(2));
+        expect(mapChanges.last['key1'], 'value1');
+        expect(mapChanges.last['key2'], 'value2');
+
+        await subscription.cancel();
+      });
+    });
+
+    group('Stale-While-Revalidate (SWR)', () {
+      test(
+        'should return stale data and trigger background revalidation',
+        () async {
+          const key = 'swr_test';
+          const staleValue = 'stale_data';
+          const freshValue = 'fresh_data';
+
+          // Set initial data with short TTL
+          await cacheStorage.set(
+            key,
+            staleValue,
+            ttl: Duration(milliseconds: 50),
+          );
+
+          // Wait for expiration
+          await Future.delayed(Duration(milliseconds: 100));
+
+          bool revalidateCalled = false;
+          Future<String> revalidate() async {
+            revalidateCalled = true;
+            await Future.delayed(
+              Duration(milliseconds: 100),
+            ); // Simulate network delay
+            return freshValue;
+          }
+
+          // SWR should return stale data immediately
+          final swrResult = await cacheStorage.swr(key, revalidate);
+          expect(swrResult.isRight(), true);
+
+          final entry = swrResult.getOrElse(() => null);
+          expect(entry?.value, staleValue);
+          expect(revalidateCalled, true);
+
+          // Wait for background revalidation to complete
+          await Future.delayed(Duration(milliseconds: 200));
+
+          // Should now have fresh data
+          final freshResult = await cacheStorage.get<String>(key);
+          expect(freshResult.isRight(), true);
+          expect(
+            freshResult.getOrElse(() => throw Exception()).value,
+            freshValue,
+          );
+        },
+      );
+
+      test(
+        'should return null for cache miss and trigger revalidation',
+        () async {
+          const key = 'swr_miss_test';
+          const freshValue = 'fresh_data';
+
+          bool revalidateCalled = false;
+          Future<String> revalidate() async {
+            revalidateCalled = true;
+            return freshValue;
+          }
+
+          // SWR for non-existent key should return null
+          final swrResult = await cacheStorage.swr(key, revalidate);
+          expect(swrResult.isRight(), true);
+          expect(swrResult.getOrElse(() => throw Exception()), null);
+          expect(revalidateCalled, true);
+
+          // Wait for background revalidation
+          await Future.delayed(Duration(milliseconds: 50));
+
+          // Should now have fresh data
+          final freshResult = await cacheStorage.get<String>(key);
+          expect(freshResult.isRight(), true);
+          expect(
+            freshResult.getOrElse(() => throw Exception()).value,
+            freshValue,
+          );
+        },
+      );
+
+      test('should handle SWR with fallback', () async {
+        const key = 'swr_fallback_test';
+        const freshValue = 'fresh_data';
+
+        Future<String> revalidate() async {
+          await Future.delayed(Duration(milliseconds: 50));
+          return freshValue;
+        }
+
+        // SWR with fallback should wait for revalidation when no cache exists
+        final result = await cacheStorage.swrWithFallback(key, revalidate);
+        expect(result.isRight(), true);
+
+        final entry = result.getOrElse(() => throw Exception());
+        expect(entry.value, freshValue);
+      });
+
+      test('should handle SWR timeout', () async {
+        const key = 'swr_timeout_test';
+
+        Future<String> slowRevalidate() async {
+          await Future.delayed(
+            Duration(milliseconds: 500),
+          ); // Slow revalidation
+          return 'should_not_reach_here';
+        }
+
+        // SWR with short timeout should fail
+        final result = await cacheStorage.swrWithFallback(
+          key,
+          slowRevalidate,
+          timeout: Duration(milliseconds: 100),
+        );
+        expect(result.isLeft(), true);
+      });
+
+      test('should force revalidation when requested', () async {
+        const key = 'swr_force_test';
+        const staleValue = 'stale_data';
+        const freshValue = 'fresh_data';
+
+        await cacheStorage.set(key, staleValue);
+
+        bool revalidateCalled = false;
+        Future<String> revalidate() async {
+          revalidateCalled = true;
+          return freshValue;
+        }
+
+        // Force revalidation even though data is fresh
+        final swrResult = await cacheStorage.swr(
+          key,
+          revalidate,
+          forceRevalidate: true,
+        );
+
+        expect(revalidateCalled, true);
+
+        // When forcing revalidation, swr returns null since it skips getting stale data
+        final entry = swrResult.getOrElse(() => null);
+        expect(entry, null);
+      });
     });
 
     group('Error Handling', () {
@@ -250,6 +532,52 @@ void main() {
         // Should not contain key after expiry
         final afterExpiry = await cacheStorage.containsKey(key);
         expect(afterExpiry.getOrElse(() => true), false);
+      });
+
+      test('should handle corrupted cache entries gracefully', () async {
+        const key = 'corrupted_test';
+
+        // Manually set corrupted data
+        final cacheKey = cacheStorage.buildKeyForTesting(key);
+        await mockPrefs.setString(cacheKey, 'invalid_json{broken');
+
+        // Should handle corrupted data gracefully
+        final result = await cacheStorage.get<String>(key);
+        expect(result.isLeft(), true);
+
+        // Cleanup should remove corrupted entries
+        final cleanupResult = await cacheStorage.cleanup();
+        expect(cleanupResult.isRight(), true);
+      });
+
+      test('should handle empty cache gracefully', () async {
+        final statsResult = await cacheStorage.getStats();
+        expect(statsResult.isRight(), true);
+
+        final stats = statsResult.getOrElse(() => throw Exception());
+        expect(stats.totalEntries, 0);
+        expect(stats.totalSize, 0);
+
+        final cleanupResult = await cacheStorage.cleanup();
+        expect(cleanupResult.isRight(), true);
+      });
+
+      test('should handle concurrent operations', () async {
+        const key = 'concurrent_test';
+
+        // Run multiple operations concurrently
+        final futures = [
+          cacheStorage.set(key, 'value1'),
+          cacheStorage.set(key, 'value2'),
+          cacheStorage.get<String>(key),
+          cacheStorage.containsKey(key),
+          cacheStorage.getStats(),
+        ];
+
+        final results = await Future.wait(futures);
+
+        // All operations should complete without throwing
+        expect(results.length, 5);
       });
     });
 

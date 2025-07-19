@@ -58,11 +58,54 @@ abstract interface class CacheStorageInterface {
   /// Useful for reactive UI updates based on cache changes.
   Stream<CacheEvent> get changes;
 
+  /// Stream of cache value changes
+  ///
+  /// Emits actual cache values when they change for reactive programming.
+  /// Includes both new and old values for comparison.
+  Stream<CacheValueEvent> get valueChanges;
+
+  /// Watch specific cache key for value changes
+  ///
+  /// Returns a stream that emits the current and future values for a specific key.
+  /// Useful for reactive UI components that depend on specific cache entries.
+  Stream<CacheEntry<T>?> watchKey<T>(String key);
+
+  /// Watch multiple cache keys for value changes
+  ///
+  /// Returns a stream that emits when any of the specified keys change.
+  /// Useful for reactive UI components that depend on multiple cache entries.
+  Stream<Map<String, CacheEntry?>> watchKeys(List<String> keys);
+
   /// Get stale entry while revalidating
   ///
   /// Returns stale cached data immediately while triggering background refresh.
   /// Part of stale-while-revalidate (SWR) strategy for better UX.
   Future<Either<Failure, CacheEntry<T>?>> getStale<T>(String key);
+
+  /// Stale-While-Revalidate pattern with custom revalidation function
+  ///
+  /// Returns cached data immediately (even if stale) and triggers background
+  /// revalidation with the provided [revalidate] function. The [revalidate]
+  /// function should return fresh data that will be cached.
+  Future<Either<Failure, CacheEntry<T>?>> swr<T>(
+    String key,
+    Future<T> Function() revalidate, {
+    Duration? ttl,
+    bool forceRevalidate = false,
+  });
+
+  /// Enhanced SWR that waits for revalidation if no stale data exists
+  ///
+  /// Similar to [swr] but if no cached data exists, it will wait for the
+  /// revalidation to complete before returning. This provides a fallback
+  /// for cache misses while still using the SWR pattern when possible.
+  Future<Either<Failure, CacheEntry<T>>> swrWithFallback<T>(
+    String key,
+    Future<T> Function() revalidate, {
+    Duration? ttl,
+    bool forceRevalidate = false,
+    Duration? timeout,
+  });
 }
 
 /// Cache statistics for monitoring and debugging
@@ -109,4 +152,24 @@ class CacheEntryRemoved extends CacheEvent {
 
 class CacheEntryExpired extends CacheEvent {
   const CacheEntryExpired(super.key);
+}
+
+/// Cache value event for reactive value updates
+sealed class CacheValueEvent {
+  const CacheValueEvent(this.key);
+  final String key;
+}
+
+class CacheValueChanged<T> extends CacheValueEvent {
+  const CacheValueChanged(super.key, this.newValue, this.oldValue);
+  final T? newValue;
+  final T? oldValue;
+}
+
+class CacheValueDeleted extends CacheValueEvent {
+  const CacheValueDeleted(super.key);
+}
+
+class CacheValueExpiredEvent extends CacheValueEvent {
+  const CacheValueExpiredEvent(super.key);
 }
