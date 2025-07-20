@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +16,7 @@ import '../services/credential_manager.dart';
 import '../services/migration_manager.dart';
 import '../services/preference_storage.dart';
 import '../services/secure_storage.dart';
+import '../services/storage_analytics.dart';
 
 part 'storage_providers.g.dart';
 
@@ -329,3 +331,54 @@ Future<StorageHealthStatus> storageHealthCheck(Ref ref) async {
 
 /// Storage health status enum
 enum StorageHealthStatus { healthy, unhealthy }
+
+/// Provider for Firebase Analytics instance
+@Riverpod(keepAlive: true)
+FirebaseAnalytics firebaseAnalytics(Ref ref) {
+  return FirebaseAnalytics.instance;
+}
+
+/// Provider for StorageAnalytics service
+///
+/// Provides analytics tracking for storage operations with privacy-safe
+/// key hashing and performance monitoring.
+@Riverpod(keepAlive: true)
+StorageAnalytics storageAnalytics(Ref ref) {
+  final analytics = ref.read(firebaseAnalyticsProvider);
+  return StorageAnalytics(analytics);
+}
+
+/// Provider for storage performance metrics reporter
+///
+/// Creates a timer that periodically sends performance reports to analytics.
+@Riverpod(keepAlive: true)
+Timer? storageMetricsReporter(Ref ref) {
+  final analytics = ref.read(storageAnalyticsProvider);
+
+  // Schedule periodic reporting every 30 minutes
+  final timer = Timer.periodic(const Duration(minutes: 30), (_) async {
+    try {
+      await analytics.sendPerformanceReport();
+    } catch (e) {
+      // Silent fail - analytics shouldn't break app
+    }
+  });
+
+  // Cancel timer when provider is disposed
+  ref.onDispose(() {
+    timer.cancel();
+  });
+
+  return timer;
+}
+
+/// Manually send storage analytics report
+@riverpod
+Future<void> sendStorageAnalyticsReport(Ref ref) async {
+  try {
+    final analytics = ref.read(storageAnalyticsProvider);
+    await analytics.sendPerformanceReport();
+  } catch (e) {
+    // Silent fail - analytics shouldn't break app
+  }
+}

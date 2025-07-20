@@ -1272,5 +1272,89 @@ final storageHealthCheckProvider =
 // ignore: unused_element
 typedef StorageHealthCheckRef =
     AutoDisposeFutureProviderRef<StorageHealthStatus>;
+String _$firebaseAnalyticsHash() => r'50223a2a038fe07ae55006344e88f86923613e7d';
+
+/// Provider for Firebase Analytics instance
+///
+/// Copied from [firebaseAnalytics].
+@ProviderFor(firebaseAnalytics)
+final firebaseAnalyticsProvider = Provider<FirebaseAnalytics>.internal(
+  firebaseAnalytics,
+  name: r'firebaseAnalyticsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$firebaseAnalyticsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef FirebaseAnalyticsRef = ProviderRef<FirebaseAnalytics>;
+String _$storageAnalyticsHash() => r'46b1533759e2049abd66ea49952c59494474a43d';
+
+/// Provider for StorageAnalytics service
+///
+/// Provides analytics tracking for storage operations with privacy-safe
+/// key hashing and performance monitoring.
+///
+/// Copied from [storageAnalytics].
+@ProviderFor(storageAnalytics)
+final storageAnalyticsProvider = Provider<StorageAnalytics>.internal(
+  storageAnalytics,
+  name: r'storageAnalyticsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$storageAnalyticsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef StorageAnalyticsRef = ProviderRef<StorageAnalytics>;
+String _$storageMetricsReporterHash() =>
+    r'09ec7b54d32da51fa754eadab6b5b5af164fb1c1';
+
+/// Provider for storage performance metrics reporter
+///
+/// Creates a timer that periodically sends performance reports to analytics.
+///
+/// Copied from [storageMetricsReporter].
+@ProviderFor(storageMetricsReporter)
+final storageMetricsReporterProvider = Provider<Timer?>.internal(
+  storageMetricsReporter,
+  name: r'storageMetricsReporterProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$storageMetricsReporterHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef StorageMetricsReporterRef = ProviderRef<Timer?>;
+String _$sendStorageAnalyticsReportHash() =>
+    r'cb52e08d08f54cb739f09a4fe7e733f1a49f6a17';
+
+/// Manually send storage analytics report
+///
+/// Copied from [sendStorageAnalyticsReport].
+@ProviderFor(sendStorageAnalyticsReport)
+final sendStorageAnalyticsReportProvider =
+    AutoDisposeFutureProvider<void>.internal(
+      sendStorageAnalyticsReport,
+      name: r'sendStorageAnalyticsReportProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$sendStorageAnalyticsReportHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SendStorageAnalyticsReportRef = AutoDisposeFutureProviderRef<void>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

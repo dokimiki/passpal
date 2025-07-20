@@ -26,7 +26,11 @@ export 'providers/storage_providers.dart'
         cacheManagerProvider,
         credentialManagerProvider,
         migrationManagerProvider,
-        sharedPreferencesProvider;
+        sharedPreferencesProvider,
+        storageAnalyticsProvider,
+        firebaseAnalyticsProvider,
+        storageMetricsReporterProvider,
+        sendStorageAnalyticsReportProvider;
 
 // Initialization provider
 export 'providers/storage_providers.dart' show initializeStorageProvider;
@@ -85,6 +89,13 @@ export 'services/cache_manager.dart' show CacheManager;
 export 'services/credential_manager.dart'
     show CredentialManager, CredentialType, StoredCredential;
 export 'services/migration_manager.dart' show MigrationManager;
+export 'services/storage_analytics.dart'
+    show
+        StorageAnalytics,
+        StorageOperationType,
+        StorageSubsystem,
+        StoragePerformanceMetrics,
+        CacheMetrics;
 
 // Testing utilities
 export 'testing/mock_secure_storage.dart'
