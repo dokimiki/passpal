@@ -1,7 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/app_error.dart';
-import '../models/app_exception.dart';
 import 'recovery_strategy.dart';
 
 part 'storage_recovery.g.dart';
@@ -13,25 +12,24 @@ class StorageRecoveryStrategy extends RecoveryStrategy
 
   @override
   bool canHandle(AppError error) {
-    return error is StorageException;
+    return error.errorCode.startsWith('STORAGE_');
   }
 
   @override
   Future<RecoveryResult> recover(AppError error) async {
-    final storageError = error as StorageException;
     try {
-      final errorCode = storageError.errorCode;
+      final errorCode = error.errorCode;
 
       switch (errorCode) {
-        case 'STORAGE_READ_FAILURE':
-          return await _handleReadFailure(storageError);
-        case 'STORAGE_WRITE_FAILURE':
-          return await _handleWriteFailure(storageError);
+        case 'STORAGE_READ_FAILED':
+          return await _handleReadFailure(error);
+        case 'STORAGE_WRITE_FAILED':
+          return await _handleWriteFailure(error);
         case 'STORAGE_CAPACITY_EXCEEDED':
-          return await _handleCapacityExceeded(storageError);
+          return await _handleCapacityExceeded(error);
         default:
           return await _handleReadFailure(
-            storageError,
+            error,
           ); // Default to read failure handling
       }
     } catch (e) {
@@ -39,7 +37,7 @@ class StorageRecoveryStrategy extends RecoveryStrategy
     }
   }
 
-  Future<RecoveryResult> _handleReadFailure(StorageException error) async {
+  Future<RecoveryResult> _handleReadFailure(AppError error) async {
     final currentAttempt = _getCurrentAttempt(error);
 
     if (currentAttempt >= retryPolicy.maxAttempts) {
@@ -61,7 +59,7 @@ class StorageRecoveryStrategy extends RecoveryStrategy
     return createRetryResult(currentAttempt + 1);
   }
 
-  Future<RecoveryResult> _handleWriteFailure(StorageException error) async {
+  Future<RecoveryResult> _handleWriteFailure(AppError error) async {
     final currentAttempt = _getCurrentAttempt(error);
 
     if (currentAttempt >= retryPolicy.maxAttempts) {
@@ -87,7 +85,7 @@ class StorageRecoveryStrategy extends RecoveryStrategy
     return createRetryResult(currentAttempt + 1);
   }
 
-  Future<RecoveryResult> _handleCapacityExceeded(StorageException error) async {
+  Future<RecoveryResult> _handleCapacityExceeded(AppError error) async {
     // Try to clear cache and temporary files
     await _clearTemporaryFiles();
     await _clearCacheFiles();
@@ -104,7 +102,7 @@ class StorageRecoveryStrategy extends RecoveryStrategy
     return const RecoveryResult.success();
   }
 
-  int _getCurrentAttempt(StorageException error) {
+  int _getCurrentAttempt(AppError error) {
     // TODO: Implement attempt tracking
     // This should be tracked in the error context or recovery manager
     // For now, return 0 as default
