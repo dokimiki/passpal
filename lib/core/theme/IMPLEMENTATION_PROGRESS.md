@@ -140,17 +140,23 @@ Implementation of the unified theme system for PassPal, providing Material 3 des
 
 ### Phase 4: Riverpod Provider Integration
 
-- **Issue #9: Theme Mode Provider** `[PENDING]`
+- **Issue #9: Theme Mode Provider** `[COMPLETED]`
   - **Scope**: Provider for reading theme mode from storage and system settings
   - **Files**: `lib/core/theme/providers/theme_mode_provider.dart`
   - **Dependencies**: Issue #8 (theme builder), storage core
-  - **Reviewable**: ~150 lines, provider logic
-  - **Test Coverage**: Theme mode switching, system theme detection
+  - **Reviewable**: ~170 lines, provider logic with comprehensive functionality
+  - **Test Coverage**: Comprehensive test suite with 9 passing tests covering theme mode switching, system theme detection, and error handling
   - **Key Features**:
-    - Read ThemeMode from preferenceStorageProvider
-    - System brightness detection
-    - Theme mode persistence
-    - Reactive theme updates
+    - ThemeModeNotifier class with storage integration and system brightness detection
+    - effectiveThemeModeProvider that resolves ThemeMode.system to light/dark based on system brightness
+    - systemBrightnessProvider for accessing current system brightness setting
+    - themeModeDisplayNameProvider for user-friendly Japanese display names
+    - isDarkModeProvider for checking if dark mode is active
+    - availableThemeModesProvider for settings UI with all available modes
+    - Type-safe conversion between storage ThemeMode and Flutter ThemeMode
+    - Platform brightness change listener for reactive system theme updates
+    - Comprehensive error handling with graceful fallbacks
+  - **Status**: ✅ Theme mode provider implemented with full test coverage and system integration
 
 - **Issue #10: Main Theme Providers** `[PENDING]`
   - **Scope**: Core theme providers for light/dark themes and theme data
@@ -267,11 +273,11 @@ Implementation of the unified theme system for PassPal, providing Material 3 des
 
 ## Current Status
 - **Phase**: 4 (Riverpod Provider Integration)
-- **Next Issue**: Issue #9 - Theme Mode Provider (Provider for reading theme mode from storage and system settings)
+- **Next Issue**: Issue #10 - Main Theme Providers (Core theme providers for light/dark themes and theme data)
 - **Total Issues**: 18
-- **Completed**: 8/18 (44%)
+- **Completed**: 9/18 (50%)
 - **In Progress**: 0/18 (0%)
-- **Remaining**: 10/18 (56%)
+- **Remaining**: 9/18 (50%)
 
 ## Dependencies Map
 ```
