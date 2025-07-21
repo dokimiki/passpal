@@ -22,12 +22,30 @@ void main() {
       });
 
       test('静的インスタンスが利用可能', () {
-        expect(ElevationTokensExtension.standardLight, isA<ElevationTokensExtension>());
-        expect(ElevationTokensExtension.standardDark, isA<ElevationTokensExtension>());
-        expect(ElevationTokensExtension.enhancedLight, isA<ElevationTokensExtension>());
-        expect(ElevationTokensExtension.enhancedDark, isA<ElevationTokensExtension>());
-        expect(ElevationTokensExtension.flatLight, isA<ElevationTokensExtension>());
-        expect(ElevationTokensExtension.flatDark, isA<ElevationTokensExtension>());
+        expect(
+          ElevationTokensExtension.standardLight,
+          isA<ElevationTokensExtension>(),
+        );
+        expect(
+          ElevationTokensExtension.standardDark,
+          isA<ElevationTokensExtension>(),
+        );
+        expect(
+          ElevationTokensExtension.enhancedLight,
+          isA<ElevationTokensExtension>(),
+        );
+        expect(
+          ElevationTokensExtension.enhancedDark,
+          isA<ElevationTokensExtension>(),
+        );
+        expect(
+          ElevationTokensExtension.flatLight,
+          isA<ElevationTokensExtension>(),
+        );
+        expect(
+          ElevationTokensExtension.flatDark,
+          isA<ElevationTokensExtension>(),
+        );
       });
 
       test('ライト・ダークテーマで適切なシャドウトークンが設定されている', () {
@@ -71,7 +89,7 @@ void main() {
 
         expect(lightShadows, isNotEmpty);
         expect(darkShadows, isNotEmpty);
-        
+
         // ダークテーマの方が不透明度が高い
         final lightAmbient = (lightShadows[0].color.a * 255.0).round() & 0xff;
         final darkAmbient = (darkShadows[0].color.a * 255.0).round() & 0xff;
@@ -99,7 +117,9 @@ void main() {
     });
 
     group('Material ウィジェット', () {
-      testWidgets('materialWithElevation() がMaterialウィジェットを生成する', (tester) async {
+      testWidgets('materialWithElevation() がMaterialウィジェットを生成する', (
+        tester,
+      ) async {
         final widget = extension.materialWithElevation(
           6.0,
           color: Colors.blue,
@@ -115,7 +135,9 @@ void main() {
         expect(material.borderRadius, equals(BorderRadius.circular(8.0)));
       });
 
-      testWidgets('animatedElevation() がアニメーション付きMaterialを生成する', (tester) async {
+      testWidgets('animatedElevation() がアニメーション付きMaterialを生成する', (
+        tester,
+      ) async {
         final widget = extension.animatedElevation(
           elevation: 6.0,
           duration: const Duration(milliseconds: 200),
@@ -161,7 +183,7 @@ void main() {
     group('レスポンシブエレベーション', () {
       test('getResponsiveElevation() が画面幅に応じて調整される', () {
         final baseElevation = 6.0;
-        
+
         // 小さい画面
         final smallElevation = extension.getResponsiveElevation(
           baseElevation: baseElevation,
@@ -239,10 +261,7 @@ void main() {
 
     group('copyWith', () {
       test('指定されたプロパティのみ変更される', () {
-        final newExtension = extension.copyWith(
-          level1: 2.0,
-          level3: 8.0,
-        );
+        final newExtension = extension.copyWith(level1: 2.0, level3: 8.0);
 
         expect(newExtension.level0, equals(extension.level0));
         expect(newExtension.level1, equals(2.0)); // 変更
@@ -255,10 +274,7 @@ void main() {
 
     group('lerp', () {
       test('同じタイプの拡張間で補間される', () {
-        final other = extension.copyWith(
-          level1: 3.0,
-          level3: 12.0,
-        );
+        final other = extension.copyWith(level1: 3.0, level3: 12.0);
 
         final lerped = extension.lerp(other, 0.5);
 
@@ -302,7 +318,7 @@ void main() {
     group('toString', () {
       test('適切な文字列表現を返す', () {
         final string = extension.toString();
-        
+
         expect(string, contains('ElevationTokensExtension'));
         expect(string, contains('level0: 0.0'));
         expect(string, contains('level1: 1.0'));
@@ -314,7 +330,7 @@ void main() {
   group('ElevationTokensContext 拡張', () {
     testWidgets('BuildContextからエレベーショントークンにアクセスできる', (tester) async {
       final testExtension = ElevationTokensExtension.standardLight;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData().withElevationTokens(testExtension),
@@ -348,18 +364,18 @@ void main() {
     test('ThemeDataにエレベーショントークンを追加できる', () {
       final testExtension = ElevationTokensExtension.standardLight;
       final theme = ThemeData().withElevationTokens(testExtension);
-      
+
       expect(theme.elevation, equals(testExtension));
     });
 
     test('既存の拡張を置き換える', () {
       final original = ElevationTokensExtension.standardLight;
       final replacement = ElevationTokensExtension.enhancedLight;
-      
+
       final theme = ThemeData()
           .withElevationTokens(original)
           .withElevationTokens(replacement);
-      
+
       expect(theme.elevation, equals(replacement));
       expect(theme.elevation, isNot(equals(original)));
     });

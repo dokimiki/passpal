@@ -32,7 +32,7 @@ class ColorSchemeGenerator {
     bool useDynamicColor = true,
   }) {
     final effectiveSeedColor = dynamicSeedColor ?? seedColor;
-    
+
     // Generate base Material 3 color scheme
     final baseScheme = ColorScheme.fromSeed(
       seedColor: effectiveSeedColor,
@@ -55,7 +55,8 @@ class ColorSchemeGenerator {
       surfaceContainerLow: ColorTokens.light.surface.surfaceContainerLow,
       surfaceContainer: ColorTokens.light.surface.surfaceContainer,
       surfaceContainerHigh: ColorTokens.light.surface.surfaceContainerHigh,
-      surfaceContainerHighest: ColorTokens.light.surface.surfaceContainerHighest,
+      surfaceContainerHighest:
+          ColorTokens.light.surface.surfaceContainerHighest,
       surfaceDim: ColorTokens.light.surface.surfaceDim,
       surfaceBright: ColorTokens.light.surface.surfaceBright,
 
@@ -89,7 +90,7 @@ class ColorSchemeGenerator {
     bool useDynamicColor = true,
   }) {
     final effectiveSeedColor = dynamicSeedColor ?? seedColor;
-    
+
     // Generate base Material 3 color scheme
     final baseScheme = ColorScheme.fromSeed(
       seedColor: effectiveSeedColor,
@@ -148,11 +149,13 @@ class ColorSchemeGenerator {
     try {
       // Attempt to get dynamic color from system
       final corePalette = await DynamicColorPlugin.getCorePalette();
-      
+
       if (corePalette != null) {
         // Generate scheme from dynamic color
         final dynamicScheme = ColorScheme.fromSeed(
-          seedColor: Color(corePalette.primary.get(40)), // Material 3 primary tone
+          seedColor: Color(
+            corePalette.primary.get(40),
+          ), // Material 3 primary tone
           brightness: brightness,
         );
 
@@ -172,10 +175,7 @@ class ColorSchemeGenerator {
     }
 
     // Final fallback to basic Material 3 scheme
-    return ColorScheme.fromSeed(
-      seedColor: seedColor,
-      brightness: brightness,
-    );
+    return ColorScheme.fromSeed(seedColor: seedColor, brightness: brightness);
   }
 
   /// Applies minimal overrides to maintain design consistency with dynamic colors.
@@ -194,7 +194,7 @@ class ColorSchemeGenerator {
       onError: tokens.status.onError,
       errorContainer: tokens.status.errorContainer,
       onErrorContainer: tokens.status.onErrorContainer,
-      
+
       // Keep outline colors consistent
       outline: tokens.neutral.outline,
       outlineVariant: tokens.neutral.outlineVariant,
@@ -215,10 +215,10 @@ class ColorSchemeGenerator {
   static double _calculateContrastRatio(Color color1, Color color2) {
     final luminance1 = _calculateRelativeLuminance(color1);
     final luminance2 = _calculateRelativeLuminance(color2);
-    
+
     final lighter = luminance1 > luminance2 ? luminance1 : luminance2;
     final darker = luminance1 > luminance2 ? luminance2 : luminance1;
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
 
@@ -226,10 +226,16 @@ class ColorSchemeGenerator {
   ///
   /// Uses WCAG 2.2 relative luminance formula.
   static double _calculateRelativeLuminance(Color color) {
-    final r = _linearizeColorComponent(((color.r * 255.0).round() & 0xff) / 255.0);
-    final g = _linearizeColorComponent(((color.g * 255.0).round() & 0xff) / 255.0);
-    final b = _linearizeColorComponent(((color.b * 255.0).round() & 0xff) / 255.0);
-    
+    final r = _linearizeColorComponent(
+      ((color.r * 255.0).round() & 0xff) / 255.0,
+    );
+    final g = _linearizeColorComponent(
+      ((color.g * 255.0).round() & 0xff) / 255.0,
+    );
+    final b = _linearizeColorComponent(
+      ((color.b * 255.0).round() & 0xff) / 255.0,
+    );
+
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
@@ -280,9 +286,13 @@ class ColorSchemeGenerator {
   ///
   /// Returns StatusColors that complement the ColorScheme for
   /// consistent status indication across the app.
-  static theme_extensions.StatusColors getStatusColorsForScheme(ColorScheme colorScheme) {
+  static theme_extensions.StatusColors getStatusColorsForScheme(
+    ColorScheme colorScheme,
+  ) {
     final isLight = colorScheme.brightness == Brightness.light;
-    return isLight ? theme_extensions.StatusColors.light : theme_extensions.StatusColors.dark;
+    return isLight
+        ? theme_extensions.StatusColors.light
+        : theme_extensions.StatusColors.dark;
   }
 }
 
@@ -299,7 +309,7 @@ extension ColorSchemeExtensions on ColorScheme {
       ColorSchemeGenerator.getStatusColorsForScheme(this);
 
   /// Validates that critical color pairs in this scheme meet contrast requirements.
-  /// 
+  ///
   /// Checks surface and text combinations which are most important for readability.
   /// Brand colors (primary, error) may not meet strict contrast for design consistency.
   bool get hasValidContrast {
@@ -313,11 +323,11 @@ extension _MathHelper on num {
     double result = 1.0;
     final base = toDouble();
     final exp = exponent.toInt();
-    
+
     for (int i = 0; i < exp; i++) {
       result *= base;
     }
-    
+
     return result;
   }
 }

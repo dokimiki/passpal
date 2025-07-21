@@ -12,10 +12,10 @@ class TypographyGenerator {
     TypographyTokens? customTokens,
   }) {
     final tokens = customTokens ?? TypographyTokens.standard;
-    
+
     // Inter フォントを使用したベーステーマを生成
     final interTheme = GoogleFonts.interTextTheme();
-    
+
     // デザイントークンの設定を適用してカスタマイズ
     return interTheme.copyWith(
       // Display styles
@@ -34,7 +34,7 @@ class TypographyGenerator {
         tokens.display.displaySmall,
         textColor,
       ),
-      
+
       // Headline styles
       headlineLarge: _applyTokenStyle(
         interTheme.headlineLarge,
@@ -51,7 +51,7 @@ class TypographyGenerator {
         tokens.headline.headlineSmall,
         textColor,
       ),
-      
+
       // Title styles
       titleLarge: _applyTokenStyle(
         interTheme.titleLarge,
@@ -68,7 +68,7 @@ class TypographyGenerator {
         tokens.title.titleSmall,
         textColor,
       ),
-      
+
       // Label styles
       labelLarge: _applyTokenStyle(
         interTheme.labelLarge,
@@ -85,7 +85,7 @@ class TypographyGenerator {
         tokens.label.labelSmall,
         textColor,
       ),
-      
+
       // Body styles
       bodyLarge: _applyTokenStyle(
         interTheme.bodyLarge,
@@ -137,7 +137,7 @@ class TypographyGenerator {
         minScale: minScale,
         maxScale: maxScale,
       ),
-      
+
       // Headline styles
       headlineLarge: baseTheme.headlineLarge?.responsive(
         screenWidth: screenWidth,
@@ -154,7 +154,7 @@ class TypographyGenerator {
         minScale: minScale,
         maxScale: maxScale,
       ),
-      
+
       // Title styles
       titleLarge: baseTheme.titleLarge?.responsive(
         screenWidth: screenWidth,
@@ -171,7 +171,7 @@ class TypographyGenerator {
         minScale: minScale,
         maxScale: maxScale,
       ),
-      
+
       // Label styles
       labelLarge: baseTheme.labelLarge?.responsive(
         screenWidth: screenWidth,
@@ -188,7 +188,7 @@ class TypographyGenerator {
         minScale: minScale,
         maxScale: maxScale,
       ),
-      
+
       // Body styles
       bodyLarge: baseTheme.bodyLarge?.responsive(
         screenWidth: screenWidth,
@@ -240,7 +240,7 @@ class TypographyGenerator {
         lineHeightScale: lineHeightScale,
         accessibilityWeight: accessibilityWeight,
       ),
-      
+
       // Headline styles
       headlineLarge: baseTheme.headlineLarge?.accessible(
         fontSizeScale: fontSizeScale,
@@ -257,7 +257,7 @@ class TypographyGenerator {
         lineHeightScale: lineHeightScale,
         accessibilityWeight: accessibilityWeight,
       ),
-      
+
       // Title styles
       titleLarge: baseTheme.titleLarge?.accessible(
         fontSizeScale: fontSizeScale,
@@ -274,7 +274,7 @@ class TypographyGenerator {
         lineHeightScale: lineHeightScale,
         accessibilityWeight: accessibilityWeight,
       ),
-      
+
       // Label styles
       labelLarge: baseTheme.labelLarge?.accessible(
         fontSizeScale: fontSizeScale,
@@ -291,7 +291,7 @@ class TypographyGenerator {
         lineHeightScale: lineHeightScale,
         accessibilityWeight: accessibilityWeight,
       ),
-      
+
       // Body styles
       bodyLarge: baseTheme.bodyLarge?.accessible(
         fontSizeScale: fontSizeScale,
@@ -328,22 +328,22 @@ class TypographyGenerator {
       displayLarge: baseTheme.displayLarge?.japanese(),
       displayMedium: baseTheme.displayMedium?.japanese(),
       displaySmall: baseTheme.displaySmall?.japanese(),
-      
+
       // Headline styles
       headlineLarge: baseTheme.headlineLarge?.japanese(),
       headlineMedium: baseTheme.headlineMedium?.japanese(),
       headlineSmall: baseTheme.headlineSmall?.japanese(),
-      
+
       // Title styles
       titleLarge: baseTheme.titleLarge?.japanese(),
       titleMedium: baseTheme.titleMedium?.japanese(),
       titleSmall: baseTheme.titleSmall?.japanese(),
-      
+
       // Label styles
       labelLarge: baseTheme.labelLarge?.japanese(),
       labelMedium: baseTheme.labelMedium?.japanese(),
       labelSmall: baseTheme.labelSmall?.japanese(),
-      
+
       // Body styles
       bodyLarge: baseTheme.bodyLarge?.japanese(),
       bodyMedium: baseTheme.bodyMedium?.japanese(),
@@ -368,10 +368,10 @@ class TypographyGenerator {
     } catch (e) {
       // フォント読み込みに失敗した場合はフォールバックを使用
       debugPrint('Inter font loading failed, using fallback: $e');
-      
+
       final tokens = customTokens ?? TypographyTokens.standard;
       final fallbackTheme = ThemeData(brightness: brightness).textTheme;
-      
+
       return TextTheme(
         displayLarge: _applyTokenStyleWithFallback(
           fallbackTheme.displayLarge,
@@ -494,8 +494,8 @@ class TypographyGenerator {
     if (baseStyle == null) return null;
 
     return baseStyle.copyWith(
-      fontFamily: fallbackFonts?.isNotEmpty == true 
-          ? fallbackFonts!.first 
+      fontFamily: fallbackFonts?.isNotEmpty == true
+          ? fallbackFonts!.first
           : baseStyle.fontFamily,
       fontSize: tokenStyle.fontSize,
       fontWeight: tokenStyle.fontWeight,

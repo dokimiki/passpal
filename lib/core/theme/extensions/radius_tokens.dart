@@ -238,7 +238,8 @@ class RadiusTokensExtension extends RadiusExtension {
       xl: xl ?? this.xl,
       full: full ?? this.full,
       radiusTokens: radiusTokens ?? this.radiusTokens,
-      componentRadiusTokens: componentRadiusTokens ?? this.componentRadiusTokens,
+      componentRadiusTokens:
+          componentRadiusTokens ?? this.componentRadiusTokens,
     );
   }
 

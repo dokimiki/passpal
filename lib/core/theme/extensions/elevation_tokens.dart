@@ -321,14 +321,18 @@ class ElevationTokensExtension extends ElevationExtension {
       level4: level4 ?? this.level4,
       level5: level5 ?? this.level5,
       elevationTokens: elevationTokens ?? this.elevationTokens,
-      componentElevationTokens: componentElevationTokens ?? this.componentElevationTokens,
+      componentElevationTokens:
+          componentElevationTokens ?? this.componentElevationTokens,
       shadowTokens: shadowTokens ?? this.shadowTokens,
       brightness: brightness ?? this.brightness,
     );
   }
 
   @override
-  ElevationTokensExtension lerp(ThemeExtension<ElevationExtension>? other, double t) {
+  ElevationTokensExtension lerp(
+    ThemeExtension<ElevationExtension>? other,
+    double t,
+  ) {
     if (other is! ElevationTokensExtension) {
       return this;
     }

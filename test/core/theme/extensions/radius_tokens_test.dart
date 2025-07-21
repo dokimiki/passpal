@@ -46,22 +46,34 @@ void main() {
 
       test('topOnly() が正しいBorderRadiusを返す', () {
         final radius = extension.topOnly(16.0);
-        expect(radius, equals(BorderRadius.vertical(top: Radius.circular(16.0))));
+        expect(
+          radius,
+          equals(BorderRadius.vertical(top: Radius.circular(16.0))),
+        );
       });
 
       test('bottomOnly() が正しいBorderRadiusを返す', () {
         final radius = extension.bottomOnly(16.0);
-        expect(radius, equals(BorderRadius.vertical(bottom: Radius.circular(16.0))));
+        expect(
+          radius,
+          equals(BorderRadius.vertical(bottom: Radius.circular(16.0))),
+        );
       });
 
       test('leftOnly() が正しいBorderRadiusを返す', () {
         final radius = extension.leftOnly(16.0);
-        expect(radius, equals(BorderRadius.horizontal(left: Radius.circular(16.0))));
+        expect(
+          radius,
+          equals(BorderRadius.horizontal(left: Radius.circular(16.0))),
+        );
       });
 
       test('rightOnly() が正しいBorderRadiusを返す', () {
         final radius = extension.rightOnly(16.0);
-        expect(radius, equals(BorderRadius.horizontal(right: Radius.circular(16.0))));
+        expect(
+          radius,
+          equals(BorderRadius.horizontal(right: Radius.circular(16.0))),
+        );
       });
 
       test('custom() が正しいBorderRadiusを返す', () {
@@ -73,12 +85,14 @@ void main() {
         );
         expect(
           radius,
-          equals(BorderRadius.only(
-            topLeft: Radius.circular(8.0),
-            topRight: Radius.circular(16.0),
-            bottomLeft: Radius.circular(4.0),
-            bottomRight: Radius.circular(12.0),
-          )),
+          equals(
+            BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(16.0),
+              bottomLeft: Radius.circular(4.0),
+              bottomRight: Radius.circular(12.0),
+            ),
+          ),
         );
       });
 
@@ -86,12 +100,14 @@ void main() {
         final radius = extension.custom(topLeft: 8.0);
         expect(
           radius,
-          equals(BorderRadius.only(
-            topLeft: Radius.circular(8.0),
-            topRight: Radius.circular(0.0),
-            bottomLeft: Radius.circular(0.0),
-            bottomRight: Radius.circular(0.0),
-          )),
+          equals(
+            BorderRadius.only(
+              topLeft: Radius.circular(8.0),
+              topRight: Radius.circular(0.0),
+              bottomLeft: Radius.circular(0.0),
+              bottomRight: Radius.circular(0.0),
+            ),
+          ),
         );
       });
     });
@@ -127,7 +143,7 @@ void main() {
     group('レスポンシブ角丸', () {
       test('getResponsiveRadius() が画面幅に応じて調整される', () {
         final baseRadius = 16.0;
-        
+
         // 小さい画面
         final smallRadius = extension.getResponsiveRadius(
           baseRadius: baseRadius,
@@ -147,20 +163,20 @@ void main() {
           baseRadius: baseRadius,
           screenWidth: 500.0,
         );
-        expect(mediumRadius, allOf(
-          greaterThan(smallRadius),
-          lessThan(largeRadius),
-        ));
+        expect(
+          mediumRadius,
+          allOf(greaterThan(smallRadius), lessThan(largeRadius)),
+        );
       });
 
       test('getResponsiveBorderRadius() が正しく動作する', () {
         final baseBorderRadius = BorderRadius.circular(16.0);
-        
+
         final responsiveRadius = extension.getResponsiveBorderRadius(
           baseBorderRadius: baseBorderRadius,
           screenWidth: 320.0,
         );
-        
+
         expect(responsiveRadius, isA<BorderRadius>());
         expect(responsiveRadius.topLeft.x, lessThan(16.0));
       });
@@ -168,12 +184,8 @@ void main() {
 
     group('部分角丸', () {
       test('partial() が正しい部分角丸を生成する', () {
-        final radius = extension.partial(
-          top: true,
-          right: true,
-          radius: 16.0,
-        );
-        
+        final radius = extension.partial(top: true, right: true, radius: 16.0);
+
         expect(radius.topLeft.x, equals(0.0));
         expect(radius.topRight.x, equals(16.0));
         expect(radius.bottomLeft.x, equals(0.0));
@@ -183,10 +195,7 @@ void main() {
 
     group('copyWith', () {
       test('指定されたプロパティのみ変更される', () {
-        final newExtension = extension.copyWith(
-          xs: 6.0,
-          lg: 20.0,
-        );
+        final newExtension = extension.copyWith(xs: 6.0, lg: 20.0);
 
         expect(newExtension.none, equals(extension.none));
         expect(newExtension.xs, equals(6.0)); // 変更
@@ -199,7 +208,7 @@ void main() {
 
       test('nullパラメータは元の値を保持する', () {
         final newExtension = extension.copyWith();
-        
+
         expect(newExtension.none, equals(extension.none));
         expect(newExtension.xs, equals(extension.xs));
         expect(newExtension.sm, equals(extension.sm));
@@ -212,10 +221,7 @@ void main() {
 
     group('lerp', () {
       test('同じタイプの拡張間で補間される', () {
-        final other = extension.copyWith(
-          xs: 8.0,
-          md: 20.0,
-        );
+        final other = extension.copyWith(xs: 8.0, md: 20.0);
 
         final lerped = extension.lerp(other, 0.5);
 
@@ -268,7 +274,7 @@ void main() {
     group('toString', () {
       test('適切な文字列表現を返す', () {
         final string = extension.toString();
-        
+
         expect(string, contains('RadiusTokensExtension'));
         expect(string, contains('none: 0.0'));
         expect(string, contains('xs: 4.0'));
@@ -280,7 +286,7 @@ void main() {
   group('RadiusTokensContext 拡張', () {
     testWidgets('BuildContextから角丸トークンにアクセスできる', (tester) async {
       final testExtension = RadiusTokensExtension.standard;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData().withRadiusTokens(testExtension),
@@ -314,18 +320,18 @@ void main() {
     test('ThemeDataに角丸トークンを追加できる', () {
       final testExtension = RadiusTokensExtension.standard;
       final theme = ThemeData().withRadiusTokens(testExtension);
-      
+
       expect(theme.radius, equals(testExtension));
     });
 
     test('既存の拡張を置き換える', () {
       final original = RadiusTokensExtension.standard;
       final replacement = RadiusTokensExtension.compact;
-      
+
       final theme = ThemeData()
           .withRadiusTokens(original)
           .withRadiusTokens(replacement);
-      
+
       expect(theme.radius, equals(replacement));
       expect(theme.radius, isNot(equals(original)));
     });

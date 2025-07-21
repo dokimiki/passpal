@@ -143,8 +143,8 @@ class MotionTokensExtension extends MotionExtension {
     String? debugLabel,
   }) {
     final effectiveDuration = _adjustDuration(duration ?? normal);
-    final effectiveReverseDuration = reverseDuration != null 
-        ? _adjustDuration(reverseDuration) 
+    final effectiveReverseDuration = reverseDuration != null
+        ? _adjustDuration(reverseDuration)
         : null;
 
     return AnimationController(
@@ -165,10 +165,9 @@ class MotionTokensExtension extends MotionExtension {
     final tween = Tween<T>(begin: begin, end: end);
     final effectiveCurve = curve ?? standardCurve;
 
-    return tween.animate(CurvedAnimation(
-      parent: controller,
-      curve: effectiveCurve,
-    ));
+    return tween.animate(
+      CurvedAnimation(parent: controller, curve: effectiveCurve),
+    );
   }
 
   @override
@@ -183,15 +182,9 @@ class MotionTokensExtension extends MotionExtension {
     final offsetAnimation = Tween<Offset>(
       begin: begin,
       end: end,
-    ).animate(CurvedAnimation(
-      parent: animation,
-      curve: effectiveCurve,
-    ));
+    ).animate(CurvedAnimation(parent: animation, curve: effectiveCurve));
 
-    return SlideTransition(
-      position: offsetAnimation,
-      child: child,
-    );
+    return SlideTransition(position: offsetAnimation, child: child);
   }
 
   @override
@@ -206,10 +199,7 @@ class MotionTokensExtension extends MotionExtension {
       curve: effectiveCurve,
     );
 
-    return FadeTransition(
-      opacity: opacityAnimation,
-      child: child,
-    );
+    return FadeTransition(opacity: opacityAnimation, child: child);
   }
 
   @override
@@ -253,10 +243,7 @@ class MotionTokensExtension extends MotionExtension {
       final scaleAnimation = Tween<double>(
         begin: scaleBegin ?? 1.0,
         end: scaleEnd ?? 1.0,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: effectiveCurve,
-      ));
+      ).animate(CurvedAnimation(parent: animation, curve: effectiveCurve));
 
       result = ScaleTransition(
         scale: scaleAnimation,
@@ -270,15 +257,9 @@ class MotionTokensExtension extends MotionExtension {
       final slideAnimation = Tween<Offset>(
         begin: slideBegin ?? Offset.zero,
         end: slideEnd ?? Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: effectiveCurve,
-      ));
+      ).animate(CurvedAnimation(parent: animation, curve: effectiveCurve));
 
-      result = SlideTransition(
-        position: slideAnimation,
-        child: result,
-      );
+      result = SlideTransition(position: slideAnimation, child: result);
     }
 
     // Apply fade transition if specified
@@ -286,15 +267,9 @@ class MotionTokensExtension extends MotionExtension {
       final fadeAnimation = Tween<double>(
         begin: fadeBegin ?? 1.0,
         end: fadeEnd ?? 1.0,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: effectiveCurve,
-      ));
+      ).animate(CurvedAnimation(parent: animation, curve: effectiveCurve));
 
-      result = FadeTransition(
-        opacity: fadeAnimation,
-        child: result,
-      );
+      result = FadeTransition(opacity: fadeAnimation, child: result);
     }
 
     return result;
@@ -375,7 +350,8 @@ class MotionTokensExtension extends MotionExtension {
   Widget buildSharedAxisTransition({
     required Widget child,
     required Animation<double> animation,
-    SharedAxisTransitionType transitionType = SharedAxisTransitionType.horizontal,
+    SharedAxisTransitionType transitionType =
+        SharedAxisTransitionType.horizontal,
   }) {
     return MotionUtils.buildSharedAxisTransition(
       child: child,
@@ -455,7 +431,9 @@ class MotionTokensExtension extends MotionExtension {
       b.inMilliseconds.toDouble(),
       t,
     );
-    return Duration(milliseconds: (lerpedMs ?? a.inMilliseconds.toDouble()).round());
+    return Duration(
+      milliseconds: (lerpedMs ?? a.inMilliseconds.toDouble()).round(),
+    );
   }
 
   @override

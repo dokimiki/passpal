@@ -43,8 +43,14 @@ void main() {
         final disabled = MotionTokensExtension.disabled;
 
         // speedy < standard < relaxed の順で持続時間が長くなる
-        expect(speedy.normal.inMilliseconds, lessThan(standard.normal.inMilliseconds));
-        expect(standard.normal.inMilliseconds, lessThan(relaxed.normal.inMilliseconds));
+        expect(
+          speedy.normal.inMilliseconds,
+          lessThan(standard.normal.inMilliseconds),
+        );
+        expect(
+          standard.normal.inMilliseconds,
+          lessThan(relaxed.normal.inMilliseconds),
+        );
 
         // disabledは全て0
         expect(disabled.instant, equals(Duration.zero));
@@ -53,7 +59,9 @@ void main() {
     });
 
     group('AnimationController 作成', () {
-      testWidgets('createController() が正しいAnimationControllerを作成する', (tester) async {
+      testWidgets('createController() が正しいAnimationControllerを作成する', (
+        tester,
+      ) async {
         final controller = extension.createController(
           vsync: tester,
           duration: const Duration(milliseconds: 300),
@@ -93,7 +101,7 @@ void main() {
 
         controller.forward();
         await tester.pump(const Duration(milliseconds: 100));
-        
+
         expect(animation.value, greaterThan(0.0));
         expect(animation.value, lessThan(1.0));
 
@@ -119,7 +127,9 @@ void main() {
     });
 
     group('トランジション ウィジェット', () {
-      testWidgets('slideTransition() がSlideTransitionウィジェットを生成する', (tester) async {
+      testWidgets('slideTransition() がSlideTransitionウィジェットを生成する', (
+        tester,
+      ) async {
         final controller = AnimationController(
           duration: const Duration(milliseconds: 200),
           vsync: tester,
@@ -140,7 +150,9 @@ void main() {
         controller.dispose();
       });
 
-      testWidgets('fadeTransition() がFadeTransitionウィジェットを生成する', (tester) async {
+      testWidgets('fadeTransition() がFadeTransitionウィジェットを生成する', (
+        tester,
+      ) async {
         final controller = AnimationController(
           duration: const Duration(milliseconds: 200),
           vsync: tester,
@@ -159,7 +171,9 @@ void main() {
         controller.dispose();
       });
 
-      testWidgets('scaleTransition() がScaleTransitionウィジェットを生成する', (tester) async {
+      testWidgets('scaleTransition() がScaleTransitionウィジェットを生成する', (
+        tester,
+      ) async {
         final controller = AnimationController(
           duration: const Duration(milliseconds: 200),
           vsync: tester,
@@ -231,20 +245,26 @@ void main() {
     group('レスポンシブ持続時間', () {
       test('getResponsiveDuration() が画面幅に応じて調整される', () {
         final baseDuration = const Duration(milliseconds: 200);
-        
+
         // 小さい画面
         final smallDuration = extension.getResponsiveDuration(
           baseDuration: baseDuration,
           screenWidth: 320.0,
         );
-        expect(smallDuration.inMilliseconds, lessThan(baseDuration.inMilliseconds));
+        expect(
+          smallDuration.inMilliseconds,
+          lessThan(baseDuration.inMilliseconds),
+        );
 
         // 大きい画面
         final largeDuration = extension.getResponsiveDuration(
           baseDuration: baseDuration,
           screenWidth: 768.0,
         );
-        expect(largeDuration.inMilliseconds, greaterThan(baseDuration.inMilliseconds));
+        expect(
+          largeDuration.inMilliseconds,
+          greaterThan(baseDuration.inMilliseconds),
+        );
       });
     });
 
@@ -262,7 +282,10 @@ void main() {
           baseDuration: baseDuration,
           slowAnimations: true,
         );
-        expect(slowAnimations.inMilliseconds, greaterThan(baseDuration.inMilliseconds));
+        expect(
+          slowAnimations.inMilliseconds,
+          greaterThan(baseDuration.inMilliseconds),
+        );
 
         final normal = extension.adjustForAccessibility(
           baseDuration: baseDuration,
@@ -272,7 +295,9 @@ void main() {
     });
 
     group('Material 3 トランジション', () {
-      testWidgets('buildContainerTransform() がコンテナトランスフォームを生成する', (tester) async {
+      testWidgets('buildContainerTransform() がコンテナトランスフォームを生成する', (
+        tester,
+      ) async {
         final controller = AnimationController(
           duration: const Duration(milliseconds: 200),
           vsync: tester,
@@ -292,7 +317,9 @@ void main() {
         controller.dispose();
       });
 
-      testWidgets('buildSharedAxisTransition() がシェアードアクシストランジションを生成する', (tester) async {
+      testWidgets('buildSharedAxisTransition() がシェアードアクシストランジションを生成する', (
+        tester,
+      ) async {
         final controller = AnimationController(
           duration: const Duration(milliseconds: 200),
           vsync: tester,
@@ -322,9 +349,15 @@ void main() {
         );
 
         expect(newExtension.instant, equals(extension.instant));
-        expect(newExtension.fast, equals(const Duration(milliseconds: 150))); // 変更
+        expect(
+          newExtension.fast,
+          equals(const Duration(milliseconds: 150)),
+        ); // 変更
         expect(newExtension.normal, equals(extension.normal));
-        expect(newExtension.slow, equals(const Duration(milliseconds: 400))); // 変更
+        expect(
+          newExtension.slow,
+          equals(const Duration(milliseconds: 400)),
+        ); // 変更
         expect(newExtension.extraSlow, equals(extension.extraSlow));
       });
     });
@@ -348,7 +381,9 @@ void main() {
       });
 
       test('境界値での補間が正しく動作する', () {
-        final other = extension.copyWith(fast: const Duration(milliseconds: 200));
+        final other = extension.copyWith(
+          fast: const Duration(milliseconds: 200),
+        );
 
         final lerpedStart = extension.lerp(other, 0.0);
         expect(lerpedStart.fast.inMilliseconds, equals(100));
@@ -381,7 +416,9 @@ void main() {
       });
 
       test('異なる値を持つインスタンスは等しくない', () {
-        final other = extension.copyWith(fast: const Duration(milliseconds: 150));
+        final other = extension.copyWith(
+          fast: const Duration(milliseconds: 150),
+        );
 
         expect(extension, isNot(equals(other)));
         expect(extension.hashCode, isNot(equals(other.hashCode)));
@@ -391,7 +428,7 @@ void main() {
     group('toString', () {
       test('適切な文字列表現を返す', () {
         final string = extension.toString();
-        
+
         expect(string, contains('MotionTokensExtension'));
         expect(string, contains('instant: 0:00:00.000000'));
         expect(string, contains('fast: 0:00:00.100000'));
@@ -403,7 +440,7 @@ void main() {
   group('MotionTokensContext 拡張', () {
     testWidgets('BuildContextからモーショントークンにアクセスできる', (tester) async {
       final testExtension = MotionTokensExtension.standard;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData().withMotionTokens(testExtension),
@@ -437,18 +474,18 @@ void main() {
     test('ThemeDataにモーショントークンを追加できる', () {
       final testExtension = MotionTokensExtension.standard;
       final theme = ThemeData().withMotionTokens(testExtension);
-      
+
       expect(theme.motion, equals(testExtension));
     });
 
     test('既存の拡張を置き換える', () {
       final original = MotionTokensExtension.standard;
       final replacement = MotionTokensExtension.speedy;
-      
+
       final theme = ThemeData()
           .withMotionTokens(original)
           .withMotionTokens(replacement);
-      
+
       expect(theme.motion, equals(replacement));
       expect(theme.motion, isNot(equals(original)));
     });

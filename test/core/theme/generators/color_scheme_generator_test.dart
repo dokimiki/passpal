@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:passpal/core/theme/generators/color_scheme_generator.dart';
 import 'package:passpal/core/theme/models/color_tokens.dart';
-import 'package:passpal/core/theme/extensions/status_colors.dart' as theme_extensions;
+import 'package:passpal/core/theme/extensions/status_colors.dart'
+    as theme_extensions;
 
 void main() {
   // Initialize binding for dynamic color tests
@@ -17,8 +18,14 @@ void main() {
         expect(scheme.brightness, Brightness.light);
         expect(scheme.primary, ColorTokens.light.primary.primary);
         expect(scheme.onPrimary, ColorTokens.light.primary.onPrimary);
-        expect(scheme.primaryContainer, ColorTokens.light.primary.primaryContainer);
-        expect(scheme.onPrimaryContainer, ColorTokens.light.primary.onPrimaryContainer);
+        expect(
+          scheme.primaryContainer,
+          ColorTokens.light.primary.primaryContainer,
+        );
+        expect(
+          scheme.onPrimaryContainer,
+          ColorTokens.light.primary.onPrimaryContainer,
+        );
         expect(scheme.surface, ColorTokens.light.surface.surface);
         expect(scheme.onSurface, ColorTokens.light.surface.onSurface);
         expect(scheme.error, ColorTokens.light.status.error);
@@ -46,11 +53,26 @@ void main() {
         final scheme = ColorSchemeGenerator.generateLightScheme();
 
         // Assert
-        expect(scheme.surfaceContainerLowest, ColorTokens.light.surface.surfaceContainerLowest);
-        expect(scheme.surfaceContainerLow, ColorTokens.light.surface.surfaceContainerLow);
-        expect(scheme.surfaceContainer, ColorTokens.light.surface.surfaceContainer);
-        expect(scheme.surfaceContainerHigh, ColorTokens.light.surface.surfaceContainerHigh);
-        expect(scheme.surfaceContainerHighest, ColorTokens.light.surface.surfaceContainerHighest);
+        expect(
+          scheme.surfaceContainerLowest,
+          ColorTokens.light.surface.surfaceContainerLowest,
+        );
+        expect(
+          scheme.surfaceContainerLow,
+          ColorTokens.light.surface.surfaceContainerLow,
+        );
+        expect(
+          scheme.surfaceContainer,
+          ColorTokens.light.surface.surfaceContainer,
+        );
+        expect(
+          scheme.surfaceContainerHigh,
+          ColorTokens.light.surface.surfaceContainerHigh,
+        );
+        expect(
+          scheme.surfaceContainerHighest,
+          ColorTokens.light.surface.surfaceContainerHighest,
+        );
       });
     });
 
@@ -63,8 +85,14 @@ void main() {
         expect(scheme.brightness, Brightness.dark);
         expect(scheme.primary, ColorTokens.dark.primary.primary);
         expect(scheme.onPrimary, ColorTokens.dark.primary.onPrimary);
-        expect(scheme.primaryContainer, ColorTokens.dark.primary.primaryContainer);
-        expect(scheme.onPrimaryContainer, ColorTokens.dark.primary.onPrimaryContainer);
+        expect(
+          scheme.primaryContainer,
+          ColorTokens.dark.primary.primaryContainer,
+        );
+        expect(
+          scheme.onPrimaryContainer,
+          ColorTokens.dark.primary.onPrimaryContainer,
+        );
         expect(scheme.surface, ColorTokens.dark.surface.surface);
         expect(scheme.onSurface, ColorTokens.dark.surface.onSurface);
         expect(scheme.error, ColorTokens.dark.status.error);
@@ -98,42 +126,50 @@ void main() {
     });
 
     group('generateDynamicScheme', () {
-      test('falls back to design tokens when dynamic color unavailable', () async {
-        // Act
-        final lightScheme = await ColorSchemeGenerator.generateDynamicScheme(
-          Brightness.light,
-          fallbackToDesignTokens: true,
-        );
-        final darkScheme = await ColorSchemeGenerator.generateDynamicScheme(
-          Brightness.dark,
-          fallbackToDesignTokens: true,
-        );
+      test(
+        'falls back to design tokens when dynamic color unavailable',
+        () async {
+          // Act
+          final lightScheme = await ColorSchemeGenerator.generateDynamicScheme(
+            Brightness.light,
+            fallbackToDesignTokens: true,
+          );
+          final darkScheme = await ColorSchemeGenerator.generateDynamicScheme(
+            Brightness.dark,
+            fallbackToDesignTokens: true,
+          );
 
-        // Assert
-        expect(lightScheme.brightness, Brightness.light);
-        expect(darkScheme.brightness, Brightness.dark);
-        expect(lightScheme.primary, ColorTokens.light.primary.primary);
-        expect(darkScheme.primary, ColorTokens.dark.primary.primary);
-      });
+          // Assert
+          expect(lightScheme.brightness, Brightness.light);
+          expect(darkScheme.brightness, Brightness.dark);
+          expect(lightScheme.primary, ColorTokens.light.primary.primary);
+          expect(darkScheme.primary, ColorTokens.dark.primary.primary);
+        },
+      );
 
-      test('falls back to basic Material 3 when design tokens disabled', () async {
-        // Act
-        final scheme = await ColorSchemeGenerator.generateDynamicScheme(
-          Brightness.light,
-          fallbackToDesignTokens: false,
-        );
+      test(
+        'falls back to basic Material 3 when design tokens disabled',
+        () async {
+          // Act
+          final scheme = await ColorSchemeGenerator.generateDynamicScheme(
+            Brightness.light,
+            fallbackToDesignTokens: false,
+          );
 
-        // Assert
-        expect(scheme.brightness, Brightness.light);
-        // Should be basic Material 3 scheme
-        expect(scheme, isA<ColorScheme>());
-      });
+          // Assert
+          expect(scheme.brightness, Brightness.light);
+          // Should be basic Material 3 scheme
+          expect(scheme, isA<ColorScheme>());
+        },
+      );
     });
 
     group('generateHighContrastScheme', () {
       test('generates high contrast light scheme', () {
         // Act
-        final scheme = ColorSchemeGenerator.generateHighContrastScheme(Brightness.light);
+        final scheme = ColorSchemeGenerator.generateHighContrastScheme(
+          Brightness.light,
+        );
 
         // Assert
         expect(scheme.brightness, Brightness.light);
@@ -147,7 +183,9 @@ void main() {
 
       test('generates high contrast dark scheme', () {
         // Act
-        final scheme = ColorSchemeGenerator.generateHighContrastScheme(Brightness.dark);
+        final scheme = ColorSchemeGenerator.generateHighContrastScheme(
+          Brightness.dark,
+        );
 
         // Assert
         expect(scheme.brightness, Brightness.dark);
@@ -164,11 +202,17 @@ void main() {
       test('validates high contrast color pairs', () {
         // Act & Assert
         expect(
-          ColorSchemeGenerator.validateContrastRatio(Colors.white, Colors.black),
+          ColorSchemeGenerator.validateContrastRatio(
+            Colors.white,
+            Colors.black,
+          ),
           isTrue,
         );
         expect(
-          ColorSchemeGenerator.validateContrastRatio(Colors.black, Colors.white),
+          ColorSchemeGenerator.validateContrastRatio(
+            Colors.black,
+            Colors.white,
+          ),
           isTrue,
         );
       });
@@ -201,7 +245,7 @@ void main() {
           ),
           isTrue,
         );
-        
+
         // Note: Primary brand colors may not meet strict 4.5:1 ratio for design consistency
         // This is common in real design systems where brand identity is prioritized
       });
@@ -209,11 +253,23 @@ void main() {
       test('validates status color contrast', () {
         // Act & Assert
         // Test that status colors exist and are different from their backgrounds
-        expect(ColorTokens.light.status.onError, isNot(equals(ColorTokens.light.status.error)));
-        expect(ColorTokens.light.status.onSuccess, isNot(equals(ColorTokens.light.status.success)));
-        expect(ColorTokens.dark.status.onError, isNot(equals(ColorTokens.dark.status.error)));
-        expect(ColorTokens.dark.status.onSuccess, isNot(equals(ColorTokens.dark.status.success)));
-        
+        expect(
+          ColorTokens.light.status.onError,
+          isNot(equals(ColorTokens.light.status.error)),
+        );
+        expect(
+          ColorTokens.light.status.onSuccess,
+          isNot(equals(ColorTokens.light.status.success)),
+        );
+        expect(
+          ColorTokens.dark.status.onError,
+          isNot(equals(ColorTokens.dark.status.error)),
+        );
+        expect(
+          ColorTokens.dark.status.onSuccess,
+          isNot(equals(ColorTokens.dark.status.success)),
+        );
+
         // Note: Status colors are designed for visual distinction
         // rather than strict accessibility contrast for design consistency
       });
@@ -225,7 +281,9 @@ void main() {
         final lightScheme = ColorSchemeGenerator.generateLightScheme();
 
         // Act
-        final statusColors = ColorSchemeGenerator.getStatusColorsForScheme(lightScheme);
+        final statusColors = ColorSchemeGenerator.getStatusColorsForScheme(
+          lightScheme,
+        );
 
         // Assert
         expect(statusColors, theme_extensions.StatusColors.light);
@@ -236,7 +294,9 @@ void main() {
         final darkScheme = ColorSchemeGenerator.generateDarkScheme();
 
         // Act
-        final statusColors = ColorSchemeGenerator.getStatusColorsForScheme(darkScheme);
+        final statusColors = ColorSchemeGenerator.getStatusColorsForScheme(
+          darkScheme,
+        );
 
         // Assert
         expect(statusColors, theme_extensions.StatusColors.dark);
@@ -293,7 +353,10 @@ void main() {
 
         // Assert
         expect(statusColors, theme_extensions.StatusColors.light);
-        expect(statusColors.success, theme_extensions.StatusColors.light.success);
+        expect(
+          statusColors.success,
+          theme_extensions.StatusColors.light.success,
+        );
         expect(statusColors.error, theme_extensions.StatusColors.light.error);
       });
 
@@ -306,7 +369,10 @@ void main() {
 
         // Assert
         expect(statusColors, theme_extensions.StatusColors.dark);
-        expect(statusColors.success, theme_extensions.StatusColors.dark.success);
+        expect(
+          statusColors.success,
+          theme_extensions.StatusColors.dark.success,
+        );
         expect(statusColors.error, theme_extensions.StatusColors.dark.error);
       });
     });
@@ -320,14 +386,20 @@ void main() {
         // Act & Assert
         // Test surface combinations which should have good contrast
         expect(
-          ColorSchemeGenerator.validateContrastRatio(lightScheme.onSurface, lightScheme.surface),
+          ColorSchemeGenerator.validateContrastRatio(
+            lightScheme.onSurface,
+            lightScheme.surface,
+          ),
           isTrue,
         );
         expect(
-          ColorSchemeGenerator.validateContrastRatio(darkScheme.onSurface, darkScheme.surface),
+          ColorSchemeGenerator.validateContrastRatio(
+            darkScheme.onSurface,
+            darkScheme.surface,
+          ),
           isTrue,
         );
-        
+
         // Note: Brand primary and error colors may not meet strict 4.5:1 ratio
         // for design consistency, but schemes should still be valid overall
         expect(lightScheme, isA<ColorScheme>());
@@ -336,8 +408,10 @@ void main() {
 
       test('validates contrast for high contrast schemes', () {
         // Arrange
-        final lightHighContrast = ColorSchemeGenerator.generateHighContrastScheme(Brightness.light);
-        final darkHighContrast = ColorSchemeGenerator.generateHighContrastScheme(Brightness.dark);
+        final lightHighContrast =
+            ColorSchemeGenerator.generateHighContrastScheme(Brightness.light);
+        final darkHighContrast =
+            ColorSchemeGenerator.generateHighContrastScheme(Brightness.dark);
 
         // Act & Assert
         expect(lightHighContrast.hasValidContrast, isTrue);
@@ -353,7 +427,7 @@ void main() {
 
       // Assert
       expect(scheme.brightness, Brightness.light);
-      
+
       // Material 3 should have these properties defined
       expect(scheme.surfaceContainerLowest, isNotNull);
       expect(scheme.surfaceContainerLow, isNotNull);
@@ -362,7 +436,7 @@ void main() {
       expect(scheme.surfaceContainerHighest, isNotNull);
       expect(scheme.surfaceDim, isNotNull);
       expect(scheme.surfaceBright, isNotNull);
-      
+
       expect(scheme.outline, isNotNull);
       expect(scheme.outlineVariant, isNotNull);
       expect(scheme.shadow, isNotNull);
@@ -375,7 +449,7 @@ void main() {
 
       // Assert
       expect(scheme.brightness, Brightness.dark);
-      
+
       // Material 3 should have these properties defined
       expect(scheme.surfaceContainerLowest, isNotNull);
       expect(scheme.surfaceContainerLow, isNotNull);
@@ -384,7 +458,7 @@ void main() {
       expect(scheme.surfaceContainerHighest, isNotNull);
       expect(scheme.surfaceDim, isNotNull);
       expect(scheme.surfaceBright, isNotNull);
-      
+
       expect(scheme.outline, isNotNull);
       expect(scheme.outlineVariant, isNotNull);
       expect(scheme.shadow, isNotNull);
@@ -401,13 +475,25 @@ void main() {
       // Assert - Primary colors should match design tokens
       expect(lightScheme.primary, ColorTokens.light.primary.primary);
       expect(lightScheme.onPrimary, ColorTokens.light.primary.onPrimary);
-      expect(lightScheme.primaryContainer, ColorTokens.light.primary.primaryContainer);
-      expect(lightScheme.onPrimaryContainer, ColorTokens.light.primary.onPrimaryContainer);
+      expect(
+        lightScheme.primaryContainer,
+        ColorTokens.light.primary.primaryContainer,
+      );
+      expect(
+        lightScheme.onPrimaryContainer,
+        ColorTokens.light.primary.onPrimaryContainer,
+      );
 
       expect(darkScheme.primary, ColorTokens.dark.primary.primary);
       expect(darkScheme.onPrimary, ColorTokens.dark.primary.onPrimary);
-      expect(darkScheme.primaryContainer, ColorTokens.dark.primary.primaryContainer);
-      expect(darkScheme.onPrimaryContainer, ColorTokens.dark.primary.onPrimaryContainer);
+      expect(
+        darkScheme.primaryContainer,
+        ColorTokens.dark.primary.primaryContainer,
+      );
+      expect(
+        darkScheme.onPrimaryContainer,
+        ColorTokens.dark.primary.onPrimaryContainer,
+      );
     });
 
     test('uses design token surface colors', () {
@@ -418,11 +504,17 @@ void main() {
       // Assert - Surface colors should match design tokens
       expect(lightScheme.surface, ColorTokens.light.surface.surface);
       expect(lightScheme.onSurface, ColorTokens.light.surface.onSurface);
-      expect(lightScheme.surfaceContainer, ColorTokens.light.surface.surfaceContainer);
+      expect(
+        lightScheme.surfaceContainer,
+        ColorTokens.light.surface.surfaceContainer,
+      );
 
       expect(darkScheme.surface, ColorTokens.dark.surface.surface);
       expect(darkScheme.onSurface, ColorTokens.dark.surface.onSurface);
-      expect(darkScheme.surfaceContainer, ColorTokens.dark.surface.surfaceContainer);
+      expect(
+        darkScheme.surfaceContainer,
+        ColorTokens.dark.surface.surfaceContainer,
+      );
     });
 
     test('uses design token status colors', () {
@@ -433,13 +525,22 @@ void main() {
       // Assert - Error colors should match design tokens
       expect(lightScheme.error, ColorTokens.light.status.error);
       expect(lightScheme.onError, ColorTokens.light.status.onError);
-      expect(lightScheme.errorContainer, ColorTokens.light.status.errorContainer);
-      expect(lightScheme.onErrorContainer, ColorTokens.light.status.onErrorContainer);
+      expect(
+        lightScheme.errorContainer,
+        ColorTokens.light.status.errorContainer,
+      );
+      expect(
+        lightScheme.onErrorContainer,
+        ColorTokens.light.status.onErrorContainer,
+      );
 
       expect(darkScheme.error, ColorTokens.dark.status.error);
       expect(darkScheme.onError, ColorTokens.dark.status.onError);
       expect(darkScheme.errorContainer, ColorTokens.dark.status.errorContainer);
-      expect(darkScheme.onErrorContainer, ColorTokens.dark.status.onErrorContainer);
+      expect(
+        darkScheme.onErrorContainer,
+        ColorTokens.dark.status.onErrorContainer,
+      );
     });
   });
 }

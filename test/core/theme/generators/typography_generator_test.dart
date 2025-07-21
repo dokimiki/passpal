@@ -6,7 +6,9 @@ import 'package:passpal/core/theme/models/typography_tokens.dart';
 void main() {
   group('TypographyGenerator', () {
     group('generateTextTheme', () {
-      testWidgets('should generate TextTheme with Inter font for light theme', (tester) async {
+      testWidgets('should generate TextTheme with Inter font for light theme', (
+        tester,
+      ) async {
         // Arrange & Act
         final textTheme = TypographyGenerator.generateTextTheme(
           brightness: Brightness.light,
@@ -19,7 +21,9 @@ void main() {
         expect(textTheme.bodyLarge?.fontFamily, contains('Inter'));
       });
 
-      testWidgets('should generate TextTheme with Inter font for dark theme', (tester) async {
+      testWidgets('should generate TextTheme with Inter font for dark theme', (
+        tester,
+      ) async {
         // Arrange & Act
         final textTheme = TypographyGenerator.generateTextTheme(
           brightness: Brightness.dark,
@@ -32,7 +36,9 @@ void main() {
         expect(textTheme.bodyLarge?.fontFamily, contains('Inter'));
       });
 
-      testWidgets('should apply custom text color when provided', (tester) async {
+      testWidgets('should apply custom text color when provided', (
+        tester,
+      ) async {
         // Arrange
         const customColor = Colors.red;
 
@@ -47,13 +53,24 @@ void main() {
         expect(textTheme.bodyLarge?.color, customColor);
       });
 
-      testWidgets('should use custom typography tokens when provided', (tester) async {
+      testWidgets('should use custom typography tokens when provided', (
+        tester,
+      ) async {
         // Arrange
         const customTokens = TypographyTokens(
           display: DisplayTokens(
-            displayLarge: TextStyle(fontSize: 100.0, fontWeight: FontWeight.w900),
-            displayMedium: TextStyle(fontSize: 80.0, fontWeight: FontWeight.w800),
-            displaySmall: TextStyle(fontSize: 60.0, fontWeight: FontWeight.w700),
+            displayLarge: TextStyle(
+              fontSize: 100.0,
+              fontWeight: FontWeight.w900,
+            ),
+            displayMedium: TextStyle(
+              fontSize: 80.0,
+              fontWeight: FontWeight.w800,
+            ),
+            displaySmall: TextStyle(
+              fontSize: 60.0,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           headline: HeadlineTokens.standard,
           title: TitleTokens.standard,
@@ -74,7 +91,9 @@ void main() {
         expect(textTheme.displayMedium?.fontWeight, FontWeight.w800);
       });
 
-      testWidgets('should apply design token specifications correctly', (tester) async {
+      testWidgets('should apply design token specifications correctly', (
+        tester,
+      ) async {
         // Arrange & Act
         final textTheme = TypographyGenerator.generateTextTheme(
           brightness: Brightness.light,
@@ -138,25 +157,29 @@ void main() {
     });
 
     group('generateResponsiveTextTheme', () {
-      testWidgets('should scale font sizes based on screen width', (tester) async {
+      testWidgets('should scale font sizes based on screen width', (
+        tester,
+      ) async {
         // Arrange
         const smallScreenWidth = 320.0;
         const largeScreenWidth = 768.0;
 
         // Act
-        final smallScreenTheme = TypographyGenerator.generateResponsiveTextTheme(
-          brightness: Brightness.light,
-          screenWidth: smallScreenWidth,
-          minScale: 0.8,
-          maxScale: 1.2,
-        );
+        final smallScreenTheme =
+            TypographyGenerator.generateResponsiveTextTheme(
+              brightness: Brightness.light,
+              screenWidth: smallScreenWidth,
+              minScale: 0.8,
+              maxScale: 1.2,
+            );
 
-        final largeScreenTheme = TypographyGenerator.generateResponsiveTextTheme(
-          brightness: Brightness.light,
-          screenWidth: largeScreenWidth,
-          minScale: 0.8,
-          maxScale: 1.2,
-        );
+        final largeScreenTheme =
+            TypographyGenerator.generateResponsiveTextTheme(
+              brightness: Brightness.light,
+              screenWidth: largeScreenWidth,
+              minScale: 0.8,
+              maxScale: 1.2,
+            );
 
         // Assert
         expect(
@@ -178,19 +201,21 @@ void main() {
         const baseFontSize = 16.0;
 
         // Act
-        final smallScreenTheme = TypographyGenerator.generateResponsiveTextTheme(
-          brightness: Brightness.light,
-          screenWidth: verySmallScreenWidth,
-          minScale: expectedMinScale,
-          maxScale: expectedMaxScale,
-        );
+        final smallScreenTheme =
+            TypographyGenerator.generateResponsiveTextTheme(
+              brightness: Brightness.light,
+              screenWidth: verySmallScreenWidth,
+              minScale: expectedMinScale,
+              maxScale: expectedMaxScale,
+            );
 
-        final largeScreenTheme = TypographyGenerator.generateResponsiveTextTheme(
-          brightness: Brightness.light,
-          screenWidth: veryLargeScreenWidth,
-          minScale: expectedMinScale,
-          maxScale: expectedMaxScale,
-        );
+        final largeScreenTheme =
+            TypographyGenerator.generateResponsiveTextTheme(
+              brightness: Brightness.light,
+              screenWidth: veryLargeScreenWidth,
+              minScale: expectedMinScale,
+              maxScale: expectedMaxScale,
+            );
 
         // Assert
         expect(
@@ -232,7 +257,9 @@ void main() {
         );
       });
 
-      testWidgets('should apply accessibility font weight when provided', (tester) async {
+      testWidgets('should apply accessibility font weight when provided', (
+        tester,
+      ) async {
         // Arrange
         const accessibilityWeight = FontWeight.w600;
 
@@ -249,31 +276,38 @@ void main() {
     });
 
     group('generateJapaneseTextTheme', () {
-      testWidgets('should optimize line height and letter spacing for Japanese text', (tester) async {
-        // Arrange & Act
-        final japaneseTheme = TypographyGenerator.generateJapaneseTextTheme(
-          brightness: Brightness.light,
-        );
+      testWidgets(
+        'should optimize line height and letter spacing for Japanese text',
+        (tester) async {
+          // Arrange & Act
+          final japaneseTheme = TypographyGenerator.generateJapaneseTextTheme(
+            brightness: Brightness.light,
+          );
 
-        final normalTheme = TypographyGenerator.generateTextTheme(
-          brightness: Brightness.light,
-        );
+          final normalTheme = TypographyGenerator.generateTextTheme(
+            brightness: Brightness.light,
+          );
 
-        // Assert - Line height should be increased for Japanese text
-        expect(
-          japaneseTheme.bodyLarge?.height,
-          greaterThan(normalTheme.bodyLarge?.height ?? 0),
-        );
+          // Assert - Line height should be increased for Japanese text
+          expect(
+            japaneseTheme.bodyLarge?.height,
+            greaterThan(normalTheme.bodyLarge?.height ?? 0),
+          );
 
-        // Assert - Letter spacing should be adjusted for Japanese text
-        final normalLetterSpacing = normalTheme.bodyLarge?.letterSpacing ?? 0.0;
-        final japaneseLetterSpacing = japaneseTheme.bodyLarge?.letterSpacing ?? 0.0;
-        expect(japaneseLetterSpacing, lessThan(normalLetterSpacing));
-      });
+          // Assert - Letter spacing should be adjusted for Japanese text
+          final normalLetterSpacing =
+              normalTheme.bodyLarge?.letterSpacing ?? 0.0;
+          final japaneseLetterSpacing =
+              japaneseTheme.bodyLarge?.letterSpacing ?? 0.0;
+          expect(japaneseLetterSpacing, lessThan(normalLetterSpacing));
+        },
+      );
     });
 
     group('generateWithFallback', () {
-      testWidgets('should generate normal theme when fonts load successfully', (tester) async {
+      testWidgets('should generate normal theme when fonts load successfully', (
+        tester,
+      ) async {
         // Arrange & Act
         final fallbackTheme = TypographyGenerator.generateWithFallback(
           brightness: Brightness.light,
@@ -284,8 +318,14 @@ void main() {
         );
 
         // Assert - Should be equivalent to normal theme when fonts load
-        expect(fallbackTheme.bodyLarge?.fontSize, normalTheme.bodyLarge?.fontSize);
-        expect(fallbackTheme.bodyLarge?.fontWeight, normalTheme.bodyLarge?.fontWeight);
+        expect(
+          fallbackTheme.bodyLarge?.fontSize,
+          normalTheme.bodyLarge?.fontSize,
+        );
+        expect(
+          fallbackTheme.bodyLarge?.fontWeight,
+          normalTheme.bodyLarge?.fontWeight,
+        );
       });
 
       testWidgets('should apply fallback fonts when provided', (tester) async {
@@ -369,26 +409,31 @@ void main() {
         expect(textTheme.displayLarge, isNotNull);
       });
 
-      testWidgets('should maintain design token specifications even with custom colors', (tester) async {
-        // Arrange
-        const customColor = Color(0xFF123456);
+      testWidgets(
+        'should maintain design token specifications even with custom colors',
+        (tester) async {
+          // Arrange
+          const customColor = Color(0xFF123456);
 
-        // Act
-        final textTheme = TypographyGenerator.generateTextTheme(
-          brightness: Brightness.light,
-          textColor: customColor,
-        );
+          // Act
+          final textTheme = TypographyGenerator.generateTextTheme(
+            brightness: Brightness.light,
+            textColor: customColor,
+          );
 
-        // Assert - Color should be applied but other specs maintained
-        expect(textTheme.bodyLarge?.color, customColor);
-        expect(textTheme.bodyLarge?.fontSize, 16.0);
-        expect(textTheme.bodyLarge?.fontWeight, FontWeight.w400);
-        expect(textTheme.bodyLarge?.letterSpacing, 0.15);
-      });
+          // Assert - Color should be applied but other specs maintained
+          expect(textTheme.bodyLarge?.color, customColor);
+          expect(textTheme.bodyLarge?.fontSize, 16.0);
+          expect(textTheme.bodyLarge?.fontWeight, FontWeight.w400);
+          expect(textTheme.bodyLarge?.letterSpacing, 0.15);
+        },
+      );
     });
 
     group('Material 3 integration', () {
-      testWidgets('should generate theme compatible with Material 3', (tester) async {
+      testWidgets('should generate theme compatible with Material 3', (
+        tester,
+      ) async {
         // Arrange & Act
         final textTheme = TypographyGenerator.generateTextTheme(
           brightness: Brightness.light,
