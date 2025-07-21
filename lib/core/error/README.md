@@ -526,7 +526,3 @@ When adding new error types:
 3. Add test utilities
 4. Update documentation
 5. Consider impact on existing error handling
-
-## License
-
-This module is part of the PassPal application and follows the same licensing terms.
