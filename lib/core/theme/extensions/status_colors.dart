@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// StatusColors theme extension implementation.
-/// 
+///
 /// Provides concrete implementation of status colors (success, warning, error, info)
 /// with proper theme interpolation and Material 3 integration.
-/// 
+///
 /// This extension integrates with StatusColors from the color tokens model
 /// and provides both primary and light/dark variants for better accessibility.
 class StatusColors extends ThemeExtension<StatusColors> {
@@ -29,20 +29,18 @@ class StatusColors extends ThemeExtension<StatusColors> {
     // Primary status colors
     success: Color(0xFF2E7D32), // StatusColors.light.success
     warning: Color(0xFFF57C00), // StatusColors.light.warning
-    error: Color(0xFFD32F2F),   // StatusColors.light.error
-    info: Color(0xFF1976D2),    // StatusColors.light.info
-    
+    error: Color(0xFFD32F2F), // StatusColors.light.error
+    info: Color(0xFF1976D2), // StatusColors.light.info
     // Light variants (for dark backgrounds)
     successLight: Color(0xFF66BB6A), // Lighter green
     warningLight: Color(0xFFFFB74D), // Lighter orange
-    errorLight: Color(0xFFEF5350),   // Lighter red
-    infoLight: Color(0xFF42A5F5),    // Lighter blue
-    
+    errorLight: Color(0xFFEF5350), // Lighter red
+    infoLight: Color(0xFF42A5F5), // Lighter blue
     // Dark variants (for light backgrounds)
-    successDark: Color(0xFF1B5E20),  // Darker green
-    warningDark: Color(0xFFE65100),  // Darker orange
-    errorDark: Color(0xFFB71C1C),    // Darker red
-    infoDark: Color(0xFF0D47A1),     // Darker blue
+    successDark: Color(0xFF1B5E20), // Darker green
+    warningDark: Color(0xFFE65100), // Darker orange
+    errorDark: Color(0xFFB71C1C), // Darker red
+    infoDark: Color(0xFF0D47A1), // Darker blue
   );
 
   /// Dark mode status colors using design tokens.
@@ -50,49 +48,44 @@ class StatusColors extends ThemeExtension<StatusColors> {
     // Primary status colors (using dark mode tokens)
     success: Color(0xFF66BB6A), // StatusColors.dark.success
     warning: Color(0xFFFFB74D), // StatusColors.dark.warning
-    error: Color(0xFFEF5350),   // StatusColors.dark.error
-    info: Color(0xFF42A5F5),    // StatusColors.dark.info
-    
+    error: Color(0xFFEF5350), // StatusColors.dark.error
+    info: Color(0xFF42A5F5), // StatusColors.dark.info
     // Light variants (for dark backgrounds) - brighter in dark mode
     successLight: Color(0xFF81C784), // Even lighter green
     warningLight: Color(0xFFFFC947), // Even lighter orange
-    errorLight: Color(0xFFF44336),   // Even lighter red
-    infoLight: Color(0xFF2196F3),    // Even lighter blue
-    
+    errorLight: Color(0xFFF44336), // Even lighter red
+    infoLight: Color(0xFF2196F3), // Even lighter blue
     // Dark variants (for light backgrounds) - use light mode colors
-    successDark: Color(0xFF2E7D32),  // Light mode success
-    warningDark: Color(0xFFF57C00),  // Light mode warning
-    errorDark: Color(0xFFD32F2F),    // Light mode error
-    infoDark: Color(0xFF1976D2),     // Light mode info
+    successDark: Color(0xFF2E7D32), // Light mode success
+    warningDark: Color(0xFFF57C00), // Light mode warning
+    errorDark: Color(0xFFD32F2F), // Light mode error
+    infoDark: Color(0xFF1976D2), // Light mode info
   );
 
   /// High contrast mode status colors for accessibility.
   static final highContrast = StatusColors(
     // High contrast primary colors (WCAG AAA compliance)
-    success: Color(0xFF0D5016),  // Very dark green
-    warning: Color(0xFF8A4000),  // Very dark orange
-    error: Color(0xFF8B0000),    // Very dark red
-    info: Color(0xFF003D82),     // Very dark blue
-    
+    success: Color(0xFF0D5016), // Very dark green
+    warning: Color(0xFF8A4000), // Very dark orange
+    error: Color(0xFF8B0000), // Very dark red
+    info: Color(0xFF003D82), // Very dark blue
     // Light variants with high contrast
     successLight: Color(0xFF4CAF50), // Material green
     warningLight: Color(0xFFFF9800), // Material orange
-    errorLight: Color(0xFFF44336),   // Material red
-    infoLight: Color(0xFF2196F3),    // Material blue
-    
+    errorLight: Color(0xFFF44336), // Material red
+    infoLight: Color(0xFF2196F3), // Material blue
     // Dark variants with high contrast
-    successDark: Color(0xFF0D5016),  // Very dark green
-    warningDark: Color(0xFF8A4000),  // Very dark orange
-    errorDark: Color(0xFF8B0000),    // Very dark red
-    infoDark: Color(0xFF003D82),     // Very dark blue
+    successDark: Color(0xFF0D5016), // Very dark green
+    warningDark: Color(0xFF8A4000), // Very dark orange
+    errorDark: Color(0xFF8B0000), // Very dark red
+    infoDark: Color(0xFF003D82), // Very dark blue
   );
 
   /// Success state color (typically green).
   /// Used for positive feedback, completed states, and success messages.
-  @override
   final Color success;
 
-  /// Warning state color (typically yellow/orange).  
+  /// Warning state color (typically yellow/orange).
   /// Used for cautionary messages and attention-grabbing elements.
   final Color warning;
 
@@ -249,7 +242,10 @@ extension StatusColorsContext on BuildContext {
   /// Gets the current [StatusColors] from the theme.
   StatusColors get statusColors {
     final statusColors = Theme.of(this).extension<StatusColors>();
-    assert(statusColors != null, 'StatusColors extension is not registered in the current theme');
+    assert(
+      statusColors != null,
+      'StatusColors extension is not registered in the current theme',
+    );
     return statusColors!;
   }
 }

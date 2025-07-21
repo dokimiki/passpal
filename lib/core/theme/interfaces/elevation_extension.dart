@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// Base interface for ElevationTokens theme extension.
-/// 
+///
 /// Provides type-safe access to consistent elevation and shadow values throughout the app.
 /// Based on Material 3 elevation system for proper visual hierarchy and depth perception.
-/// 
+///
 /// This interface ensures consistent elevation implementation across
 /// different components and interaction states.
 abstract class ElevationExtension extends ThemeExtension<ElevationExtension> {
@@ -86,7 +86,7 @@ abstract class ElevationExtension extends ThemeExtension<ElevationExtension> {
   });
 
   /// Linearly interpolates between this and another [ElevationExtension].
-  /// 
+  ///
   /// Required for theme transitions and animations.
   @override
   ElevationExtension lerp(ThemeExtension<ElevationExtension>? other, double t);

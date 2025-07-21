@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// Base interface for RadiusTokens theme extension.
-/// 
+///
 /// Provides type-safe access to consistent border radius values throughout the app.
 /// Based on Material 3 design principles for modern, cohesive visual design.
-/// 
+///
 /// This interface ensures consistent radius implementation across
 /// different components and interaction states.
 abstract class RadiusExtension extends ThemeExtension<RadiusExtension> {
@@ -85,7 +85,7 @@ abstract class RadiusExtension extends ThemeExtension<RadiusExtension> {
   });
 
   /// Linearly interpolates between this and another [RadiusExtension].
-  /// 
+  ///
   /// Required for theme transitions and animations.
   @override
   RadiusExtension lerp(ThemeExtension<RadiusExtension>? other, double t);

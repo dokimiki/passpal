@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// Base interface for MotionTokens theme extension.
-/// 
+///
 /// Provides type-safe access to consistent animation durations and curves throughout the app.
 /// Based on Material 3 motion principles for smooth, purposeful animations.
-/// 
+///
 /// This interface ensures consistent motion implementation across
 /// different components and interaction patterns.
 abstract class MotionExtension extends ThemeExtension<MotionExtension> {
@@ -129,7 +129,7 @@ abstract class MotionExtension extends ThemeExtension<MotionExtension> {
   });
 
   /// Linearly interpolates between this and another [MotionExtension].
-  /// 
+  ///
   /// Required for theme transitions and animations.
   @override
   MotionExtension lerp(ThemeExtension<MotionExtension>? other, double t);

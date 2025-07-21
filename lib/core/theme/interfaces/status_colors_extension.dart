@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
 /// Base interface for StatusColors theme extension.
-/// 
+///
 /// Provides type-safe access to status colors (success, warning, error, info)
 /// that are not part of Material 3's standard ColorScheme.
-/// 
+///
 /// This interface ensures consistent status color implementation across
 /// light, dark, and high-contrast theme variants.
-abstract class StatusColorsExtension extends ThemeExtension<StatusColorsExtension> {
+abstract class StatusColorsExtension
+    extends ThemeExtension<StatusColorsExtension> {
   /// Success state color (typically green).
   /// Used for positive feedback, completed states, and success messages.
   Color get success;
 
-  /// Warning state color (typically yellow/orange).  
+  /// Warning state color (typically yellow/orange).
   /// Used for cautionary messages and attention-grabbing elements.
   Color get warning;
 
@@ -74,8 +75,11 @@ abstract class StatusColorsExtension extends ThemeExtension<StatusColorsExtensio
   });
 
   /// Linearly interpolates between this and another [StatusColorsExtension].
-  /// 
+  ///
   /// Required for theme transitions and animations.
   @override
-  StatusColorsExtension lerp(ThemeExtension<StatusColorsExtension>? other, double t);
+  StatusColorsExtension lerp(
+    ThemeExtension<StatusColorsExtension>? other,
+    double t,
+  );
 }

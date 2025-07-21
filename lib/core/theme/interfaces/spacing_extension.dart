@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 /// Base interface for SpacingTokens theme extension.
-/// 
+///
 /// Provides type-safe access to consistent spacing values throughout the app.
 /// Based on an 8px grid system for improved visual consistency and rhythm.
-/// 
+///
 /// This interface ensures consistent spacing implementation across
 /// different screen sizes and density factors.
 abstract class SpacingExtension extends ThemeExtension<SpacingExtension> {
@@ -34,7 +34,8 @@ abstract class SpacingExtension extends ThemeExtension<SpacingExtension> {
 
   /// Responsive spacing that adapts to screen size.
   /// Returns appropriate spacing based on current screen width.
-  double responsiveSpacing(BuildContext context, {
+  double responsiveSpacing(
+    BuildContext context, {
     double? mobile,
     double? tablet,
     double? desktop,
@@ -82,7 +83,7 @@ abstract class SpacingExtension extends ThemeExtension<SpacingExtension> {
   });
 
   /// Linearly interpolates between this and another [SpacingExtension].
-  /// 
+  ///
   /// Required for theme transitions and animations.
   @override
   SpacingExtension lerp(ThemeExtension<SpacingExtension>? other, double t);
