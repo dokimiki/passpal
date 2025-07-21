@@ -7,7 +7,7 @@ part of 'theme_mode_provider.dart';
 // **************************************************************************
 
 String _$effectiveThemeModeHash() =>
-    r'45c73f79e00031fa64fe9917b9a6f061f3acdce9';
+    r'958c88a5542a529557acf2b9f73dedd9ed091027';
 
 /// Provider for effective theme mode (resolves system to light/dark)
 ///

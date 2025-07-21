@@ -477,6 +477,7 @@ class TypographyGenerator {
     if (baseStyle == null) return null;
 
     return baseStyle.copyWith(
+      fontFamily: tokenStyle.fontFamily,
       fontSize: tokenStyle.fontSize,
       fontWeight: tokenStyle.fontWeight,
       height: tokenStyle.height,
