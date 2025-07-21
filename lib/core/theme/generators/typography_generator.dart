@@ -515,13 +515,15 @@ class TypographyGenerator {
       isTestEnvironment = true;
       return true;
     }());
-    
+
     if (isTestEnvironment) {
       // テスト環境ではHTTPリクエストを行わずに直接システムフォントを使用
-      debugPrint('Test environment detected, using system fonts instead of Google Fonts');
+      debugPrint(
+        'Test environment detected, using system fonts instead of Google Fonts',
+      );
       return ThemeData(brightness: brightness).textTheme;
     }
-    
+
     try {
       // プロダクション環境でのみGoogle Fontsを読み込み
       return GoogleFonts.interTextTheme();

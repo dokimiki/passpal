@@ -10,8 +10,7 @@ import 'package:passpal/core/theme/extensions/motion_tokens.dart';
 void main() {
   // Initialize Flutter binding for GoogleFonts
   TestWidgetsFlutterBinding.ensureInitialized();
-  
-  
+
   group('ThemeBuilder', () {
     group('buildTheme', () {
       test('builds light theme with all required components', () {
@@ -344,7 +343,10 @@ void main() {
 
           // Theme building should complete within reasonable time
           // Relaxed timing expectations due to font loading in test environment
-          expect(averageTime, lessThan(50000)); // 50ms is reasonable for test environment
+          expect(
+            averageTime,
+            lessThan(50000),
+          ); // 50ms is reasonable for test environment
         } catch (e) {
           debugPrint('Font loading failed in test environment: $e');
           // Test basic structure existence instead
