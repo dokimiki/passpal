@@ -2,36 +2,36 @@
 
 ## Purpose
 
-* **Unified HTTP Communication Base**: Abstract all HTTP communication to palapi/ALBO/MaNaBo/Cubics/SSO, implementing authentication, error handling, cache, and retry logic transparently.
-* **Unified Authentication**: Handle different authentication methods (Firebase ID Token/Cookie) through a common interface, minimizing feature-layer implementation cost.
-* **Reliable Networking**: Automatically detect network issues, auth expiration, and maintenance, with proper retry/fallback logic.
-* **Offline Support**: Provide best UX regardless of network, prioritizing cache display (SWR strategy).
+* **Unified HTTP Platform** — Abstract all HTTP requests to palapi, ALBO, MaNaBo, Cubics, and SSO, providing transparent authentication, error handling, caching, and retry.
+* **Unified Auth** — Handle various authentication (Firebase ID Token, Cookie) with a single interface to minimize feature-layer complexity.
+* **Reliable Networking** — Automatically detect network failures, expired authentication, maintenance, and apply proper retry or fallback.
+* **Offline Support** — Use SWR strategy to prioritize cached data, ensuring optimal UX even with unstable connectivity.
 
 ---
 
 ## Domain Knowledge
 
-### API Service Types
+### API Service Classification
 
-| Service   | Auth              | Error Detection     | Core Roles  |
-| --------- | ----------------- | ------------------- | ----------- |
-| palapi    | Firebase ID Token | HTTP status         | auth, error |
-| ALBO      | Shibboleth Cookie | Session timeout msg | auth, error |
-| MaNaBo    | Shibboleth Cookie | Login form detect   | auth, error |
-| Cubics    | Shibboleth Cookie | Session timeout msg | auth, error |
-| SSO       | Form login        | Redirect detection  | auth        |
-| PublicAPI | -                 | HTTP status         | -           |
+| Service    | Auth              | Error Detection        | Core Modules |
+| ---------- | ----------------- | ---------------------- | ------------ |
+| palapi     | Firebase ID Token | HTTP Status            | auth, error  |
+| ALBO       | Shibboleth Cookie | Session expiry message | auth, error  |
+| MaNaBo     | Shibboleth Cookie | Login form detection   | auth, error  |
+| Cubics     | Shibboleth Cookie | Session expiry message | auth, error  |
+| SSO        | Form Auth         | Redirect detection     | auth         |
+| Public API | -                 | HTTP Status            | -            |
 
-### Network State & Retry Strategy
+### Network & Retry Strategy
 
-| State      | Detection          | Handling            | Retry  | Use Cache     |
-| ---------- | ------------------ | ------------------- | ------ | ------------- |
-| Offline    | connectivity\_plus | Return cache ASAP   | ×      | ○ (stale OK)  |
-| Timeout    | Dio timeout        | Exponential backoff | ○ (3x) | ○ (after 1st) |
-| 401/403    | HTTP status        | Refresh & retry     | ○ (1x) | ×             |
-| 429        | Rate Limit         | Retry-After header  | ○      | ○             |
-| 500 errors | HTTP status        | Exponential backoff | ○ (5x) | ○             |
-| 503        | HTTP status/HTML   | Fail immediately    | ×      | ×             |
+| State   | Detection          | Handling                  | Retry    | Cache                |
+| ------- | ------------------ | ------------------------- | -------- | -------------------- |
+| Offline | connectivity\_plus | Return cache immediately  | No       | Yes (Stale OK)       |
+| Timeout | Dio timeout        | Exponential backoff       | Yes (3x) | Yes (after 1st fail) |
+| 401/403 | HTTP Status        | Refresh auth, retry       | Yes (1x) | No                   |
+| 429     | Rate Limit         | Follow Retry-After header | Yes      | Yes                  |
+| 5xx     | Server Error       | Exponential backoff       | Yes (5x) | Yes                  |
+| 503     | Maintenance        | Abort immediately         | No       | No                   |
 
 ---
 
@@ -39,18 +39,18 @@
 
 ### Included
 
-1. **HTTP Client Management**: Dio instance setup, config, interceptors.
-2. **Authentication**: AuthInterceptor for auto token/cookie attach and refresh.
-3. **Error Handling**: ErrorInterceptor for response parsing and unified error model.
-4. **Cache Strategy**: CacheInterceptor for SWR, ETag/Last-Modified.
-5. **Retry Logic**: RetryInterceptor for smart retry with jitter.
-6. **Network Monitoring**: ConnectivityMonitor for online/offline state tracking.
+1. **HTTP Client Management** — Dio instance creation/config/interceptor management
+2. **Auth Integration** — Auto token/cookie add/update via AuthInterceptor
+3. **Error Conversion** — Convert responses to unified error model via ErrorInterceptor
+4. **Cache Strategy** — SWR via CacheInterceptor, ETag/Last-Modified
+5. **Retry Control** — Smart retry with jitter via RetryInterceptor
+6. **Network Monitor** — Track online/offline state with ConnectivityMonitor
 
 ### Excluded
 
 * HTML parsing (presentation layer)
-* Business logic (feature repositories)
-* Data models (feature domains)
+* Business logic (repository/feature)
+* Data model definition (domain/feature)
 * UI updates (presentation)
 * Background execution (core/background)
 
@@ -60,67 +60,70 @@
 
 ### 1. NetworkClient Abstraction
 
-`NetworkClient` interface defines standard HTTP methods.
+* Define unified `get` / `post` / `put` / `delete` methods.
+* `CacheStrategy` enum:
 
-* `get(path, query, options, cacheStrategy)`
-* `post(data, query, options)`
-* etc.
+  * `networkFirst` (default)
+  * `cacheFirst`
+  * `networkOnly`
+  * `cacheOnly`
 
-`CacheStrategy` enum:
+### 2. Per-Service Client Implementation
 
-* `networkFirst` (default), `cacheFirst`, `networkOnly`, `cacheOnly`.
+* **PalapiClient**: Dio + Firebase auth, adds `Authorization: Bearer {token}`
+* **PortalClient**: Dio + CookieJar, throws on expired session
 
-### 2. Per-service Client Implementations
+### 3. Interceptor Implementation
 
-* **PalapiClient**: Implements NetworkClient, holds Dio + AuthProvider. Sets BaseOptions: `application/json`, 10s connect, 30s receive timeout. Adds Firebase ID Token as Bearer for `get`.
-* **PortalClient**: Implements NetworkClient, holds Dio + CookieJar + HtmlParser. `getHtml` uses `ResponseType.plain` for GET, parses as HTML, detects session expiration (throws `AuthenticationException.sessionExpired()`), otherwise parses/returns Document.
+* **AuthInterceptor**:
 
-### 3. Interceptors
-
-* **AuthInterceptor**: Adds auth info by service type. On 401, triggers refresh + retry.
-* **ErrorInterceptor**: Converts DioException to AppError: network failures, auth errors, rate limit, maintenance, server errors. Notifies errorNotifier, rethrows.
-* **CacheInterceptor**: Handles cache strategy. Offline always switches to cacheFirst. On `cacheFirst`/`cacheOnly`, returns cache. SWR returns stale cache, then updates in BG. Adds If-None-Match if ETag exists. Saves cache on response.
-* **RetryInterceptor**: On retryable errors, retries up to max (w/ exponential backoff + jitter 0-1s).
+  * palapi: Add Firebase token
+  * portal: Auto cookie handling
+  * On 401, refresh and retry (token/cookie from `core/auth`)
+* **ErrorInterceptor**: Convert `DioError` to `AppError` and notify/rethrow
+* **CacheInterceptor**: Force `cacheFirst` when offline
+* **RetryInterceptor**: Retry with exponential backoff + jitter if allowed
 
 ### 4. Network Monitoring
 
-* **ConnectivityMonitor**: Riverpod provider tracking connectivity status (wifi, cellular, ethernet, offline). `isOnline` getter returns current bool.
+* `ConnectivityMonitor`: watch `onConnectivityChanged`, map to `ConnectivityStatus`, sync `isOnline`
 
 ### 5. Riverpod Providers
 
-* `dioProvider`: Instantiates Dio per API, sets base URL, timeouts, adds all interceptors (+ Log on debug).
-* `palapiClientProvider`: Provides PalapiClient with config/auth injected.
-* `alboClientProvider`: Provides PortalClient with specific Dio, persistent CookieJar, HtmlParser.
-* `connectivityStatusProvider`: Watches connectivityMonitor state, returns status (defaults to offline if unknown/error).
-* `mockConfigProvider`: Generates MockConfig for testing, with delay and scenario.
+* `dio`: Create Dio per service with interceptors
+* `palapiClient` / `alboClient` / `manaboClient` / `cubicsClient` / `ssoClient`: Build each client
+
+  * ssoClient is only for core/auth, no strict baseUrl etc.
+* `connectivityStatus`: Provide network state (fallback to offline on error)
+* `mockConfig`: Enabled only with mock settings
 
 ---
 
-## Integration Flow with Other Cores
+## Integration Flows
 
-### 1. Config Core (Endpoint Resolution)
+### 1. Config Core (Get Endpoints)
 
 ```mermaid
 flowchart LR
     A[NetworkClient] --> B[configProvider]
-    B --> C[API BaseURL Fetch]
+    B --> C[API Base URL]
     C --> D[Dio BaseOptions]
     E[Config Update] --> F[Client Rebuild]
 ```
 
-### 2. Auth Core (Attach Auth Info)
+### 2. Auth Core (Add Auth Info)
 
 ```mermaid
 flowchart TD
     A[HTTP Req] --> B{Service Type}
-    B -->|palapi| C[Get Firebase ID Token]
-    B -->|Portal| D[Auto Attach Cookie]
-    C --> E[Set Authorization Header]
+    B -->|palapi| C[Get Firebase Token]
+    B -->|portal| D[Auto Cookie]
+    C --> E[Add Auth Header]
     D --> F[CookieJar]
     G[401 Error] --> H[auth.refresh()]
     H --> I{Success?}
-    I -->|Yes| J[Retry Req]
-    I -->|No| K[Error Notify]
+    I -->|Yes| J[Retry]
+    I -->|No| K[Notify Error]
 ```
 
 ### 3. Storage Core (Cache)
@@ -129,13 +132,13 @@ flowchart TD
 flowchart TD
     A[GET Req] --> B{CacheStrategy}
     B -->|CacheFirst| C[cacheStorage.get]
-    C --> D{Cache Hit?}
-    D -->|Yes| E[Return Cache]
-    D -->|No| F[Fetch Network]
+    C --> D{Hit?}
+    D -->|Yes| E[Return Immediately]
+    D -->|No| F[Network Fetch]
     F --> G[cacheStorage.put]
-    B -->|SWR| H[Check Stale]
+    B -->|SWR| H[Stale Check]
     H -->|Stale| I[Return Stale]
-    I --> J[Background Update]
+    I --> J[BG Update]
 ```
 
 ### 4. Error Core (Error Conversion)
@@ -143,7 +146,7 @@ flowchart TD
 ```mermaid
 flowchart LR
     A[DioException] --> B[ErrorInterceptor]
-    B --> C[AppError Convert]
+    B --> C[AppError]
     C --> D[errorNotifier.handleError]
     D --> E[UI Notify/Crashlytics]
 ```
@@ -152,45 +155,42 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    A[BGTask] --> B[Separate Isolate]
-    B --> C[NetworkClient Build]
+    A[BGTask] --> B[Isolate]
+    B --> C[NetworkClient]
     C --> D[API Call]
     D --> E{Success?}
-    E -->|Yes| F[Update Cache]
-    E -->|No| G[RetryPolicy]
+    E -->|Yes| F[Cache Update]
+    E -->|No| G[Retry Policy]
 ```
 
 ---
 
 ## Error Handling Strategy
 
-| Error Type   | Detection          | Auto Retry      | Fallback      | Notify      |
-| ------------ | ------------------ | --------------- | ------------- | ----------- |
-| Offline      | connectivity\_plus | ×               | Show cache    | Snackbar    |
-| Timeout      | Dio timeout        | ○ (3x)          | Old cache     | None        |
-| Auth Error   | 401/403            | ○ (1x, refresh) | Login screen  | None        |
-| Rate Limit   | 429                | ○ (wait)        | Cache         | Toast       |
-| Server Error | 500-599            | ○ (5x)          | Error screen  | Crashlytics |
-| Maintenance  | 503/HTML detect    | ×               | Maint. screen | None        |
+| Type         | Condition          | Auto Retry  | Fallback           | Notification |
+| ------------ | ------------------ | ----------- | ------------------ | ------------ |
+| Offline      | connectivity\_plus | No          | Show cache         | Snackbar     |
+| Timeout      | Dio timeout        | Yes (3x)    | Old cache          | None         |
+| Auth Error   | 401/403            | Yes (1x)    | Login screen       | None         |
+| Rate Limit   | 429                | Yes (Retry) | Show cache         | Toast        |
+| Server Error | 500-599            | Yes (5x)    | Error screen       | Crashlytics  |
+| Maintenance  | 503/HTML           | No          | Maintenance screen | None         |
 
 ---
 
 ## Testability
 
-### Mock Clients
+### Mock Client
 
-`MockNetworkClient` implements NetworkClient, returns test responses.
+MockNetworkClient implements NetworkClient for testing, allowing you to register mock responses and simulate delays/errors.
 
-* Register mock with `mockResponse(path, data, statusCode)`.
-* `get` simulates delay, returns mock if exists; else throws DioException.
+### Interceptor Test
 
-### Interceptor Testing
-
-Test `AuthInterceptor` for 401 auto-refresh. Use `MockAuthProvider` and `MockDio`, check that first request triggers 401, refresh is called, retry succeeds, and mock call counts are as expected.
+AuthInterceptor tests verify auto-refresh on 401, using MockAuthProvider and MockDio to simulate error and retry scenarios. Call counts are also checked.
 
 ---
 
-## Monitoring Metrics
+## Metrics
 
 ### Key Metrics
 
@@ -202,8 +202,4 @@ Test `AuthInterceptor` for 401 auto-refresh. Use `MockAuthProvider` and `MockDio
 
 ### Firebase Performance
 
-`getWithTrace` extension records Firebase Performance HTTP metrics:
-
-* On request: start trace.
-* On response: log status, content type, payload, stop trace.
-* On error: log error type as attribute.
+`getWithTrace` extension method logs HTTP metrics via Firebase Performance; starts trace on request, logs status/content-type/payload, and logs errors as attributes.
