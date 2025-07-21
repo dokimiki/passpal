@@ -1,6 +1,5 @@
 import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
-import '../interfaces/radius_extension.dart';
 import '../models/radius_tokens.dart';
 
 /// RadiusTokens theme extension implementation.
@@ -239,7 +238,10 @@ class RadiusTokensExtension extends ThemeExtension<RadiusTokensExtension> {
   }
 
   @override
-  RadiusTokensExtension lerp(ThemeExtension<RadiusTokensExtension>? other, double t) {
+  RadiusTokensExtension lerp(
+    ThemeExtension<RadiusTokensExtension>? other,
+    double t,
+  ) {
     if (other is! RadiusTokensExtension) {
       return this;
     }

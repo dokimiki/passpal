@@ -402,7 +402,10 @@ class MotionTokensExtension extends MotionExtension<MotionTokensExtension> {
   }
 
   @override
-  MotionTokensExtension lerp(ThemeExtension<MotionTokensExtension>? other, double t) {
+  MotionTokensExtension lerp(
+    ThemeExtension<MotionTokensExtension>? other,
+    double t,
+  ) {
     if (other is! MotionTokensExtension) {
       return this;
     }

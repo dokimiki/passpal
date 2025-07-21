@@ -43,11 +43,10 @@ void main() {
         expect(lightTheme.extension<RadiusTokensExtension>(), isNotNull);
         expect(lightTheme.extension<ElevationTokensExtension>(), isNotNull);
         expect(lightTheme.extension<MotionTokensExtension>(), isNotNull);
-
       } catch (e) {
         // If font loading fails, we still want to verify the basic structure
-        print('Font loading failed (expected in test environment): $e');
-        
+        debugPrint('Font loading failed (expected in test environment): $e');
+
         // Test that the ThemeBuilder class and method exist
         expect(ThemeBuilder.buildTheme, isNotNull);
       }
@@ -78,12 +77,14 @@ void main() {
         final darkElevation = darkTheme.extension<ElevationTokensExtension>();
 
         if (lightElevation != null && darkElevation != null) {
-          expect(lightElevation, equals(ElevationTokensExtension.standardLight));
+          expect(
+            lightElevation,
+            equals(ElevationTokensExtension.standardLight),
+          );
           expect(darkElevation, equals(ElevationTokensExtension.standardDark));
         }
-
       } catch (e) {
-        print('Extension test failed due to font loading: $e');
+        debugPrint('Extension test failed due to font loading: $e');
         // Test passes if the basic structure is correct
       }
     });
@@ -111,31 +112,32 @@ void main() {
           expect(theme.chipTheme, isNotNull);
           expect(theme.dividerTheme, isNotNull);
           expect(theme.expansionTileTheme, isNotNull);
-
         } catch (e) {
-          print('Component theme test failed due to font loading: $e');
+          debugPrint('Component theme test failed due to font loading: $e');
           // Test structure is correct even if runtime fails
         }
       });
     });
 
     group('Material 3 Compliance', () {
-      test('Material 3 is enabled and color scheme has required properties', () {
-        try {
-          final lightTheme = ThemeBuilder.buildTheme(Brightness.light);
-          final darkTheme = ThemeBuilder.buildTheme(Brightness.dark);
+      test(
+        'Material 3 is enabled and color scheme has required properties',
+        () {
+          try {
+            final lightTheme = ThemeBuilder.buildTheme(Brightness.light);
+            final darkTheme = ThemeBuilder.buildTheme(Brightness.dark);
 
-          expect(lightTheme.useMaterial3, isTrue);
-          expect(darkTheme.useMaterial3, isTrue);
+            expect(lightTheme.useMaterial3, isTrue);
+            expect(darkTheme.useMaterial3, isTrue);
 
-          // Basic color scheme properties should exist
-          expect(lightTheme.colorScheme, isA<ColorScheme>());
-          expect(darkTheme.colorScheme, isA<ColorScheme>());
-
-        } catch (e) {
-          print('Material 3 test failed due to font loading: $e');
-        }
-      });
+            // Basic color scheme properties should exist
+            expect(lightTheme.colorScheme, isA<ColorScheme>());
+            expect(darkTheme.colorScheme, isA<ColorScheme>());
+          } catch (e) {
+            debugPrint('Material 3 test failed due to font loading: $e');
+          }
+        },
+      );
     });
   });
 }

@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 ///
 /// This interface ensures consistent motion implementation across
 /// different components and interaction patterns.
-abstract class MotionExtension<T extends MotionExtension<T>> extends ThemeExtension<T> {
+abstract class MotionExtension<T extends MotionExtension<T>>
+    extends ThemeExtension<T> {
   /// Instant transition (0ms).
   /// Used for immediate state changes without animation.
   Duration get instant;
@@ -63,10 +64,10 @@ abstract class MotionExtension<T extends MotionExtension<T>> extends ThemeExtens
 
   /// Tween animation with motion tokens.
   /// Simplifies creation of value-based animations.
-  Animation<T> createTween<T>({
+  Animation<V> createTween<V>({
     required AnimationController controller,
-    required T begin,
-    required T end,
+    required V begin,
+    required V end,
     Curve? curve,
   });
 

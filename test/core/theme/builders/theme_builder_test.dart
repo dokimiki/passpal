@@ -19,7 +19,10 @@ void main() {
         expect(theme.useMaterial3, isTrue);
         expect(theme.brightness, equals(Brightness.light));
         expect(theme.platform, equals(TargetPlatform.android));
-        expect(theme.visualDensity, equals(VisualDensity.adaptivePlatformDensity));
+        expect(
+          theme.visualDensity,
+          equals(VisualDensity.adaptivePlatformDensity),
+        );
 
         // Color scheme
         expect(theme.colorScheme, isNotNull);
@@ -142,9 +145,15 @@ void main() {
 
         expect(appBarTheme.elevation, equals(0));
         expect(appBarTheme.centerTitle, isTrue);
-        expect(appBarTheme.surfaceTintColor, equals(theme.colorScheme.surfaceTint));
+        expect(
+          appBarTheme.surfaceTintColor,
+          equals(theme.colorScheme.surfaceTint),
+        );
         expect(appBarTheme.backgroundColor, equals(theme.colorScheme.surface));
-        expect(appBarTheme.foregroundColor, equals(theme.colorScheme.onSurface));
+        expect(
+          appBarTheme.foregroundColor,
+          equals(theme.colorScheme.onSurface),
+        );
       });
 
       test('ElevatedButtonTheme is configured correctly', () {
@@ -169,7 +178,10 @@ void main() {
         final cardTheme = theme.cardTheme;
 
         expect(cardTheme.elevation, equals(1));
-        expect(cardTheme.surfaceTintColor, equals(theme.colorScheme.surfaceTint));
+        expect(
+          cardTheme.surfaceTintColor,
+          equals(theme.colorScheme.surfaceTint),
+        );
         expect(cardTheme.color, equals(theme.colorScheme.surface));
         expect(cardTheme.shadowColor, equals(theme.colorScheme.shadow));
         expect(cardTheme.margin, equals(const EdgeInsets.all(8)));
@@ -179,7 +191,10 @@ void main() {
         final inputTheme = theme.inputDecorationTheme;
 
         expect(inputTheme.filled, isTrue);
-        expect(inputTheme.fillColor, equals(theme.colorScheme.surfaceContainerHighest));
+        expect(
+          inputTheme.fillColor,
+          equals(theme.colorScheme.surfaceContainerHighest),
+        );
       });
 
       test('NavigationBarTheme is configured correctly', () {
@@ -187,15 +202,27 @@ void main() {
 
         expect(navBarTheme.elevation, equals(0));
         expect(navBarTheme.backgroundColor, equals(theme.colorScheme.surface));
-        expect(navBarTheme.surfaceTintColor, equals(theme.colorScheme.surfaceTint));
-        expect(navBarTheme.indicatorColor, equals(theme.colorScheme.secondaryContainer));
+        expect(
+          navBarTheme.surfaceTintColor,
+          equals(theme.colorScheme.surfaceTint),
+        );
+        expect(
+          navBarTheme.indicatorColor,
+          equals(theme.colorScheme.secondaryContainer),
+        );
       });
 
       test('SnackBarTheme is configured correctly', () {
         final snackBarTheme = theme.snackBarTheme;
 
-        expect(snackBarTheme.backgroundColor, equals(theme.colorScheme.inverseSurface));
-        expect(snackBarTheme.actionTextColor, equals(theme.colorScheme.inversePrimary));
+        expect(
+          snackBarTheme.backgroundColor,
+          equals(theme.colorScheme.inverseSurface),
+        );
+        expect(
+          snackBarTheme.actionTextColor,
+          equals(theme.colorScheme.inversePrimary),
+        );
         expect(snackBarTheme.behavior, equals(SnackBarBehavior.floating));
       });
 
@@ -204,7 +231,10 @@ void main() {
 
         expect(dialogTheme.elevation, equals(6));
         expect(dialogTheme.backgroundColor, equals(theme.colorScheme.surface));
-        expect(dialogTheme.surfaceTintColor, equals(theme.colorScheme.surfaceTint));
+        expect(
+          dialogTheme.surfaceTintColor,
+          equals(theme.colorScheme.surfaceTint),
+        );
       });
     });
 
@@ -250,13 +280,14 @@ void main() {
         );
 
         // Button minimum sizes should meet accessibility guidelines
-        final lightButtonSize = lightTheme.elevatedButtonTheme.style
+        final lightButtonSize = lightTheme
+            .elevatedButtonTheme
+            .style
             ?.minimumSize
             ?.resolve({});
         expect(lightButtonSize?.height, greaterThanOrEqualTo(44));
 
-        final darkButtonSize = darkTheme.elevatedButtonTheme.style
-            ?.minimumSize
+        final darkButtonSize = darkTheme.elevatedButtonTheme.style?.minimumSize
             ?.resolve({});
         expect(darkButtonSize?.height, greaterThanOrEqualTo(44));
       });
@@ -268,7 +299,7 @@ void main() {
 
         // Typography should be configured for Japanese text
         expect(theme.textTheme, isNotNull);
-        
+
         // Text themes should have proper line heights for Japanese
         final bodyLarge = theme.textTheme.bodyLarge;
         expect(bodyLarge, isNotNull);
@@ -282,7 +313,9 @@ void main() {
         final stopwatch = Stopwatch()..start();
 
         for (int i = 0; i < iterations; i++) {
-          ThemeBuilder.buildTheme(i.isEven ? Brightness.light : Brightness.dark);
+          ThemeBuilder.buildTheme(
+            i.isEven ? Brightness.light : Brightness.dark,
+          );
         }
 
         stopwatch.stop();

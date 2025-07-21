@@ -251,8 +251,13 @@ class RadiusUtils {
     required double radius,
   }) {
     // Count how many sides are requested
-    final requestedSides = [top, bottom, left, right].where((side) => side).length;
-    
+    final requestedSides = [
+      top,
+      bottom,
+      left,
+      right,
+    ].where((side) => side).length;
+
     // If only one side is requested, use simple OR logic (like topOnly, rightOnly, etc.)
     if (requestedSides == 1) {
       return BorderRadius.only(
@@ -262,15 +267,19 @@ class RadiusUtils {
         bottomRight: Radius.circular((bottom || right) ? radius : 0.0),
       );
     }
-    
+
     // For multiple sides, use intersection-based logic
     // A corner gets radius if it's at the intersection of requested sides
     // OR if it's on a priority edge (right > bottom > left > top)
     return BorderRadius.only(
       topLeft: Radius.circular((top && left) ? radius : 0.0),
       topRight: Radius.circular((top && right) || right ? radius : 0.0),
-      bottomLeft: Radius.circular((bottom && left) || bottom || left ? radius : 0.0),
-      bottomRight: Radius.circular((bottom && right) || right || bottom ? radius : 0.0),
+      bottomLeft: Radius.circular(
+        (bottom && left) || bottom || left ? radius : 0.0,
+      ),
+      bottomRight: Radius.circular(
+        (bottom && right) || right || bottom ? radius : 0.0,
+      ),
     );
   }
 }

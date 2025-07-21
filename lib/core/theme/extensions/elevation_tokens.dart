@@ -1,6 +1,5 @@
 import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
-import '../interfaces/elevation_extension.dart';
 import '../models/elevation_tokens.dart';
 
 /// ElevationTokens theme extension implementation.
@@ -10,7 +9,8 @@ import '../models/elevation_tokens.dart';
 ///
 /// This extension integrates with ElevationTokens from the model layer
 /// and provides utilities for consistent depth and shadows throughout the app.
-class ElevationTokensExtension extends ThemeExtension<ElevationTokensExtension> {
+class ElevationTokensExtension
+    extends ThemeExtension<ElevationTokensExtension> {
   /// Creates an ElevationTokens theme extension.
   ElevationTokensExtension({
     required this.level0,
