@@ -85,9 +85,9 @@ void main() {
 
     group('Tween アニメーション', () {
       testWidgets('createTween() が正しいAnimationを作成する', (tester) async {
-        final controller = AnimationController(
-          duration: const Duration(milliseconds: 200),
+        final controller = extension.createController(
           vsync: tester,
+          duration: const Duration(milliseconds: 200),
         );
 
         final animation = extension.createTween<double>(
@@ -100,7 +100,8 @@ void main() {
         expect(animation.value, equals(0.0));
 
         controller.forward();
-        await tester.pump(const Duration(milliseconds: 100));
+        await tester.pump(); // Initial pump
+        await tester.pump(const Duration(milliseconds: 100)); // Advance time
 
         expect(animation.value, greaterThan(0.0));
         expect(animation.value, lessThan(1.0));

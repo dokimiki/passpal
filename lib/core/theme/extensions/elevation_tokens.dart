@@ -10,7 +10,7 @@ import '../models/elevation_tokens.dart';
 ///
 /// This extension integrates with ElevationTokens from the model layer
 /// and provides utilities for consistent depth and shadows throughout the app.
-class ElevationTokensExtension extends ElevationExtension {
+class ElevationTokensExtension extends ThemeExtension<ElevationTokensExtension> {
   /// Creates an ElevationTokens theme extension.
   ElevationTokensExtension({
     required this.level0,
@@ -109,22 +109,16 @@ class ElevationTokensExtension extends ElevationExtension {
     brightness: Brightness.dark,
   );
 
-  @override
   final double level0;
 
-  @override
   final double level1;
 
-  @override
   final double level2;
 
-  @override
   final double level3;
 
-  @override
   final double level4;
 
-  @override
   final double level5;
 
   /// Underlying elevation tokens model.
@@ -139,7 +133,14 @@ class ElevationTokensExtension extends ElevationExtension {
   /// Theme brightness for shadow calculation.
   final Brightness brightness;
 
-  @override
+  // Convenience getters for common shadow configurations
+  List<BoxShadow> get shadow0 => shadowForLevel(level0);
+  List<BoxShadow> get shadow1 => shadowForLevel(level1);
+  List<BoxShadow> get shadow2 => shadowForLevel(level2);
+  List<BoxShadow> get shadow3 => shadowForLevel(level3);
+  List<BoxShadow> get shadow4 => shadowForLevel(level4);
+  List<BoxShadow> get shadow5 => shadowForLevel(level5);
+
   List<BoxShadow> shadowForLevel(double elevation) {
     if (elevation <= 0) return [];
 
@@ -151,7 +152,6 @@ class ElevationTokensExtension extends ElevationExtension {
     );
   }
 
-  @override
   BoxDecoration decorationWithElevation(
     double elevation, {
     Color? color,
@@ -166,7 +166,6 @@ class ElevationTokensExtension extends ElevationExtension {
     );
   }
 
-  @override
   Widget materialWithElevation(
     double elevation, {
     required Widget child,
@@ -183,7 +182,6 @@ class ElevationTokensExtension extends ElevationExtension {
     );
   }
 
-  @override
   Widget animatedElevation({
     required double elevation,
     required Widget child,
@@ -330,7 +328,7 @@ class ElevationTokensExtension extends ElevationExtension {
 
   @override
   ElevationTokensExtension lerp(
-    ThemeExtension<ElevationExtension>? other,
+    ThemeExtension<ElevationTokensExtension>? other,
     double t,
   ) {
     if (other is! ElevationTokensExtension) {

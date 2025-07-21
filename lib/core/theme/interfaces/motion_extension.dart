@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 ///
 /// This interface ensures consistent motion implementation across
 /// different components and interaction patterns.
-abstract class MotionExtension extends ThemeExtension<MotionExtension> {
+abstract class MotionExtension<T extends MotionExtension<T>> extends ThemeExtension<T> {
   /// Instant transition (0ms).
   /// Used for immediate state changes without animation.
   Duration get instant;
@@ -114,7 +114,7 @@ abstract class MotionExtension extends ThemeExtension<MotionExtension> {
 
   /// Creates a copy of this extension with given fields replaced.
   @override
-  MotionExtension copyWith({
+  T copyWith({
     Duration? instant,
     Duration? fast,
     Duration? normal,
@@ -132,5 +132,5 @@ abstract class MotionExtension extends ThemeExtension<MotionExtension> {
   ///
   /// Required for theme transitions and animations.
   @override
-  MotionExtension lerp(ThemeExtension<MotionExtension>? other, double t);
+  T lerp(ThemeExtension<T>? other, double t);
 }

@@ -10,7 +10,7 @@ import '../models/radius_tokens.dart';
 ///
 /// This extension integrates with RadiusTokens from the model layer
 /// and provides utilities for consistent border radius throughout the app.
-class RadiusTokensExtension extends RadiusExtension {
+class RadiusTokensExtension extends ThemeExtension<RadiusTokensExtension> {
   /// Creates a RadiusTokens theme extension.
   RadiusTokensExtension({
     required this.none,
@@ -63,25 +63,18 @@ class RadiusTokensExtension extends RadiusExtension {
     componentRadiusTokens: ComponentRadiusTokens.rounded,
   );
 
-  @override
   final double none;
 
-  @override
   final double xs;
 
-  @override
   final double sm;
 
-  @override
   final double md;
 
-  @override
   final double lg;
 
-  @override
   final double xl;
 
-  @override
   final double full;
 
   /// Underlying radius tokens model.
@@ -90,32 +83,34 @@ class RadiusTokensExtension extends RadiusExtension {
   /// Component-specific radius tokens.
   final ComponentRadiusTokens componentRadiusTokens;
 
-  @override
+  // Convenience getters for BorderRadius utilities
+  BorderRadius get circularXs => circular(xs);
+  BorderRadius get circularSm => circular(sm);
+  BorderRadius get circularMd => circular(md);
+  BorderRadius get circularLg => circular(lg);
+  BorderRadius get circularXl => circular(xl);
+  BorderRadius get circularFull => circular(full);
+
   BorderRadius circular(double radius) {
     return BorderRadius.circular(radius);
   }
 
-  @override
   BorderRadius topOnly(double radius) {
     return BorderRadius.vertical(top: Radius.circular(radius));
   }
 
-  @override
   BorderRadius bottomOnly(double radius) {
     return BorderRadius.vertical(bottom: Radius.circular(radius));
   }
 
-  @override
   BorderRadius leftOnly(double radius) {
     return BorderRadius.horizontal(left: Radius.circular(radius));
   }
 
-  @override
   BorderRadius rightOnly(double radius) {
     return BorderRadius.horizontal(right: Radius.circular(radius));
   }
 
-  @override
   BorderRadius custom({
     double? topLeft,
     double? topRight,
@@ -244,7 +239,7 @@ class RadiusTokensExtension extends RadiusExtension {
   }
 
   @override
-  RadiusTokensExtension lerp(ThemeExtension<RadiusExtension>? other, double t) {
+  RadiusTokensExtension lerp(ThemeExtension<RadiusTokensExtension>? other, double t) {
     if (other is! RadiusTokensExtension) {
       return this;
     }

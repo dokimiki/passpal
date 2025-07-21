@@ -10,7 +10,7 @@ import '../models/motion_tokens.dart';
 ///
 /// This extension integrates with MotionTokens from the model layer
 /// and provides utilities for consistent motion throughout the app.
-class MotionTokensExtension extends MotionExtension {
+class MotionTokensExtension extends MotionExtension<MotionTokensExtension> {
   /// Creates a MotionTokens theme extension.
   MotionTokensExtension({
     required this.instant,
@@ -402,7 +402,7 @@ class MotionTokensExtension extends MotionExtension {
   }
 
   @override
-  MotionTokensExtension lerp(ThemeExtension<MotionExtension>? other, double t) {
+  MotionTokensExtension lerp(ThemeExtension<MotionTokensExtension>? other, double t) {
     if (other is! MotionTokensExtension) {
       return this;
     }
