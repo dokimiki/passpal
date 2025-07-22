@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import '../models/color_tokens.dart';
@@ -209,6 +211,41 @@ class ColorSchemeGenerator {
     return contrastRatio >= minimumContrastRatio;
   }
 
+  /// Calculates contrast ratio between two colors (public method).
+  ///
+  /// Uses WCAG 2.2 relative luminance formula.
+  /// Returns contrast ratio from 1:1 (no contrast) to 21:1 (maximum contrast).
+  static double calculateContrastRatio(Color color1, Color color2) {
+    return _calculateContrastRatio(color1, color2);
+  }
+
+  /// Checks if colors meet minimum contrast requirements for accessibility.
+  ///
+  /// Supports different WCAG levels:
+  /// - 'AA': 4.5:1 for normal text
+  /// - 'AAA': 7:1 for normal text
+  /// - 'AA Large': 3:1 for large text (18pt+)
+  /// - 'AAA Large': 4.5:1 for large text
+  static bool hasMinimumContrast(
+    Color foreground,
+    Color background, {
+    String level = 'AA',
+  }) {
+    final ratio = _calculateContrastRatio(foreground, background);
+
+    switch (level) {
+      case 'AAA':
+        return ratio >= 7.0;
+      case 'AA Large':
+        return ratio >= 3.0;
+      case 'AAA Large':
+        return ratio >= 4.5;
+      case 'AA':
+      default:
+        return ratio >= 4.5;
+    }
+  }
+
   /// Calculates contrast ratio between two colors.
   ///
   /// Uses WCAG 2.2 relative luminance formula.
@@ -320,14 +357,6 @@ extension ColorSchemeExtensions on ColorScheme {
 /// Helper extension for math operations.
 extension _MathHelper on num {
   double pow(num exponent) {
-    double result = 1.0;
-    final base = toDouble();
-    final exp = exponent.toInt();
-
-    for (int i = 0; i < exp; i++) {
-      result *= base;
-    }
-
-    return result;
+    return math.pow(toDouble(), exponent).toDouble();
   }
 }

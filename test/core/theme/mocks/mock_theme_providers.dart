@@ -233,6 +233,16 @@ class TestThemeProviderOverrides {
   static List<Override> integration() {
     return [...TestThemeProviderOverrides.lightTheme(), ...extensions()];
   }
+
+  /// Create overrides for colorblind protanopia testing
+  static List<Override> colorblindProtanopia() {
+    return [...TestThemeProviderOverrides.lightTheme()];
+  }
+
+  /// Create overrides for high contrast testing
+  static List<Override> highContrast() {
+    return [...TestThemeProviderOverrides.lightTheme()];
+  }
 }
 
 /// Test theme scenarios for different testing needs

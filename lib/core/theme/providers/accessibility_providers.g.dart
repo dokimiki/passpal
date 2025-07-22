@@ -437,7 +437,7 @@ class _ColorBlindFriendlyThemeProviderElement
 }
 
 String _$accessibilitySettingsNotifierHash() =>
-    r'fec1727b670c46c7f54d264c40190f85ed96ff2c';
+    r'5fddd64692efc3f3111e999ac4e75d6f29c1e828';
 
 /// Provider for current accessibility settings.
 ///

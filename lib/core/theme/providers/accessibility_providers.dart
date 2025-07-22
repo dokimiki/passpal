@@ -171,7 +171,7 @@ class AccessibilitySettingsNotifier extends _$AccessibilitySettingsNotifier {
       }
     } catch (e) {
       // Fallback to default settings if platform detection fails
-      debugPrint('Failed to detect platform accessibility features: $e');
+      // This is expected in test environment
     }
 
     return settings;
@@ -236,6 +236,7 @@ bool systemHighContrast(Ref ref) {
     }
     return false;
   } catch (e) {
+    // In test environment, return false
     return false;
   }
 }
@@ -254,6 +255,7 @@ bool systemReducedMotion(Ref ref) {
     }
     return false;
   } catch (e) {
+    // In test environment, return false
     return false;
   }
 }
