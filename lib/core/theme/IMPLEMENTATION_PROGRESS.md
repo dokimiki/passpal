@@ -248,17 +248,19 @@ Implementation of the unified theme system for PassPal, providing Material 3 des
 
 ### Phase 6: Integration Testing
 
-- **Issue #15: Core Module Integration** `[PENDING]`
+- **Issue #15: Core Module Integration** `[COMPLETED]`
   - **Scope**: Integration tests with storage and config core modules
   - **Files**: `test/core/theme/integration/`
   - **Dependencies**: Issue #10 (providers), storage core, config core
-  - **Reviewable**: ~250 lines, integration scenarios
-  - **Test Coverage**: Cross-module theme functionality
+  - **Reviewable**: ~1800 lines, comprehensive integration scenarios
+  - **Test Coverage**: Cross-module theme functionality with storage/config/error cores
   - **Key Features**:
-    - Theme persistence with storage core
-    - Configuration-driven theme updates
-    - Error handling integration
-    - Performance testing
+    - Theme-Storage Integration: Theme mode persistence, cache integration, storage error recovery
+    - Theme-Config Integration: Feature flag preparation, dynamic config readiness, admin config compatibility
+    - Error Handling Integration: Cross-module error propagation, recovery strategies, error state management
+    - Performance Integration: Call overhead measurement, provider dependency performance, memory usage analysis
+    - Integration Test Architecture: Comprehensive test framework with 12 test scenarios and performance benchmarking
+  - **Status**: ✅ Complete cross-module integration testing with 5 test files covering all integration aspects
 
 - **Issue #16: Widget Integration Tests** `[PENDING]`
   - **Scope**: End-to-end theme application in widget tests
@@ -300,11 +302,11 @@ Implementation of the unified theme system for PassPal, providing Material 3 des
 
 ## Current Status
 - **Phase**: 6 (Integration Testing)
-- **Next Issue**: Issue #15 - Core Module Integration (Integration tests with storage and config core modules)
+- **Next Issue**: Issue #16 - Widget Integration Tests (End-to-end theme application in widget tests)
 - **Total Issues**: 18
-- **Completed**: 14/18 (77.8%)
+- **Completed**: 15/18 (83.3%)
 - **In Progress**: 0/18 (0%)
-- **Remaining**: 4/18 (22.2%)
+- **Remaining**: 3/18 (16.7%)
 
 ## Dependencies Map
 ```
