@@ -6,7 +6,7 @@ part of 'dio_factory.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dioFactoryHash() => r'99c6bc194a7303a3e1231eb1fed7f8037fdcf0ea';
+String _$dioFactoryHash() => r'a0f9929f51ec2d16c70d072a574e08ec7e105f7b';
 
 /// Provider for DioFactory instance
 ///

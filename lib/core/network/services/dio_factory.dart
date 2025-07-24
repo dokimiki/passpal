@@ -8,6 +8,7 @@ import '../../config/providers.dart';
 import '../../config/models/api_config.dart';
 import '../../error/providers.dart';
 import '../models/service_config.dart';
+import '../interceptors/auth_interceptor.dart';
 
 part 'dio_factory.g.dart';
 
@@ -24,10 +25,15 @@ part 'dio_factory.g.dart';
 /// - User agent headers
 /// - Base interceptors
 class DioFactory {
-  DioFactory({required this.apiConfig, required this.logger});
+  DioFactory({
+    required this.apiConfig,
+    required this.logger,
+    required this.ref,
+  });
 
   final ApiConfig apiConfig;
   final AppLogger logger;
+  final Ref ref;
 
   /// Create a Dio instance for PalAPI service
   ///
@@ -50,7 +56,7 @@ class DioFactory {
       ),
     );
 
-    _configureCommonInterceptors(dio);
+    _configureCommonInterceptors(dio, ServiceConfigs.palapi);
 
     logger.debug(
       'PalAPI Dio client created with base URL: ${apiConfig.palApiBaseUrl}',
@@ -87,7 +93,7 @@ class DioFactory {
     // Add cookie manager for session handling
     dio.interceptors.add(CookieManager(cookieJar));
 
-    _configureCommonInterceptors(dio);
+    _configureCommonInterceptors(dio, config);
 
     logger.debug(
       'Portal Dio client created for ${config.displayName} with base URL: ${config.baseUrl}',
@@ -121,14 +127,18 @@ class DioFactory {
     // Add cookie manager for SSO session handling
     dio.interceptors.add(CookieManager(cookieJar));
 
-    _configureCommonInterceptors(dio);
+    _configureCommonInterceptors(dio, ServiceConfigs.sso);
 
     logger.debug('SSO Dio client created with base URL: ${apiConfig.ssoUrl}');
     return dio;
   }
 
   /// Configure common interceptors for all clients
-  void _configureCommonInterceptors(Dio dio) {
+  void _configureCommonInterceptors(Dio dio, ServiceConfig serviceConfig) {
+    // Add authentication interceptor first
+    final authInterceptor = ref.read(authInterceptorProvider(serviceConfig));
+    dio.interceptors.add(authInterceptor);
+
     // Add request/response logging
     dio.interceptors.add(
       LogInterceptor(
@@ -191,7 +201,7 @@ DioFactory dioFactory(Ref ref) {
   final apiConfig = ref.watch(apiConfigProvider);
   final logger = ref.watch(scopedLoggerProvider('DioFactory'));
 
-  return DioFactory(apiConfig: apiConfig, logger: logger);
+  return DioFactory(apiConfig: apiConfig, logger: logger, ref: ref);
 }
 
 /// Provider for PalAPI Dio client
