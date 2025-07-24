@@ -48,7 +48,9 @@ void main() {
             testMockConnectivity.checkConnectivity(),
           ).thenThrow(Exception('Test error'));
 
-          final testMonitor = ConnectivityMonitor(connectivity: testMockConnectivity);
+          final testMonitor = ConnectivityMonitor(
+            connectivity: testMockConnectivity,
+          );
 
           // Give time for initialization
           await Future.delayed(const Duration(milliseconds: 100));
@@ -74,7 +76,9 @@ void main() {
             testMockConnectivity.checkConnectivity(),
           ).thenAnswer((_) async => [ConnectivityResult.wifi]);
 
-          final testMonitor = ConnectivityMonitor(connectivity: testMockConnectivity);
+          final testMonitor = ConnectivityMonitor(
+            connectivity: testMockConnectivity,
+          );
 
           // Give time for initialization and internet check
           await Future.delayed(const Duration(milliseconds: 100));

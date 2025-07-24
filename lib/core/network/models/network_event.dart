@@ -70,13 +70,15 @@ extension NetworkEventExtensions on NetworkEvent {
   /// Whether this event represents a quality improvement
   bool get isQualityImproved {
     if (previous == null) return false;
-    return _getQualityScore(current.quality) > _getQualityScore(previous!.quality);
+    return _getQualityScore(current.quality) >
+        _getQualityScore(previous!.quality);
   }
 
   /// Whether this event represents a quality degradation
   bool get isQualityDegraded {
     if (previous == null) return false;
-    return _getQualityScore(current.quality) < _getQualityScore(previous!.quality);
+    return _getQualityScore(current.quality) <
+        _getQualityScore(previous!.quality);
   }
 
   /// Convert quality enum to numeric score for comparison

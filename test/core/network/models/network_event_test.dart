@@ -180,29 +180,33 @@ void main() {
     });
 
     group('JSON serialization', () {
-      test('should serialize and deserialize correctly', () {
-        // TODO: Fix JSON serialization type casting issue
-        // The ConnectivityStatus nested object serialization needs investigation
-        return;
-        
-        final originalEvent = NetworkEventFactory.connected(
-          previous: offlineStatus,
-          current: wifiStatus,
-        );
+      test(
+        'should serialize and deserialize correctly',
+        () {
+          // TODO: Fix JSON serialization type casting issue
+          // The ConnectivityStatus nested object serialization needs investigation
+          return;
 
-        final json = originalEvent.toJson();
-        final deserializedEvent = NetworkEvent.fromJson(json);
+          final originalEvent = NetworkEventFactory.connected(
+            previous: offlineStatus,
+            current: wifiStatus,
+          );
 
-        expect(deserializedEvent.type, equals(originalEvent.type));
-        expect(
-          deserializedEvent.current.isConnected,
-          equals(originalEvent.current.isConnected),
-        );
-        expect(
-          deserializedEvent.current.type,
-          equals(originalEvent.current.type),
-        );
-      }, skip: 'JSON serialization needs ConnectivityStatus serialization fix');
+          final json = originalEvent.toJson();
+          final deserializedEvent = NetworkEvent.fromJson(json);
+
+          expect(deserializedEvent.type, equals(originalEvent.type));
+          expect(
+            deserializedEvent.current.isConnected,
+            equals(originalEvent.current.isConnected),
+          );
+          expect(
+            deserializedEvent.current.type,
+            equals(originalEvent.current.type),
+          );
+        },
+        skip: 'JSON serialization needs ConnectivityStatus serialization fix',
+      );
     });
   });
 
