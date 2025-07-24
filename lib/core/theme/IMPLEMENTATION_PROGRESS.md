@@ -262,17 +262,20 @@ Implementation of the unified theme system for PassPal, providing Material 3 des
     - Integration Test Architecture: Comprehensive test framework with 12 test scenarios and performance benchmarking
   - **Status**: ✅ Complete cross-module integration testing with 5 test files covering all integration aspects
 
-- **Issue #16: Widget Integration Tests** `[PENDING]`
+- **Issue #16: Widget Integration Tests** `[COMPLETED]`
   - **Scope**: End-to-end theme application in widget tests
-  - **Files**: `test/core/theme/widgets/`
+  - **Files**: `test/core/theme/widgets/widget_theme_integration_test.dart`
   - **Dependencies**: Issue #15 (integration), Issue #14 (accessibility)
-  - **Reviewable**: ~200 lines, widget testing
-  - **Test Coverage**: Theme application in real widgets
+  - **Reviewable**: ~570 lines, comprehensive widget testing
+  - **Test Coverage**: Complete widget integration testing with 11 passing tests
   - **Key Features**:
-    - Widget theme application tests
-    - Dynamic theme switching in widgets
-    - Extension usage in components
-    - Performance impact measurement
+    - Basic theme application tests (light/dark theme widget application)
+    - Theme extension usage tests (StatusColors, SpacingTokens, RadiusTokens, MotionTokens)
+    - Dynamic theme switching tests (provider overrides, theme data switching)
+    - Accessibility integration tests (high contrast themes, motion settings)
+    - Performance testing (rendering efficiency, memory leak prevention)
+    - Comprehensive test widget implementations for all theme aspects
+  - **Status**: ✅ Complete widget integration test suite with 11 tests covering all theme functionality
 
 ### Phase 7: Documentation & Finalization
 
@@ -301,12 +304,12 @@ Implementation of the unified theme system for PassPal, providing Material 3 des
     - Documentation for provider usage
 
 ## Current Status
-- **Phase**: 6 (Integration Testing)
-- **Next Issue**: Issue #16 - Widget Integration Tests (End-to-end theme application in widget tests)
+- **Phase**: 7 (Documentation & Finalization)
+- **Next Issue**: Issue #17 - Core Module README (Comprehensive documentation with usage examples)
 - **Total Issues**: 18
-- **Completed**: 15/18 (83.3%)
+- **Completed**: 16/18 (88.9%)
 - **In Progress**: 0/18 (0%)
-- **Remaining**: 3/18 (16.7%)
+- **Remaining**: 2/18 (11.1%)
 
 ## Dependencies Map
 ```
