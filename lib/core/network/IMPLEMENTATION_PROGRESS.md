@@ -65,16 +65,16 @@ The Network Core module provides unified HTTP platform for all external API comm
 
 ### ✅ Phase 3: Error Handling & Recovery (Not Started)
 
-#### Issue #5: Error Interceptor
+#### Issue #5: Error Interceptor ✅ **COMPLETED**
 **PR Scope**: Convert HTTP errors to unified AppError format
-- [ ] `interceptors/error_interceptor.dart` - DioException → AppError
-- [ ] `models/network_error_types.dart` - Network-specific error definitions
-- [ ] Integration with error core providers
-- [ ] Error context enrichment (request URL, headers, etc.)
+- [x] `interceptors/error_interceptor.dart` - DioException → AppError
+- [x] `models/network_error_types.dart` - Network-specific error definitions
+- [x] Integration with error core providers
+- [x] Error context enrichment (request URL, headers, etc.)
 
-**Files to create**: 2 files
+**Files created**: 2 files + generated Riverpod files + tests
 **Dependencies**: Issue #3, Error Core
-**Tests**: Unit tests covering all error scenarios
+**Tests**: Unit tests covering all error scenarios created
 
 #### Issue #6: Retry Interceptor
 **PR Scope**: Implement intelligent retry with exponential backoff
@@ -211,13 +211,13 @@ The Network Core module provides unified HTTP platform for all external API comm
 ## Current Status
 
 - **Total Issues**: 16
-- **Completed**: 4
+- **Completed**: 5
 - **In Progress**: 0
-- **Remaining**: 12
+- **Remaining**: 11
 
 ## Current Phase: Error Handling & Recovery
 
-**Next Action**: Start with Issue #5 - Error Interceptor
+**Next Action**: Start with Issue #6 - Retry Interceptor
 
 ## Key Integration Points
 
@@ -386,3 +386,53 @@ The Network Core module provides unified HTTP platform for all external API comm
 **Code Generation**: Uses Riverpod code generation for provider setup
 **Integration**: Successfully integrated with DioFactory and service configurations
 **Known Issues**: Firebase initialization required for full test execution (tests pass with basic functionality)
+
+## Issue #5 Implementation Notes
+
+**Completed**: 2025-01-24
+**Files Created**:
+- `models/network_error_types.dart` - Comprehensive network error classification with Freezed unions
+- `interceptors/error_interceptor.dart` - Full error interceptor with Japanese error messages and context enrichment
+- `test/core/network/interceptors/error_interceptor_test.dart` - Unit tests for error classification and handling
+
+**Key Features Implemented**:
+- Detailed network error type classification (connection, timeout, response, cancelled, badRequest, certificate, unknown)
+- DioException to AppError/Failure conversion with structured error data
+- HTTP status code categorization (1xx-5xx) with specific handling
+- Retry strategy determination based on error type and status code
+- Comprehensive error context extraction (request URL, headers, timing, etc.)
+- Japanese localized error messages for user-facing display
+- Integration with Error Core providers (ErrorNotifier, AppLogger)
+- Service-specific error interceptor providers via Riverpod
+- Structured error attachment to DioException for downstream processing
+
+**Error Classification System**:
+- `DetailedNetworkErrorType` - Sealed union with 7 error categories
+- `NetworkErrorClassifier` - Static utility class for error analysis
+- `HttpStatusCategory` - 5 category classification for HTTP status codes
+- Retry-ability determination with suggested delay calculation
+- Error code mapping for Error Core integration
+
+**Japanese Error Messages**:
+- Connection errors: "ネットワーク接続に失敗しました"
+- Timeout errors: "受信がタイムアウトしました (30秒)"
+- HTTP 401: "認証が必要です (401 Unauthorized)"
+- HTTP 404: "リソースが見つかりません (404 Not Found)"
+- And more specific messages for common status codes
+
+**Provider Integration**: Full Riverpod provider setup
+- `errorInterceptorProvider` - General error interceptor
+- `errorInterceptorForServiceProvider(serviceName)` - Service-specific interceptors
+- Integration with `loggerForTagProvider` and `errorNotifierProvider`
+
+**Test Coverage**: Comprehensive unit tests covering:
+- All 7 error type classifications from DioException
+- HTTP status code categorization and retry-ability logic
+- Error context extraction with request/response data
+- Retry delay suggestion algorithms
+- Error code mapping for all error types
+- NetworkErrorClassifier utility functions
+
+**Code Generation**: Uses Freezed for immutable error types and Riverpod for provider generation
+**Integration**: Successfully integrated with Error Core providers and DioFactory interceptor chain
+**Known Issues**: Linter warnings about multiple underscores in test files (non-breaking)
