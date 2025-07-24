@@ -49,6 +49,7 @@ const _$ConnectivityTypeEnumMap = {
 };
 
 const _$ConnectionQualityEnumMap = {
+  ConnectionQuality.none: 'none',
   ConnectionQuality.excellent: 'excellent',
   ConnectionQuality.good: 'good',
   ConnectionQuality.fair: 'fair',

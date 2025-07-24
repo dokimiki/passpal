@@ -29,6 +29,9 @@ enum ConnectivityType {
 
 /// Network connection quality levels
 enum ConnectionQuality {
+  /// No connection
+  none,
+
   /// Excellent connection (>= 10 Mbps)
   excellent,
 
@@ -89,6 +92,15 @@ abstract class ConnectivityStatus with _$ConnectivityStatus {
 
 /// Extension methods for ConnectivityStatus
 extension ConnectivityStatusExtension on ConnectivityStatus {
+  /// Whether device is online
+  bool get isOnline => isConnected;
+
+  /// Whether device is offline
+  bool get isOffline => !isConnected;
+
+  /// Connection type (alias for type field)
+  ConnectivityType get connectionType => type;
+
   /// Whether connection is suitable for background operations
   bool get isGoodForBackground =>
       isConnected &&
@@ -133,12 +145,35 @@ extension ConnectivityStatusExtension on ConnectivityStatus {
 }
 
 /// Factory methods for common connectivity scenarios
-extension ConnectivityStatusFactory on ConnectivityStatus {
+class ConnectivityStatusFactory {
   /// Create offline status
   static ConnectivityStatus offline() {
     return ConnectivityStatus(
       isConnected: false,
       type: ConnectivityType.none,
+      timestamp: DateTime.now(),
+    );
+  }
+
+  /// Create online status with connection type
+  static ConnectivityStatus online({
+    required ConnectivityType connectionType,
+    ConnectionQuality quality = ConnectionQuality.good,
+    String? networkName,
+    int? signalStrength,
+    double? speedKbps,
+    bool isMetered = false,
+    bool isRoaming = false,
+  }) {
+    return ConnectivityStatus(
+      isConnected: true,
+      type: connectionType,
+      quality: quality,
+      networkName: networkName,
+      signalStrength: signalStrength,
+      speedKbps: speedKbps,
+      isMetered: isMetered,
+      isRoaming: isRoaming,
       timestamp: DateTime.now(),
     );
   }

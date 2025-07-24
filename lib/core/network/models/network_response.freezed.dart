@@ -17,7 +17,7 @@ mixin _$NetworkResponse<T> {
 
 /// HTTP status code
  int get statusCode;/// Response body data
-@JsonKey(includeFromJson: false, includeToJson: false) T? get data;/// Response headers
+ T? get data;/// Response headers
  Map<String, List<String>> get headers;/// Content type from response headers
  String? get contentType;/// Response timestamp
  DateTime get timestamp;/// Whether the response came from cache
@@ -58,7 +58,7 @@ abstract mixin class $NetworkResponseCopyWith<T,$Res>  {
   factory $NetworkResponseCopyWith(NetworkResponse<T> value, $Res Function(NetworkResponse<T>) _then) = _$NetworkResponseCopyWithImpl;
 @useResult
 $Res call({
- int statusCode,@JsonKey(includeFromJson: false, includeToJson: false) T? data, Map<String, List<String>> headers, String? contentType, DateTime timestamp, bool fromCache, int? cacheAge, String? requestUrl, int? responseTimeMs, Map<String, dynamic> metadata
+ int statusCode, T? data, Map<String, List<String>> headers, String? contentType, DateTime timestamp, bool fromCache, int? cacheAge, String? requestUrl, int? responseTimeMs, Map<String, dynamic> metadata
 });
 
 
@@ -172,7 +172,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int statusCode, @JsonKey(includeFromJson: false, includeToJson: false)  T? data,  Map<String, List<String>> headers,  String? contentType,  DateTime timestamp,  bool fromCache,  int? cacheAge,  String? requestUrl,  int? responseTimeMs,  Map<String, dynamic> metadata)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int statusCode,  T? data,  Map<String, List<String>> headers,  String? contentType,  DateTime timestamp,  bool fromCache,  int? cacheAge,  String? requestUrl,  int? responseTimeMs,  Map<String, dynamic> metadata)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NetworkResponse() when $default != null:
 return $default(_that.statusCode,_that.data,_that.headers,_that.contentType,_that.timestamp,_that.fromCache,_that.cacheAge,_that.requestUrl,_that.responseTimeMs,_that.metadata);case _:
@@ -193,7 +193,7 @@ return $default(_that.statusCode,_that.data,_that.headers,_that.contentType,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int statusCode, @JsonKey(includeFromJson: false, includeToJson: false)  T? data,  Map<String, List<String>> headers,  String? contentType,  DateTime timestamp,  bool fromCache,  int? cacheAge,  String? requestUrl,  int? responseTimeMs,  Map<String, dynamic> metadata)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int statusCode,  T? data,  Map<String, List<String>> headers,  String? contentType,  DateTime timestamp,  bool fromCache,  int? cacheAge,  String? requestUrl,  int? responseTimeMs,  Map<String, dynamic> metadata)  $default,) {final _that = this;
 switch (_that) {
 case _NetworkResponse():
 return $default(_that.statusCode,_that.data,_that.headers,_that.contentType,_that.timestamp,_that.fromCache,_that.cacheAge,_that.requestUrl,_that.responseTimeMs,_that.metadata);case _:
@@ -213,7 +213,7 @@ return $default(_that.statusCode,_that.data,_that.headers,_that.contentType,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int statusCode, @JsonKey(includeFromJson: false, includeToJson: false)  T? data,  Map<String, List<String>> headers,  String? contentType,  DateTime timestamp,  bool fromCache,  int? cacheAge,  String? requestUrl,  int? responseTimeMs,  Map<String, dynamic> metadata)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int statusCode,  T? data,  Map<String, List<String>> headers,  String? contentType,  DateTime timestamp,  bool fromCache,  int? cacheAge,  String? requestUrl,  int? responseTimeMs,  Map<String, dynamic> metadata)?  $default,) {final _that = this;
 switch (_that) {
 case _NetworkResponse() when $default != null:
 return $default(_that.statusCode,_that.data,_that.headers,_that.contentType,_that.timestamp,_that.fromCache,_that.cacheAge,_that.requestUrl,_that.responseTimeMs,_that.metadata);case _:
@@ -228,13 +228,13 @@ return $default(_that.statusCode,_that.data,_that.headers,_that.contentType,_tha
 @JsonSerializable(genericArgumentFactories: true)
 
 class _NetworkResponse<T> implements NetworkResponse<T> {
-  const _NetworkResponse({required this.statusCode, @JsonKey(includeFromJson: false, includeToJson: false) this.data, final  Map<String, List<String>> headers = const {}, this.contentType, required this.timestamp, this.fromCache = false, this.cacheAge, this.requestUrl, this.responseTimeMs, final  Map<String, dynamic> metadata = const {}}): _headers = headers,_metadata = metadata;
+  const _NetworkResponse({required this.statusCode, this.data, final  Map<String, List<String>> headers = const {}, this.contentType, required this.timestamp, this.fromCache = false, this.cacheAge, this.requestUrl, this.responseTimeMs, final  Map<String, dynamic> metadata = const {}}): _headers = headers,_metadata = metadata;
   factory _NetworkResponse.fromJson(Map<String, dynamic> json,T Function(Object?) fromJsonT) => _$NetworkResponseFromJson(json,fromJsonT);
 
 /// HTTP status code
 @override final  int statusCode;
 /// Response body data
-@override@JsonKey(includeFromJson: false, includeToJson: false) final  T? data;
+@override final  T? data;
 /// Response headers
  final  Map<String, List<String>> _headers;
 /// Response headers
@@ -299,7 +299,7 @@ abstract mixin class _$NetworkResponseCopyWith<T,$Res> implements $NetworkRespon
   factory _$NetworkResponseCopyWith(_NetworkResponse<T> value, $Res Function(_NetworkResponse<T>) _then) = __$NetworkResponseCopyWithImpl;
 @override @useResult
 $Res call({
- int statusCode,@JsonKey(includeFromJson: false, includeToJson: false) T? data, Map<String, List<String>> headers, String? contentType, DateTime timestamp, bool fromCache, int? cacheAge, String? requestUrl, int? responseTimeMs, Map<String, dynamic> metadata
+ int statusCode, T? data, Map<String, List<String>> headers, String? contentType, DateTime timestamp, bool fromCache, int? cacheAge, String? requestUrl, int? responseTimeMs, Map<String, dynamic> metadata
 });
 
 

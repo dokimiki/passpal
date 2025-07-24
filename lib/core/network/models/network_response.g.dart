@@ -11,6 +11,7 @@ _NetworkResponse<T> _$NetworkResponseFromJson<T>(
   T Function(Object? json) fromJsonT,
 ) => _NetworkResponse<T>(
   statusCode: (json['statusCode'] as num).toInt(),
+  data: _$nullableGenericFromJson(json['data'], fromJsonT),
   headers:
       (json['headers'] as Map<String, dynamic>?)?.map(
         (k, e) =>
@@ -31,6 +32,7 @@ Map<String, dynamic> _$NetworkResponseToJson<T>(
   Object? Function(T value) toJsonT,
 ) => <String, dynamic>{
   'statusCode': instance.statusCode,
+  'data': _$nullableGenericToJson(instance.data, toJsonT),
   'headers': instance.headers,
   'contentType': instance.contentType,
   'timestamp': instance.timestamp.toIso8601String(),
@@ -40,3 +42,13 @@ Map<String, dynamic> _$NetworkResponseToJson<T>(
   'responseTimeMs': instance.responseTimeMs,
   'metadata': instance.metadata,
 };
+
+T? _$nullableGenericFromJson<T>(
+  Object? input,
+  T Function(Object? json) fromJson,
+) => input == null ? null : fromJson(input);
+
+Object? _$nullableGenericToJson<T>(
+  T? input,
+  Object? Function(T value) toJson,
+) => input == null ? null : toJson(input);
