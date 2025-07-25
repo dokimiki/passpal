@@ -28,6 +28,19 @@
   - キャッシュ/設定: `shared_preferences`
 - **バックエンド**: Firebase Auth + VPS API
 
+## コピペコマンド
+
+```bash
+# コード生成・フォーマットを一気に実行 (どうしてもエラーが出るときに実行)
+dart fix --apply && dart format . && dart run build_runner clean && flutter clean && flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs
+
+# コード解析実行 (1番目に実行)
+dart fix --apply && dart format . && flutter analyze
+
+# テスト実行 (2番目に実行)
+flutter test test/core/
+```
+
 ## 初期化コマンド
 
 ### 前提ツール 環境構築(flutter)
