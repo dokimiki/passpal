@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"chukyo-passpal","appId":"1:707651746611:android:b996ff760156e4b4055c46","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"chukyo-passpal","configurations":{"android":"1:707651746611:android:b996ff760156e4b4055c46","ios":"1:707651746611:ios:19cee6f1abc13250055c46"}}}}}}
